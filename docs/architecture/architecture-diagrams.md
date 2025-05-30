@@ -26,9 +26,7 @@ flowchart LR
 
 ## 🟦 Simple Architecture (MVP Level)
 
-> **Target**: Proof of concept, small-scale deployment (1K-10K policies)  
-> **Timeline**: 2-4 months development  
-> **Team Size**: 2-4 developers  
+> **Target**: Proof of concept, small-scale deployment (1K-10K policies)
 
 ### Architecture Diagram
 
@@ -88,9 +86,7 @@ graph TB
 
 ## 🟨 Medium Complexity Architecture (Scalable)
 
-> **Target**: Growing business with moderate scale (10K-100K policies)  
-> **Timeline**: 4-8 months development  
-> **Team Size**: 6-10 developers  
+> **Target**: Growing business with moderate scale (10K-100K policies)
 
 ### Architecture Diagram
 
@@ -204,9 +200,7 @@ sequenceDiagram
 
 ## 🟪 Complex Enterprise Architecture
 
-> **Target**: Large-scale enterprise (100K+ policies, multi-region)  
-> **Timeline**: 8-18 months development  
-> **Team Size**: 15-25 developers  
+> **Target**: Large-scale enterprise (100K+ policies, multi-region)
 
 ### High-Level Architecture Overview
 
@@ -448,21 +442,18 @@ gantt
 
 #### Choose **Simple** When:
 - 🎯 Building MVP or proof of concept
-- 👥 Small team (2-4 developers)
 - 📊 Low transaction volume (< 1K daily)
 - ⏱️ Time to market is critical
 - 💰 Limited budget for infrastructure
 
 #### Choose **Medium** When:
 - 📈 Growing business with scaling needs
-- 👥 Medium team (6-10 developers)
 - 📊 Moderate transaction volume (1K-50K daily)
 - 🔄 Need for service independence
 - 💪 Moderate fault tolerance requirements
 
 #### Choose **Complex** When:
 - 🏢 Enterprise-scale requirements
-- 👥 Large engineering organization
 - 📊 High transaction volume (50K+ daily)
 - 🌍 Multi-region deployment needs
 - 🛡️ Stringent compliance requirements
