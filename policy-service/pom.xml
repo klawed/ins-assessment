@@ -12,7 +12,7 @@
 
     <artifactId>policy-service</artifactId>
     <packaging>jar</packaging>
-    <n>Policy Service</n>
+    
     <description>Manages policy metadata and premium schedules</description>
 
     <dependencies>
