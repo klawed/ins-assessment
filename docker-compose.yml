@@ -1,0 +1,183 @@
+version: '3.8'
+
+services:
+  # Infrastructure Services
+  mariadb:
+    image: mariadb:11.0
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: billing_system
+      MYSQL_USER: billing_user
+      MYSQL_PASSWORD: billing_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - ./docker/mariadb/init:/docker-entrypoint-initdb.d
+    networks:
+      - billing-network
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - billing-network
+
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
+    networks:
+      - billing-network
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - billing-network
+
+  # Microservices
+  policy-service:
+    build:
+      context: ./policy-service
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - DB_HOST=mariadb
+      - DB_PORT=3306
+      - DB_NAME=billing_system
+      - DB_USER=billing_user
+      - DB_PASSWORD=billing_password
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    depends_on:
+      - mariadb
+      - kafka
+    networks:
+      - billing-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  billing-service:
+    build:
+      context: ./billing-service
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - DB_HOST=mariadb
+      - DB_PORT=3306
+      - DB_NAME=billing_system
+      - DB_USER=billing_user
+      - DB_PASSWORD=billing_password
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - POLICY_SERVICE_URL=http://policy-service:8080
+    depends_on:
+      - mariadb
+      - kafka
+      - policy-service
+    networks:
+      - billing-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  payment-service:
+    build:
+      context: ./payment-service
+      dockerfile: Dockerfile
+    ports:
+      - "8083:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - DB_HOST=mariadb
+      - DB_PORT=3306
+      - DB_NAME=billing_system
+      - DB_USER=billing_user
+      - DB_PASSWORD=billing_password
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - PAYMENT_GATEWAY_URL=http://payment-gateway-mock:8080
+    depends_on:
+      - mariadb
+      - kafka
+      - redis
+      - payment-gateway-mock
+    networks:
+      - billing-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  notification-service:
+    build:
+      context: ./notification-service
+      dockerfile: Dockerfile
+    ports:
+      - "8084:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - DB_HOST=mariadb
+      - DB_PORT=3306
+      - DB_NAME=billing_system
+      - DB_USER=billing_user
+      - DB_PASSWORD=billing_password
+    depends_on:
+      - kafka
+      - mariadb
+    networks:
+      - billing-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Mock Payment Gateway
+  payment-gateway-mock:
+    build:
+      context: ./payment-gateway-mock
+      dockerfile: Dockerfile
+    ports:
+      - "8090:8080"
+    networks:
+      - billing-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+volumes:
+  mariadb_data:
+
+networks:
+  billing-network:
+    driver: bridge
