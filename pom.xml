@@ -17,6 +17,7 @@
         <module>billing-service</module>
         <module>notification-service</module>
         <module>payment-service</module>
+        <module>payment-gateway-mock</module>
     </modules>
 
     <properties>

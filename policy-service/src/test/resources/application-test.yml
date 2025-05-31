@@ -30,6 +30,6 @@ spring:
 logging:
   level:
     org.testcontainers: DEBUG
-    com.github.dockerjava: WARN
+    com.github.dockerjava: DEBUG
     root: INFO
-    '[org.testcontainers.utility.TestcontainersConfiguration]': DEBUG
+    com.billing: DEBUG
