@@ -143,6 +143,14 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>3.1.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             
             <plugin>
@@ -153,14 +161,6 @@
             <plugin>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-maven-plugin</artifactId>
-                <configuration>
-                    <url>jdbc:mariadb://localhost:3306/billing_system</url>
-                    <user>billing_user</user>
-                    <password>billing_password</password>
-                    <locations>
-                        <location>classpath:db/migration</location>
-                    </locations>
-                </configuration>
             </plugin>
             
             <plugin>
