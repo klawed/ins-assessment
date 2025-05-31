@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.is;
@@ -20,6 +21,7 @@ class PolicyControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
+    @WithMockUser
     void shouldReturnHelloMessage() throws Exception {
         mockMvc.perform(get("/api/policies/hello"))
                 .andExpect(status().isOk())
@@ -30,6 +32,7 @@ class PolicyControllerTest {
     }
 
     @Test
+    @WithMockUser
     void shouldReturnPolicyById() throws Exception {
         String policyId = "POLICY-123";
 
@@ -41,6 +44,7 @@ class PolicyControllerTest {
     }
 
     @Test
+    @WithMockUser
     void shouldReturnPolicySchedule() throws Exception {
         String policyId = "POLICY-123";
 
