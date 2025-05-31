@@ -24,7 +24,7 @@ flowchart LR
 
 ---
 
-## 🟦 Simple Architecture (MVP Level)
+## 🟢 Simple Architecture (MVP Level)
 
 > **Target**: Proof of concept, small-scale deployment (1K-10K policies)
 
@@ -234,7 +234,7 @@ graph TB
     subgraph "Data Platform"
         DB_CLUSTER[(MariaDB Cluster<br/>Multi-Master)]
         REDIS_CLUSTER[(Redis Cluster<br/>Distributed Cache)]
-        SEARCH[ElasticSearch<br/>Analytics)]
+        SEARCH[ElasticSearch<br/>Analytics]
     end
     
     subgraph "External Ecosystem"
@@ -377,7 +377,7 @@ flowchart TD
 ### Capability Comparison
 
 | **Capability** | **Simple** | **Medium** | **Complex** |
-|----------------|------------|------------|-------------|
+|----------------|-----------|-----------|-------------|
 | **Scalability** | Single instance | Horizontal services | Auto-scaling cluster |
 | **Availability** | 95% | 99% | 99.9%+ |
 | **Data Consistency** | Strong | Eventually consistent | Configurable per use case |
@@ -450,7 +450,7 @@ gantt
 - 📈 Growing business with scaling needs
 - 📊 Moderate transaction volume (1K-50K daily)
 - 🔄 Need for service independence
-- 💪 Moderate fault tolerance requirements
+- 🛡️ Moderate fault tolerance requirements
 
 #### Choose **Complex** When:
 - 🏢 Enterprise-scale requirements
