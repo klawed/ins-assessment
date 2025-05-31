@@ -61,7 +61,7 @@
             
             <!-- Spring Cloud BOM -->
             <dependency>
-                <groupId>org.springframework.framework.cloud</groupId>
+                <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
                 <version>${spring-cloud.version}</version>
                 <type>pom</type>
