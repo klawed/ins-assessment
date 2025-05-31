@@ -50,8 +50,8 @@ services:
   # Microservices
   policy-service:
     build:
-      context: ./policy-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: policy-service/Dockerfile
     ports:
       - "8081:8080"
     environment:
@@ -76,8 +76,8 @@ services:
 
   billing-service:
     build:
-      context: ./billing-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: billing-service/Dockerfile
     ports:
       - "8082:8080"
     environment:
@@ -104,8 +104,8 @@ services:
 
   payment-service:
     build:
-      context: ./payment-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: payment-service/Dockerfile
     ports:
       - "8083:8080"
     environment:
@@ -135,8 +135,8 @@ services:
 
   notification-service:
     build:
-      context: ./notification-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: notification-service/Dockerfile
     ports:
       - "8084:8080"
     environment:
@@ -162,8 +162,8 @@ services:
   # Mock Payment Gateway
   payment-gateway-mock:
     build:
-      context: ./payment-gateway-mock
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: payment-gateway-mock/Dockerfile
     ports:
       - "8090:8080"
     networks:
