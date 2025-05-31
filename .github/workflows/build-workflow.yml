@@ -13,7 +13,14 @@ jobs:
     services:
       docker:
         image: docker:dind
-        options: --health-cmd="docker info" --health-interval=10s --health-timeout=5s --health-retries=3
+        options: >-
+          --privileged
+          --health-cmd="docker info"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+        env:
+          DOCKER_TLS_CERTDIR: ""
 
     steps:
     - name: Checkout code
@@ -47,3 +54,5 @@ jobs:
       env:
         TESTCONTAINERS_RYUK_DISABLED: true
         TESTCONTAINERS_CHECKS_DISABLE: true
+        DOCKER_HOST: tcp://docker:2375
+        DOCKER_TLS_VERIFY: ""
