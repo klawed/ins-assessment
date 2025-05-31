@@ -13,7 +13,6 @@ jobs:
     services:
       docker:
         image: docker:dind
-        privileged: true
         options: >-
           --privileged
           --health-cmd="docker info"
