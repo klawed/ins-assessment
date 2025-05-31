@@ -47,10 +47,20 @@ jobs:
       run: mvn clean package -DskipTests
 
     - name: Run Unit Tests
-      run: mvn test -Dtest="!**/*E2ETest.java"
+      run: |
+        for module in policy-service billing-service notification-service payment-service
+        do
+          echo "Running unit tests for $module"
+          mvn test -pl $module -Dtest="!**/*E2ETest.java" -Dsurefire.failIfNoSpecifiedTests=false
+        done
 
     - name: Run E2E Tests
-      run: mvn test -Dtest="**/*E2ETest.java"
+      run: |
+        for module in policy-service billing-service notification-service payment-service
+        do
+          echo "Running E2E tests for $module"
+          mvn test -pl $module -Dtest="**/*E2ETest.java" -Dsurefire.failIfNoSpecifiedTests=false
+        done
       env:
         TESTCONTAINERS_RYUK_DISABLED: true
         TESTCONTAINERS_CHECKS_DISABLE: true
