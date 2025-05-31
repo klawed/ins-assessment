@@ -15,7 +15,9 @@ import org.testcontainers.containers.MariaDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
-
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -73,7 +75,12 @@ class PolicyServiceIntegrationTest {
 
         // When
         ResponseEntity<Map<String, Object>> response =
-                restTemplate.getForEntity(url, new ParameterizedTypeReference<>() {});
+                restTemplate.exchange(
+                        url,
+                        HttpMethod.GET,
+                        null,
+                        new ParameterizedTypeReference<Map<String, Object>>() {}
+                );
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
