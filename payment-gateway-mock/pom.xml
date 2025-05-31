@@ -12,7 +12,7 @@
 
     <artifactId>payment-gateway-mock</artifactId>
     <packaging>jar</packaging>
-    <n>Payment Gateway Mock</n>
+    <name>Payment Gateway Mock</name>
     <description>Simulates third-party payment provider</description>
 
     <dependencies>

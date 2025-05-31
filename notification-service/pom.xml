@@ -12,7 +12,7 @@
 
     <artifactId>notification-service</artifactId>
     <packaging>jar</packaging>
-    <n>Notification Service</n>
+    <name>Notification Service</name>
     <description>Manages payment reminders and notifications</description>
 
     <dependencies>

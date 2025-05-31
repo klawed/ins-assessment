@@ -12,7 +12,7 @@
 
     <artifactId>payment-service</artifactId>
     <packaging>jar</packaging>
-    <n>Payment Service</n>
+    <name>Payment Service</name>
     <description>Manages payment processing, retry logic, and payment gateway integration</description>
 
     <dependencies>

@@ -12,7 +12,7 @@
 
     <artifactId>billing-service</artifactId>
     <packaging>jar</packaging>
-    <n>Billing Service</n>
+    <name>Billing Service</name>
     <description>Calculates premiums and manages billing cycles</description>
 
     <dependencies>
