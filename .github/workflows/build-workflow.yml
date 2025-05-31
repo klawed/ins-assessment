@@ -10,6 +10,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     
+    services:
+      docker:
+        image: docker:dind
+        privileged: true
+        options: --health-cmd="docker info" --health-interval=10s --health-timeout=5s --health-retries=3
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -34,5 +40,11 @@ jobs:
     - name: Build all services
       run: mvn clean package -DskipTests
 
-    - name: Run unit tests
-      run: mvn test
+    - name: Run Unit Tests
+      run: mvn test -Dtest="!**/*E2ETest.java"
+
+    - name: Run E2E Tests
+      run: mvn test -Dtest="**/*E2ETest.java"
+      env:
+        TESTCONTAINERS_RYUK_DISABLED: true
+        TESTCONTAINERS_CHECKS_DISABLE: true

@@ -23,7 +23,7 @@ public class PolicyController {
     }
 
     @GetMapping("/{policyId}")
-    public ResponseEntity<PolicyDto> getPolicyById(@PathVariable String policyId) {
+    public ResponseEntity<PolicyDto> getPolicyById(@PathVariable("policyId") String policyId) {
         // Mock policy data for testing
         PolicyDto policy = PolicyDto.builder()
                 .policyId(policyId)
@@ -42,7 +42,7 @@ public class PolicyController {
     }
 
     @GetMapping("/{policyId}/schedule")
-    public ResponseEntity<Map<String, Object>> getPolicySchedule(@PathVariable String policyId) {
+    public ResponseEntity<Map<String, Object>> getPolicySchedule(@PathVariable("policyId") String policyId) {
         Map<String, Object> schedule = Map.of(
                 "policyId", policyId,
                 "premiumSchedule", "Monthly - $100"

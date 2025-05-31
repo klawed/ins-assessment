@@ -34,7 +34,7 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
     networks:
       - billing-network
 
@@ -160,6 +160,7 @@ services:
   # Mock Payment Gateway
   payment-gateway-mock:
     build:
+      context: .
       dockerfile: payment-gateway-mock/Dockerfile
     ports:
       - "8090:8080"

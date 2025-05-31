@@ -25,8 +25,11 @@ class BillingSystemE2ETest {
 
     @Container
     static DockerComposeContainer<?> environment = new DockerComposeContainer<>(
-            new File("docker-compose.yml"))
-            .withExposedService("policy-service", 8080, 
+            new File("../docker-compose.yml"))
+            .withLocalCompose(true)  // Use local docker-compose
+            .withPull(false)         // Don't pull images if they exist
+            .withEnv("COMPOSE_FILE", "docker-compose.yml")
+            .withExposedService("policy-service", 8080,
                 Wait.forHttp("/actuator/health")
                     .forStatusCode(200)
                     .withStartupTimeout(Duration.ofMinutes(3)))
