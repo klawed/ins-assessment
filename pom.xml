@@ -15,9 +15,8 @@
         <module>shared-models</module>
         <module>policy-service</module>
         <module>billing-service</module>
-        <module>payment-service</module>
         <module>notification-service</module>
-        <module>payment-gateway-mock</module>
+        <module>payment-service</module>
     </modules>
 
     <properties>
@@ -174,22 +173,10 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.12.1</version>
+                    <version>3.11.0</version>
                     <configuration>
-                        <source>21</source>
-                        <target>21</target>
-                        <annotationProcessorPaths>
-                            <path>
-                                <groupId>org.projectlombok</groupId>
-                                <artifactId>lombok</artifactId>
-                                <version>${lombok.version}</version>
-                            </path>
-                            <path>
-                                <groupId>org.mapstruct</groupId>
-                                <artifactId>mapstruct-processor</artifactId>
-                                <version>${mapstruct.version}</version>
-                            </path>
-                        </annotationProcessorPaths>
+                        <release>21</release>
+                        <parameters>true</parameters>
                     </configuration>
                 </plugin>
                 

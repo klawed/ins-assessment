@@ -31,3 +31,5 @@ logging:
   level:
     org.testcontainers: DEBUG
     com.github.dockerjava: WARN
+    root: INFO
+    '[org.testcontainers.utility.TestcontainersConfiguration]': DEBUG

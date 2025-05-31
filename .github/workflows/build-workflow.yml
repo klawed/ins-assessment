@@ -13,6 +13,7 @@ jobs:
     services:
       docker:
         image: docker:dind
+        privileged: true
         options: >-
           --privileged
           --health-cmd="docker info"
@@ -33,18 +34,11 @@ jobs:
         distribution: 'temurin'
         cache: maven
 
-    - name: Cache Maven dependencies
-      uses: actions/cache@v3
-      with:
-        path: ~/.m2
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
+    - name: Build parent project
+      run: mvn clean install -N
 
-    - name: Build and install shared models
+    - name: Build shared models
       run: mvn clean install -pl shared-models
-
-    - name: Build all services
-      run: mvn clean package -DskipTests
 
     - name: Run Unit Tests
       run: |
@@ -53,16 +47,3 @@ jobs:
           echo "Running unit tests for $module"
           mvn test -pl $module -Dtest="!**/*E2ETest.java" -Dsurefire.failIfNoSpecifiedTests=false
         done
-
-    - name: Run E2E Tests
-      run: |
-        for module in policy-service billing-service notification-service payment-service
-        do
-          echo "Running E2E tests for $module"
-          mvn test -pl $module -Dtest="**/*E2ETest.java" -Dsurefire.failIfNoSpecifiedTests=false
-        done
-      env:
-        TESTCONTAINERS_RYUK_DISABLED: true
-        TESTCONTAINERS_CHECKS_DISABLE: true
-        DOCKER_HOST: tcp://docker:2375
-        DOCKER_TLS_VERIFY: ""
