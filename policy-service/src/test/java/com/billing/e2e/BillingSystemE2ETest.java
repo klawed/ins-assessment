@@ -18,6 +18,9 @@ import java.time.Duration;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
+import org.testcontainers.utility.MountableFile;
+import org.slf4j.LoggerFactory;
+import org.testcontainers.containers.output.Slf4jLogConsumer;
 
 @SpringBootTest(classes = PolicyServiceApplication.class)
 @Testcontainers
@@ -26,29 +29,18 @@ class BillingSystemE2ETest {
     @Container
     static DockerComposeContainer<?> environment = new DockerComposeContainer<>(
             new File("../docker-compose.yml"))
-            .withLocalCompose(true)  // Use local docker-compose
-            .withPull(false)         // Don't pull images if they exist
-            .withEnv("COMPOSE_FILE", "docker-compose.yml")
+            .withLocalCompose(true)
+            .withPull(false)
+            .withExposedService("mariadb", 3306, 
+                Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(30)))
+            .withExposedService("kafka", 9092,
+                Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(30)))
             .withExposedService("policy-service", 8080,
                 Wait.forHttp("/actuator/health")
                     .forStatusCode(200)
-                    .withStartupTimeout(Duration.ofMinutes(3)))
-            .withExposedService("billing-service", 8080, 
-                Wait.forHttp("/actuator/health")
-                    .forStatusCode(200)
-                    .withStartupTimeout(Duration.ofMinutes(3)))
-            .withExposedService("payment-service", 8080, 
-                Wait.forHttp("/actuator/health")
-                    .forStatusCode(200)
-                    .withStartupTimeout(Duration.ofMinutes(3)))
-            .withExposedService("notification-service", 8080, 
-                Wait.forHttp("/actuator/health")
-                    .forStatusCode(200)
-                    .withStartupTimeout(Duration.ofMinutes(3)))
-            .withExposedService("payment-gateway-mock", 8080, 
-                Wait.forHttp("/actuator/health")
-                    .forStatusCode(200)
-                    .withStartupTimeout(Duration.ofMinutes(2)));
+                    .withStartupTimeout(Duration.ofSeconds(90)))
+            // Add logging
+            .withLogConsumer("policy-service", new Slf4jLogConsumer(LoggerFactory.getLogger("policy-service")));
 
     @BeforeEach
     void setUp() {

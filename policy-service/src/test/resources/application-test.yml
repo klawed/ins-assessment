@@ -27,3 +27,7 @@ spring:
     password: billing_password
   flyway:
     enabled: false
+logging:
+  level:
+    org.testcontainers: DEBUG
+    com.github.dockerjava: WARN
