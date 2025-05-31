@@ -11,6 +11,7 @@ import org.testcontainers.containers.DockerComposeContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import com.billing.policy.PolicyServiceApplication;
 
 import java.io.File;
 import java.time.Duration;
@@ -18,7 +19,7 @@ import java.time.Duration;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
-@SpringBootTest
+@SpringBootTest(classes = PolicyServiceApplication.class)
 @Testcontainers
 class BillingSystemE2ETest {
 
