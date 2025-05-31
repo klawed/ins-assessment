@@ -3,15 +3,16 @@ FROM maven:3.9.6-eclipse-temurin-21 AS build
 
 WORKDIR /app
 
-# Copy parent pom and shared models first for better caching
+# Copy parent pom and all modules for Maven validation
 COPY pom.xml ./
 COPY shared-models/ ./shared-models/
+COPY policy-service/ ./policy-service/
+COPY billing-service/ ./billing-service/
+COPY payment-service/ ./payment-service/
+COPY notification-service/ ./notification-service/
+COPY payment-gateway-mock/ ./payment-gateway-mock/
 
-# Copy notification service
-COPY notification-service/pom.xml ./notification-service/
-COPY notification-service/src ./notification-service/src
-
-# Build the application
+# Build the specific application
 RUN mvn clean package -DskipTests -pl notification-service -am
 
 # Runtime stage
