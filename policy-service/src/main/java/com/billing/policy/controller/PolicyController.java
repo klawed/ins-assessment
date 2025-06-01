@@ -1,5 +1,6 @@
 package com.billing.policy.controller;
 
+import com.billing.policy.service.PolicyService;
 import com.billing.shared.dto.PolicyDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,8 +15,12 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/policies")
-@CrossOrigin(origins = "*")
 public class PolicyController {
+    private final PolicyService policyService;
+
+    public PolicyController(PolicyService policyService) {
+        this.policyService = policyService;
+    }
 
     @GetMapping("/hello")
     public ResponseEntity<Map<String, String>> hello() {

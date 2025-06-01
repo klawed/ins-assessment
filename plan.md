@@ -442,3 +442,53 @@ Based on test compilation errors and business requirements, the following models
 Start with proposed architecture (Policy Service ↔ Customer UI, Billing Service ↔ Admin UI) for simplicity and clear service boundaries, with option to migrate to dedicated UI service as system scales.
 
 This approach prioritizes developer productivity and clear API exercise capabilities while maintaining production-ready architectural patterns with proper shared model governance.
+
+## Service Layer Architecture
+
+### Design Patterns
+- Each service follows interface-based design for loose coupling and testability
+- Service implementations handle business logic and transaction boundaries
+- Repository layer handles data access concerns
+
+### Service Interface Template
+```java
+public interface ServiceName {
+    // CRUD operations
+    Optional<EntityDto> getById(String id);
+    List<EntityDto> getByFilter(FilterDTO filter);
+    EntityDto create(EntityDto dto);
+    EntityDto update(String id, EntityDto dto);
+    void delete(String id);
+    
+    // Business operations
+    Map<String, Object> calculateMetrics(String id);
+    void validateBusinessRules(EntityDto dto);
+}
+```
+
+### Implementation Guidelines
+1. Services:
+   - **Policy Service**
+     - PolicyService / PolicyServiceImpl
+     - Handles policy metadata and premium schedules
+   - **Billing Service**
+     - BillingService / BillingServiceImpl
+     - Manages billing cycles and payment status
+   - **Payment Service**
+     - PaymentService / PaymentServiceImpl
+     - Processes payments and handles gateway integration
+   - **Notification Service**
+     - NotificationService / NotificationServiceImpl
+     - Manages communication and event publishing
+
+2. Common Patterns:
+   - Use constructor injection for dependencies
+   - Implement @Transactional boundaries
+   - Include comprehensive logging
+   - Handle exceptions with @ControllerAdvice
+   - Document with Javadoc and OpenAPI annotations
+
+3. Testing Strategy:
+   - Unit tests with mocked dependencies
+   - Integration tests with test containers
+   - API contract tests with Spring Cloud Contract

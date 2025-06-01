@@ -6,19 +6,22 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.core.env.Environment;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 
+import com.billing.policy.config.WebSecurityTestConfig;
+import com.billing.policy.service.PolicyService;
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.Arrays;
+import java.util.Optional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.mockito.Mockito.when;
 
 @WebMvcTest(PolicyController.class)
-@ActiveProfiles("test")
+@Import(WebSecurityTestConfig.class)
 class PolicyControllerTest {
 
     @Autowired
@@ -30,9 +33,23 @@ class PolicyControllerTest {
     @Autowired
     private Environment env;
 
+    @MockBean
+    private PolicyService policyService;
+
     @Test
     void shouldGetPolicyById() throws Exception {
-        // Test with existing mock policy ID
+        PolicyDto mockPolicy = PolicyDto.builder()
+            .policyId("POLICY-123")
+            .customerId("CUST-001")
+            .policyType("AUTO_INSURANCE")
+            .premiumAmount(new BigDecimal("156.00"))
+            .status(PolicyDto.PolicyStatus.OVERDUE)
+            .frequency("MONTHLY")
+            .gracePeriodDays(10)
+            .build();
+
+        when(policyService.getPolicyById("POLICY-123")).thenReturn(Optional.of(mockPolicy));
+
         mockMvc.perform(get("/api/policies/POLICY-123"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
