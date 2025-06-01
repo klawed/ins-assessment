@@ -6,15 +6,20 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.core.env.Environment;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Arrays;
 
+import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(PolicyController.class)
+@ActiveProfiles("test")
 class PolicyControllerTest {
 
     @Autowired
@@ -22,6 +27,9 @@ class PolicyControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private Environment env;
 
     @Test
     void shouldGetPolicyById() throws Exception {
@@ -147,5 +155,10 @@ class PolicyControllerTest {
                 .andExpect(jsonPath("$.status").value("GRACE_PERIOD"))
                 .andExpect(jsonPath("$.daysOverdue").value(0))
                 .andExpect(jsonPath("$.lateFee").value(0));
+    }
+
+    @Test
+    void verifyTestProfile() {
+        assertThat(Arrays.asList(env.getActiveProfiles())).contains("test");
     }
 }
