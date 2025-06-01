@@ -63,10 +63,10 @@ curl http://localhost:8084/api/notifications/hello
 2. **Run services locally** (in separate terminals):
    ```bash
    mvn clean install
-   cd policy-service && mvn spring-boot:run
-   cd billing-service && mvn spring-boot:run  
-   cd payment-service && mvn spring-boot:run
-   cd notification-service && mvn spring-boot:run
+   cd policy-service && mvn spring-boot:run -Dspring.profiles.active=dev
+   cd billing-service && mvn spring-boot:run -Dspring.profiles.active=dev  
+   cd payment-service && mvn spring-boot:run -Dspring.profiles.active=dev
+   cd notification-service && mvn spring-boot:run -Dspring.profiles.active=dev
    ```
 
 3. **Or run from IDE** with Spring Boot configuration
