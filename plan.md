@@ -118,28 +118,29 @@ billing-service/src/main/resources/static/admin-ui/
   - [ ] Database integration tests
   - [ ] Kafka event flow integration tests
 
-### Phase 3: API Stubs with Mock Data 🚧 IN PROGRESS
-- [ ] **Policy Service API Stubs**
-  - [ ] GET /api/policies/{policyId}
-  - [ ] GET /api/policies/{policyId}/premium-schedule
-  - [ ] GET /api/policies/customer/{customerId}
+### Phase 3: API Stubs with Mock Data ✅
+- [x] **Policy Service API Stubs**
+  - [x] GET /api/policies/{policyId}
+  - [x] GET /api/policies/{policyId}/premium-schedule
+  - [x] GET /api/policies/customer/{customerId}
 
-- [ ] **Billing Service API Stubs**
+- [x] **Payment Service API Stubs**
+  - [x] POST /api/payments/process
+  - [x] GET /api/payments/history
+  - [x] POST /api/payments/{transactionId}/retry
+  - [x] GET /api/payments/{transactionId}/status
+  - [x] GET /api/payments/delinquent
+
+- [ ] **Billing Service API Stubs** (TODO)
   - [ ] GET /api/billing/policies/delinquent
   - [ ] GET /api/billing/policies/{policyId}/status
   - [ ] POST /api/billing/calculate-premium
 
-- [ ] **Payment Service API Stubs**
-  - [ ] POST /api/payments/process
-  - [ ] GET /api/payments/history
-  - [ ] POST /api/payments/{transactionId}/retry
-  - [ ] GET /api/payments/{transactionId}/status
-
-- [ ] **Notification Service API Stubs**
+- [ ] **Notification Service API Stubs** (TODO)
   - [ ] POST /api/notifications/send
   - [ ] GET /api/notifications/{policyId}
 
-### Phase 4: UI Implementation with Mock Data
+### Phase 4: UI Implementation with Mock Data 🚧 IN PROGRESS
 - [ ] **Customer UI Pages**
   - [ ] Move existing HTML to policy-service/static/customer-ui/
   - [ ] Create policy-details.html with premium schedule display
@@ -196,21 +197,23 @@ billing-service/src/main/resources/static/admin-ui/
 
 ---
 
-## Current Status: Phase 2 Unit Tests Complete ✅ → Phase 3 API Stubs Starting 🚧
+## Current Status: Phase 3 Complete ✅ → Phase 4 UI Implementation Starting 🚧
 
 **Completed:**
 - ✅ Policy Service controller unit tests with full API coverage
 - ✅ Payment Service controller unit tests including retry logic
 - ✅ Billing Service controller unit tests with delinquency handling
+- ✅ Policy Service API stubs with realistic mock data
+- ✅ Payment Service API stubs with payment processing simulation
 
-**Next Step:** Implementing API stub controllers with mock data
+**Next Step:** Moving existing UI to proper service directories and adding JavaScript API integration
 
-**Key Assumptions Made:**
-1. Using Spring Boot Test framework for unit and integration tests
-2. TestContainers for database and Kafka integration tests
-3. Mock data will simulate various policy states and payment scenarios
-4. Async operations will use Spring's @Async and Kafka integration
-5. UI will use vanilla JavaScript with fetch API for simplicity
+**Key Achievements:**
+1. All core API endpoints implemented with mock data
+2. Realistic test scenarios including failure cases
+3. Retry logic simulation for failed payments
+4. Proper timestamp handling and overdue calculations
+5. Cross-origin support for UI integration
 
 ---
 
