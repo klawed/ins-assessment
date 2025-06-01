@@ -29,6 +29,65 @@ The UI applications are designed to exercise the billing system APIs with a focu
 
 ---
 
+## Shared Model Strategy
+
+### Current State Assessment
+**Existing Models:**
+- `PolicyDto` - Currently in shared-models module, used by Policy Service
+
+**Missing Models Identified:**
+Based on test compilation errors and business requirements, the following models need to be created:
+
+### Phase 2.5: Shared Model Library Development (NEW)
+**Timeline**: 1 week
+**Resources**: 1 developer
+
+#### Core Domain Models
+1. **`BillingDto`** - Billing calculations and premium details
+   - Fields: `policyId`, `baseAmount`, `fees`, `lateFees`, `totalDue`, `dueDate`, `gracePeriodEnd`
+   - Used by: Billing Service, Payment Service
+
+2. **`DelinquentPolicyDto`** - Delinquent policy tracking
+   - Fields: `policyId`, `customerId`, `customerName`, `daysOverdue`, `amountOverdue`, `lastPaymentDate`, `gracePeriodExpiry`
+   - Used by: Billing Service, Admin UI
+
+3. **`PaymentTransactionDto`** - Payment processing records
+   - Fields: `transactionId`, `policyId`, `amount`, `paymentMethod`, `status`, `attemptedAt`, `completedAt`, `failureReason`
+   - Used by: Payment Service, Billing Service
+
+4. **`PremiumCalculationDto`** - Premium calculation results
+   - Fields: `policyType`, `baseAmount`, `riskFactors`, `discounts`, `totalPremium`, `effectiveDate`, `frequency`
+   - Used by: Billing Service, Policy Service
+
+5. **`NotificationEventDto`** - Event-driven notification data
+   - Fields: `eventType`, `policyId`, `customerId`, `message`, `channel`, `scheduledFor`, `sentAt`
+   - Used by: Notification Service, all services
+
+#### Business Rule Enums
+1. **`PolicyStatus`** - Policy lifecycle states
+   - Values: `ACTIVE`, `OVERDUE`, `GRACE_PERIOD`, `SUSPENDED`, `CANCELLED`
+
+2. **`PaymentStatus`** - Payment transaction states
+   - Values: `PENDING`, `PROCESSING`, `COMPLETED`, `FAILED`, `CANCELLED`, `REFUNDED`
+
+3. **`NotificationType`** - Notification categories
+   - Values: `PAYMENT_DUE`, `PAYMENT_OVERDUE`, `GRACE_PERIOD_WARNING`, `PAYMENT_CONFIRMED`, `POLICY_SUSPENDED`
+
+#### Validation and Serialization
+- **Jakarta Validation**: Add `@NotNull`, `@Size`, `@Positive` annotations
+- **Jackson Configuration**: Custom serializers for dates and monetary amounts
+- **Builder Pattern**: Lombok-based builders for immutable DTOs
+- **Test Support**: Factory methods for test data generation
+
+#### Implementation Strategy
+1. **Week 1**: Create core DTOs with validation annotations
+2. **Validation**: Unit tests for all model validation rules
+3. **Documentation**: JavaDoc with usage examples for each model
+4. **Integration**: Update all services to use shared models
+5. **Migration**: Replace ad-hoc Map<String, Object> responses with proper DTOs
+
+---
+
 ## Application Design Strategy
 
 ### Customer UI Application
@@ -69,7 +128,7 @@ The UI applications are designed to exercise the billing system APIs with a focu
 ### API Design Standards
 - **Versioning Strategy**: Semantic versioning (v1, v2) with backward compatibility
 - **Documentation**: OpenAPI 3.0 specification with Swagger UI integration
-- **Response Format**: Standardized JSON with consistent error handling
+- **Response Format**: Standardized JSON with consistent error handling using shared DTOs
 - **Authentication**: JWT-based with role-based access control (RBAC)
 - **Rate Limiting**: Per-service limits with graceful degradation
 
@@ -86,6 +145,7 @@ The UI applications are designed to exercise the billing system APIs with a focu
   - `policy.delinquent`, `retry.scheduled`, `notification.sent`
 - **Consumer Groups**: Service-specific with configurable retry policies
 - **Schema Registry**: Avro schemas for event structure validation
+- **Event DTOs**: Shared models for event payloads ensuring consistency
 
 ---
 
@@ -98,22 +158,26 @@ The UI applications are designed to exercise the billing system APIs with a focu
 - **Controller Layer**: HTTP request/response handling with MockMvc
 - **Data Layer**: Repository pattern testing with test containers
 - **Shared Models**: Validation rules and serialization testing
+- **Test Profiles**: All tests use `@ActiveProfiles("test")` for consistent configuration
 
 #### Integration Testing (20% coverage target)
 - **API Integration**: Full HTTP endpoint testing with real database
 - **Service Communication**: Cross-service integration with embedded Kafka
 - **Database Integration**: Transaction handling and data consistency
 - **Event Flow**: End-to-end event processing validation
+- **Shared Model Integration**: DTO serialization across service boundaries
 
 #### Contract Testing
-- **Provider Contracts**: Pact-based testing between services
+- **Provider Contracts**: Pact-based testing between services using shared DTOs
 - **Consumer Contracts**: API client validation against specifications
 - **Schema Validation**: Event structure compatibility testing
+- **Model Evolution**: Backward compatibility testing for DTO changes
 
 #### End-to-End Testing (10% coverage target)
 - **User Journey**: Complete customer payment workflows
 - **Admin Operations**: Delinquency management and retry scenarios
 - **Error Scenarios**: Failure handling and recovery testing
+- **Cross-Service Workflows**: Full business process validation
 
 ### Performance Testing
 - **Service Level Objectives (SLOs)**:
@@ -126,11 +190,11 @@ The UI applications are designed to exercise the billing system APIs with a focu
 ### Security Testing
 - **Authentication**: JWT token validation and expiration
 - **Authorization**: Role-based access control enforcement
-- **Input Validation**: SQL injection and XSS prevention
+- **Input Validation**: SQL injection and XSS prevention using shared model validation
 - **Data Encryption**: Sensitive data protection in transit and at rest
 
 ### Test Data Management
-- **Mock Data**: Realistic test scenarios with edge cases
+- **Mock Data**: Realistic test scenarios with edge cases using shared DTO factories
 - **Data Isolation**: Test environment separation from production
 - **Data Cleanup**: Automated test data lifecycle management
 
@@ -143,18 +207,21 @@ The UI applications are designed to exercise the billing system APIs with a focu
 - **Infrastructure Monitoring**: Resource utilization and availability
 - **Distributed Tracing**: Request flow across service boundaries
 - **Log Aggregation**: Centralized logging with search capabilities
+- **Model Metrics**: DTO validation failure rates and serialization performance
 
 ### Documentation Standards
-- **API Documentation**: Living documentation with examples
+- **API Documentation**: Living documentation with examples using shared models
 - **Architectural Decision Records (ADRs)**: Decision tracking and rationale
 - **Runbooks**: Operational procedures and troubleshooting guides
 - **API Changelog**: Version history and breaking changes
+- **Model Documentation**: JavaDoc for all shared DTOs with usage examples
 
 ### Deployment Strategy
 - **Containerization**: Docker containers with multi-stage builds
 - **Orchestration**: Kubernetes deployment with service mesh
 - **CI/CD Pipeline**: Automated testing, building, and deployment
 - **Blue-Green Deployment**: Zero-downtime service updates
+- **Model Versioning**: Semantic versioning for shared-models module
 
 ---
 
@@ -191,12 +258,28 @@ The UI applications are designed to exercise the billing system APIs with a focu
 - Database schema approval
 - Event schema definitions
 
-### Phase 3: Integration and Events (Sprint 6-7)
+### Phase 2.5: Shared Model Library (Sprint 6) ⭐ NEW
+**Timeline**: 1 week
+**Resources**: 1 developer
+
+**Deliverables:**
+- Complete shared-models module with all business DTOs
+- Validation annotations and custom serializers
+- Builder patterns and factory methods for testing
+- Migration of all services to use shared models
+- Documentation and usage examples
+
+**Quality Gates:**
+- 100% test coverage for all shared models
+- Backward compatibility validation
+- Performance benchmarks for serialization
+
+### Phase 3: Integration and Events (Sprint 7-8)
 **Timeline**: 2 weeks
 **Resources**: 3 developers, 1 QA engineer
 
 **Deliverables:**
-- Event-driven communication between services
+- Event-driven communication between services using shared DTOs
 - Integration test suite with real service interactions
 - Payment gateway mock service implementation
 - Cross-service error handling and resilience patterns
@@ -206,7 +289,7 @@ The UI applications are designed to exercise the billing system APIs with a focu
 - Service communication failure scenarios
 - Data consistency across service boundaries
 
-### Phase 4: User Interface Implementation (Sprint 8-9)
+### Phase 4: User Interface Implementation (Sprint 9-10)
 **Timeline**: 2 weeks
 **Resources**: 2 developers, 1 UI/UX designer
 
@@ -221,7 +304,7 @@ The UI applications are designed to exercise the billing system APIs with a focu
 - Cross-browser compatibility testing
 - API integration validation
 
-### Phase 5: Security and Performance (Sprint 10-11)
+### Phase 5: Security and Performance (Sprint 11-12)
 **Timeline**: 2 weeks
 **Resources**: 2 developers, 1 security specialist, 1 performance engineer
 
@@ -236,7 +319,7 @@ The UI applications are designed to exercise the billing system APIs with a focu
 - Performance SLOs met under simulated load
 - Production deployment preparation
 
-### Phase 6: Production Preparation (Sprint 12)
+### Phase 6: Production Preparation (Sprint 13)
 **Timeline**: 1 week
 **Resources**: Full team
 
@@ -256,26 +339,31 @@ The UI applications are designed to exercise the billing system APIs with a focu
 - Billing Service controller unit tests with delinquency handling
 - Policy Service API stubs with realistic mock data
 - Payment Service API stubs with payment processing simulation
+- PolicyDto implementation in shared-models module
+- Test profile configuration fixes (`@ActiveProfiles("test")`)
 
-### 🚧 In Progress (Phase 4)
-- Customer UI pages with API integration
-- Admin UI dashboard implementation
-- JavaScript API client development
+### 🚧 In Progress (Phase 2.5)
+- **Shared Model Development**: Creating comprehensive DTO library
+- **Service Migration**: Updating controllers to use proper DTOs instead of Map<String, Object>
+- **Validation Framework**: Adding Jakarta validation to all models
 
 ### 📋 Next Sprint Priorities
-1. **UI Component Development**: Complete customer payment flow interface
-2. **Admin Dashboard**: Implement delinquent policies overview with filtering
-3. **API Integration**: Add comprehensive error handling and loading states
-4. **Testing**: Expand integration test coverage for UI-API interactions
+1. **Shared Model Completion**: Finish all business DTOs with validation
+2. **Service Updates**: Replace ad-hoc responses with proper DTOs
+3. **Integration Testing**: Update tests to use shared models
+4. **Documentation**: Complete JavaDoc for all shared models
 
 ### Key Achievements
-1. All core API endpoints implemented with comprehensive mock data
+1. All core API endpoints implemented with mock data
 2. Realistic test scenarios including failure cases and edge conditions
 3. Retry logic simulation for failed payments with exponential backoff
 4. Proper timestamp handling and overdue calculations with timezone support
 5. Cross-origin support for UI integration with security considerations
+6. Test configuration standardization with proper profiles
 
 ### Technical Debt Items
+- [ ] **HIGH**: Complete shared model library (Phase 2.5)
+- [ ] Replace Map<String, Object> responses with proper DTOs
 - [ ] Implement proper pagination for large datasets
 - [ ] Add request/response compression for API efficiency
 - [ ] Enhance error messages with internationalization support
@@ -290,22 +378,26 @@ The UI applications are designed to exercise the billing system APIs with a focu
 - Service communication failures during peak load
 - Data consistency issues in distributed transactions
 - Event processing bottlenecks affecting user experience
+- **NEW**: Shared model breaking changes affecting multiple services
 
 **Mitigation Strategies:**
 - Circuit breaker implementation with graceful degradation
 - Saga pattern for distributed transaction management
 - Kafka partitioning strategy for event processing scalability
+- **NEW**: Semantic versioning and backward compatibility testing for shared models
 
 ### Resource Risks
 **Medium Priority:**
 - Developer availability during critical sprints
 - Infrastructure cost optimization requirements
 - Third-party service integration delays
+- **NEW**: Model design decisions requiring cross-team coordination
 
 **Contingency Plans:**
 - Cross-training team members on multiple services
 - Cloud resource auto-scaling with cost monitoring
 - Mock service implementations for external dependencies
+- **NEW**: Clear model ownership and change approval process
 
 ### Business Risks
 **Low Priority:**
@@ -322,6 +414,7 @@ The UI applications are designed to exercise the billing system APIs with a focu
 - **System Availability**: > 99.5% uptime during business hours
 - **Event Processing**: < 1 second end-to-end event delivery
 - **Test Coverage**: > 80% code coverage across all services
+- **NEW**: **Model Consistency**: 100% DTO usage across all API responses
 
 ### Business Metrics
 - **Payment Processing**: < 5% failure rate for valid transactions
@@ -348,4 +441,4 @@ The UI applications are designed to exercise the billing system APIs with a focu
 ### Recommended Implementation
 Start with proposed architecture (Policy Service ↔ Customer UI, Billing Service ↔ Admin UI) for simplicity and clear service boundaries, with option to migrate to dedicated UI service as system scales.
 
-This approach prioritizes developer productivity and clear API exercise capabilities while maintaining production-ready architectural patterns.
+This approach prioritizes developer productivity and clear API exercise capabilities while maintaining production-ready architectural patterns with proper shared model governance.
