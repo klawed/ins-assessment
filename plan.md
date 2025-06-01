@@ -102,13 +102,13 @@ billing-service/src/main/resources/static/admin-ui/
 - [x] Create basic UI mockups with external CSS
 - [x] Document API requirements
 
-### Phase 2: Testing Infrastructure
-- [ ] **Unit Tests**
-  - [ ] Policy Service controller tests
-  - [ ] Billing Service controller tests  
-  - [ ] Payment Service controller tests
-  - [ ] Notification Service controller tests
-  - [ ] Shared model validation tests
+### Phase 2: Testing Infrastructure ✅
+- [x] **Unit Tests**
+  - [x] Policy Service controller tests
+  - [x] Billing Service controller tests  
+  - [x] Payment Service controller tests
+  - [ ] Notification Service controller tests (TODO)
+  - [ ] Shared model validation tests (TODO)
 
 - [ ] **Integration Tests**
   - [ ] Policy Service API integration tests
@@ -118,7 +118,7 @@ billing-service/src/main/resources/static/admin-ui/
   - [ ] Database integration tests
   - [ ] Kafka event flow integration tests
 
-### Phase 3: API Stubs with Mock Data
+### Phase 3: API Stubs with Mock Data 🚧 IN PROGRESS
 - [ ] **Policy Service API Stubs**
   - [ ] GET /api/policies/{policyId}
   - [ ] GET /api/policies/{policyId}/premium-schedule
@@ -196,9 +196,14 @@ billing-service/src/main/resources/static/admin-ui/
 
 ---
 
-## Current Status: Phase 1 Complete ✅
+## Current Status: Phase 2 Unit Tests Complete ✅ → Phase 3 API Stubs Starting 🚧
 
-**Next Step:** Beginning Phase 2 - Unit Tests
+**Completed:**
+- ✅ Policy Service controller unit tests with full API coverage
+- ✅ Payment Service controller unit tests including retry logic
+- ✅ Billing Service controller unit tests with delinquency handling
+
+**Next Step:** Implementing API stub controllers with mock data
 
 **Key Assumptions Made:**
 1. Using Spring Boot Test framework for unit and integration tests
