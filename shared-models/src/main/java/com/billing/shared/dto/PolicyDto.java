@@ -41,11 +41,15 @@ public class PolicyDto {
 
     private Integer gracePeriodDays;
 
+    private LocalDate nextDueDate; // Add next due date field
+
     public enum PolicyStatus {
         ACTIVE,
         INACTIVE,
         CANCELLED,
         LAPSED,
-        PENDING
+        PENDING,
+        OVERDUE,        // Add missing status
+        GRACE_PERIOD    // Add missing status
     }
 }
