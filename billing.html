@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InsuranceCorp - Billing</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">InsuranceCorp</div>
+            <nav class="nav">
+                <a href="dashboard.html">Dashboard</a>
+                <a href="policies.html">Policies</a>
+                <a href="billing.html">Billing</a>
+                <a href="payments.html">Payment History</a>
+            </nav>
+            <div class="user-info">
+                <span>Welcome, John Doe</span>
+                <a href="login.html" class="btn btn-secondary">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <h1 class="page-title">Billing & Payments</h1>
+
+        <!-- Outstanding Bills Alert -->
+        <div class="alert alert-warning">
+            <strong>Attention:</strong> You have 1 overdue payment totaling $171.00. 
+            <a href="payment.html?policy=12345" class="btn btn-danger" style="margin-left: 1rem;">Pay Now</a>
+        </div>
+
+        <!-- Billing Summary -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">$171.00</div>
+                <div class="stat-label">Amount Overdue</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">$245.00</div>
+                <div class="stat-label">Due This Month</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">$401.00</div>
+                <div class="stat-label">Monthly Premium</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">5</div>
+                <div class="stat-label">Days Until Next Payment</div>
+            </div>
+        </div>
+
+        <!-- Current Bills -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Current Bills</h2>
+                <a href="payment.html" class="btn btn-success">Pay All Bills</a>
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Policy</th>
+                        <th>Premium</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                        <th>Late Fee</th>
+                        <th>Total Due</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="background-color: #fdf2f2;">
+                        <td>
+                            <strong>Auto Insurance</strong><br>
+                            <small>Policy #12345</small>
+                        </td>
+                        <td>$156.00</td>
+                        <td>Dec 15, 2024</td>
+                        <td><span class="status overdue">3 Days Overdue</span></td>
+                        <td>$15.00</td>
+                        <td><strong>$171.00</strong></td>
+                        <td>
+                            <a href="payment.html?policy=12345" class="btn btn-danger">Pay Now</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>Home Insurance</strong><br>
+                            <small>Policy #67890</small>
+                        </td>
+                        <td>$89.00</td>
+                        <td>Jan 1, 2025</td>
+                        <td><span class="status current">Current</span></td>
+                        <td>$0.00</td>
+                        <td><strong>$89.00</strong></td>
+                        <td>
+                            <a href="payment.html?policy=67890" class="btn btn-success">Pay Early</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>Life Insurance</strong><br>
+                            <small>Policy #24680</small>
+                        </td>
+                        <td>$156.00</td>
+                        <td>Jan 1, 2025</td>
+                        <td><span class="status current">Current</span></td>
+                        <td>$0.00</td>
+                        <td><strong>$156.00</strong></td>
+                        <td>
+                            <a href="payment.html?policy=24680" class="btn btn-success">Pay Early</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Premium Schedule -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Upcoming Premium Schedule</h2>
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th>Auto Insurance</th>
+                        <th>Home Insurance</th>
+                        <th>Life Insurance</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>December 2024</strong></td>
+                        <td>$156.00 (Overdue)</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td><strong>$156.00</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>January 2025</strong></td>
+                        <td>$156.00</td>
+                        <td>$89.00</td>
+                        <td>$156.00</td>
+                        <td><strong>$401.00</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>February 2025</strong></td>
+                        <td>$156.00</td>
+                        <td>$89.00</td>
+                        <td>$156.00</td>
+                        <td><strong>$401.00</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>March 2025</strong></td>
+                        <td>$156.00</td>
+                        <td>$89.00</td>
+                        <td>$156.00</td>
+                        <td><strong>$401.00</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Payment Methods -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Saved Payment Methods</h2>
+                <a href="payment-methods.html" class="btn btn-primary">Manage Payment Methods</a>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+                <div style="border: 1px solid #ddd; border-radius: 8px; padding: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <strong>Visa ending in 1234</strong>
+                        <span class="status current">Primary</span>
+                    </div>
+                    <div class="text-muted">
+                        <div>Expires: 12/26</div>
+                        <div>Auto Insurance, Home Insurance</div>
+                    </div>
+                </div>
+
+                <div style="border: 1px solid #ddd; border-radius: 8px; padding: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <strong>Bank Account ending in 7890</strong>
+                        <span class="status current">Active</span>
+                    </div>
+                    <div class="text-muted">
+                        <div>Chase Bank</div>
+                        <div>Life Insurance (AutoPay)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AutoPay Settings -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">AutoPay Settings</h2>
+                <a href="autopay.html" class="btn btn-primary">Manage AutoPay</a>
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Policy</th>
+                        <th>AutoPay Status</th>
+                        <th>Payment Method</th>
+                        <th>Schedule</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Auto Insurance #12345</td>
+                        <td><span class="status overdue">Disabled</span></td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>
+                            <a href="autopay.html?policy=12345" class="btn btn-primary">Enable</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Home Insurance #67890</td>
+                        <td><span class="status overdue">Disabled</span></td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>
+                            <a href="autopay.html?policy=67890" class="btn btn-primary">Enable</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Life Insurance #24680</td>
+                        <td><span class="status current">Enabled</span></td>
+                        <td>Bank Account ****7890</td>
+                        <td>5 days before due date</td>
+                        <td>
+                            <a href="autopay.html?policy=24680" class="btn btn-secondary">Modify</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Grace Period Information -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Grace Period & Late Fee Policy</h2>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div>
+                    <h4>Grace Period</h4>
+                    <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                        <li>10-day grace period for all policies</li>
+                        <li>Coverage remains active during grace period</li>
+                        <li>Late fees apply after due date</li>
+                        <li>Policy may lapse after grace period expires</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Late Fees</h4>
+                    <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                        <li>$15.00 flat fee for payments 1-30 days late</li>
+                        <li>$25.00 flat fee for payments over 30 days late</li>
+                        <li>Additional processing fees may apply</li>
+                        <li>Waived with AutoPay enrollment</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2024 InsuranceCorp. All rights reserved. | Privacy Policy | Terms of Service</p>
+        </div>
+    </footer>
+</body>
+</html>
