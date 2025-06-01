@@ -95,6 +95,120 @@ billing-service/src/main/resources/static/admin-ui/
 
 ---
 
+## Implementation Task List
+
+### Phase 1: Foundation ✅
+- [x] Create user journey documentation
+- [x] Create basic UI mockups with external CSS
+- [x] Document API requirements
+
+### Phase 2: Testing Infrastructure
+- [ ] **Unit Tests**
+  - [ ] Policy Service controller tests
+  - [ ] Billing Service controller tests  
+  - [ ] Payment Service controller tests
+  - [ ] Notification Service controller tests
+  - [ ] Shared model validation tests
+
+- [ ] **Integration Tests**
+  - [ ] Policy Service API integration tests
+  - [ ] Billing Service API integration tests
+  - [ ] Payment Service API integration tests
+  - [ ] Cross-service communication tests
+  - [ ] Database integration tests
+  - [ ] Kafka event flow integration tests
+
+### Phase 3: API Stubs with Mock Data
+- [ ] **Policy Service API Stubs**
+  - [ ] GET /api/policies/{policyId}
+  - [ ] GET /api/policies/{policyId}/premium-schedule
+  - [ ] GET /api/policies/customer/{customerId}
+
+- [ ] **Billing Service API Stubs**
+  - [ ] GET /api/billing/policies/delinquent
+  - [ ] GET /api/billing/policies/{policyId}/status
+  - [ ] POST /api/billing/calculate-premium
+
+- [ ] **Payment Service API Stubs**
+  - [ ] POST /api/payments/process
+  - [ ] GET /api/payments/history
+  - [ ] POST /api/payments/{transactionId}/retry
+  - [ ] GET /api/payments/{transactionId}/status
+
+- [ ] **Notification Service API Stubs**
+  - [ ] POST /api/notifications/send
+  - [ ] GET /api/notifications/{policyId}
+
+### Phase 4: UI Implementation with Mock Data
+- [ ] **Customer UI Pages**
+  - [ ] Move existing HTML to policy-service/static/customer-ui/
+  - [ ] Create policy-details.html with premium schedule display
+  - [ ] Add JavaScript for API calls using mock data
+  - [ ] Implement payment processing flow with mock responses
+
+- [ ] **Admin UI Pages**
+  - [ ] Create admin-dashboard.html (delinquent policies overview)
+  - [ ] Create delinquent-policies.html (detailed list with filters)
+  - [ ] Create retry-management.html (failed payment retry interface)
+  - [ ] Create payment-monitoring.html (real-time payment status)
+  - [ ] Add admin JavaScript for operational API calls
+
+### Phase 5: API Implementation with Async/Pub-Sub
+- [ ] **Event-Driven Architecture**
+  - [ ] Set up Kafka topics and producers/consumers
+  - [ ] Implement payment.attempted, payment.succeeded, payment.failed events
+  - [ ] Implement policy.delinquent, retry.scheduled events
+
+- [ ] **Policy Service Implementation**
+  - [ ] Database entities and repositories
+  - [ ] REST controller implementation
+  - [ ] Event publishing for policy changes
+
+- [ ] **Billing Service Implementation**
+  - [ ] Premium calculation engine
+  - [ ] Delinquency tracking logic
+  - [ ] Grace period and late fee calculation
+  - [ ] Event consumers for policy and payment events
+
+- [ ] **Payment Service Implementation**
+  - [ ] Payment processing workflow
+  - [ ] Retry scheduling logic with exponential backoff
+  - [ ] Transaction state management
+  - [ ] Event publishing for payment status changes
+
+- [ ] **Notification Service Implementation**
+  - [ ] Event consumers for triggering notifications
+  - [ ] Email/SMS notification logic
+  - [ ] Notification history and preferences
+
+### Phase 6: Integration and Testing
+- [ ] **End-to-End Testing**
+  - [ ] Customer payment flow testing
+  - [ ] Admin delinquency management testing
+  - [ ] Event flow validation
+  - [ ] Error handling and retry logic testing
+
+- [ ] **Performance and Reliability**
+  - [ ] Load testing payment processing
+  - [ ] Kafka event throughput testing
+  - [ ] Database query optimization
+  - [ ] Circuit breaker implementation
+
+---
+
+## Current Status: Phase 1 Complete ✅
+
+**Next Step:** Beginning Phase 2 - Unit Tests
+
+**Key Assumptions Made:**
+1. Using Spring Boot Test framework for unit and integration tests
+2. TestContainers for database and Kafka integration tests
+3. Mock data will simulate various policy states and payment scenarios
+4. Async operations will use Spring's @Async and Kafka integration
+5. UI will use vanilla JavaScript with fetch API for simplicity
+
+---
+
 ## Developer Ergonomics
 
 ### Simplified Development Workflow
