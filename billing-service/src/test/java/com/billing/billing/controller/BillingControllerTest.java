@@ -55,7 +55,7 @@ class BillingControllerTest {
         mockMvc.perform(post("/api/billing/calculate")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
-                .andExpected(status().isOk())
+                .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.calculatedPremium").value(150.00))
                 .andExpect(jsonPath("$.frequency").value("MONTHLY"))
