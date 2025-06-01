@@ -7,7 +7,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.math.BigDecimal;
 import java.util.Map;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -32,7 +31,7 @@ class PaymentControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpected(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.transactionId").exists())
                 .andExpect(jsonPath("$.status").exists())
                 .andExpect(jsonPath("$.amount").value(171.00))
@@ -48,7 +47,7 @@ class PaymentControllerTest {
                 .andExpect(jsonPath("$.originalTransactionId").value("TXN-2024-001236"))
                 .andExpect(jsonPath("$.newTransactionId").exists())
                 .andExpect(jsonPath("$.status").value("PROCESSING"))
-                .andExpected(jsonPath("$.retryAttempt").value(1));
+                .andExpect(jsonPath("$.retryAttempt").value(1));
     }
 
     @Test
