@@ -27,7 +27,7 @@ class PolicyControllerTest {
     void shouldGetPolicyById() throws Exception {
         // Test with existing mock policy ID
         mockMvc.perform(get("/api/policies/POLICY-123"))
-                .andExpected(status().isOk())
+                .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.policyId").value("POLICY-123"))
                 .andExpect(jsonPath("$.customerId").value("CUST-001"))
@@ -89,7 +89,7 @@ class PolicyControllerTest {
                 .andExpect(jsonPath("$[0].customerId").value("CUST-001"))
                 .andExpect(jsonPath("$[1].policyId").value("POLICY-456"))
                 .andExpect(jsonPath("$[1].policyType").value("HOME_INSURANCE"))
-                .andExpected(jsonPath("$[2].policyId").value("POLICY-789"))
+                .andExpect(jsonPath("$[2].policyId").value("POLICY-789"))
                 .andExpect(jsonPath("$[2].policyType").value("LIFE_INSURANCE"));
     }
 
@@ -120,10 +120,10 @@ class PolicyControllerTest {
     void shouldHandleHealthCheck() throws Exception {
         mockMvc.perform(get("/api/policies/hello"))
                 .andExpect(status().isOk())
-                .andExpected(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.service").value("policy-service"))
                 .andExpect(jsonPath("$.message").value("Hello from Policy Service!"))
-                .andExpected(jsonPath("$.status").value("UP"));
+                .andExpect(jsonPath("$.status").value("UP"));
     }
 
     @Test
