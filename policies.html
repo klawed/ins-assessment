@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InsuranceCorp - Policies</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">InsuranceCorp</div>
+            <nav class="nav">
+                <a href="dashboard.html">Dashboard</a>
+                <a href="policies.html">Policies</a>
+                <a href="billing.html">Billing</a>
+                <a href="payments.html">Payment History</a>
+            </nav>
+            <div class="user-info">
+                <span>Welcome, John Doe</span>
+                <a href="login.html" class="btn btn-secondary">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <h1 class="page-title">My Policies</h1>
+
+        <!-- Filter/Search -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Filter Policies</h2>
+            </div>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <div class="form-group" style="margin-bottom: 0; flex: 1;">
+                    <label class="form-label">Policy Type</label>
+                    <select class="form-control">
+                        <option value="">All Types</option>
+                        <option value="auto">Auto Insurance</option>
+                        <option value="home">Home Insurance</option>
+                        <option value="life">Life Insurance</option>
+                        <option value="health">Health Insurance</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 0; flex: 1;">
+                    <label class="form-label">Status</label>
+                    <select class="form-control">
+                        <option value="">All Statuses</option>
+                        <option value="current">Current</option>
+                        <option value="overdue">Overdue</option>
+                        <option value="grace">Grace Period</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div style="padding-top: 1.5rem;">
+                    <button class="btn btn-primary">Filter</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Policy List -->
+        <div class="policy-grid">
+            <!-- Auto Insurance - Overdue -->
+            <div class="policy-card overdue">
+                <div class="policy-header">
+                    <div>
+                        <div class="policy-type">Auto Insurance</div>
+                        <div class="policy-number">Policy #12345</div>
+                    </div>
+                    <div class="status overdue">Overdue</div>
+                </div>
+                <div class="policy-details">
+                    <div class="policy-detail">
+                        <span>Vehicle:</span>
+                        <strong>2019 Honda Civic</strong>
+                    </div>
+                    <div class="policy-detail">
+                        <span>Coverage:</span>
+                        <strong>Full Coverage</strong>
+                    </div>
+                    <div class="policy-detail">
+                        <span>Premium:</span>
+                        <strong>$156.00/month</strong>
+                    </div>
+                    <div class="policy-detail">
+                        <span>Due Date:</span>
+                        <strong>Dec 15, 2024</strong>
+                    </div>
+                    <div class="policy-detail">
+                        <span>Days Overdue:</span>
+                        <strong>3 days</strong>
+                    </div>
+                    <div class="policy-detail">
+                        <span>Late Fee:</span>
+                        <strong>$15.00</strong>
+                    </div>
+                    <div class="policy-detail">
+                        <span>Total Due:</span>
+                        <strong>$171.00</strong>
+                    </div>
+                </div>
+                <div class="btn-group">
+                    <a href="payment.html?policy=12345" class="btn btn-danger">Pay Now ($171.00)</a>
+                    <a href="policy-details.html?id=12345" class="btn btn-secondary">View Details</a>
+                </div>
+            </div>
+
+            <!-- Home Insurance - Current -->
+            <div class="policy-card current">
+                <div class="policy-header">
+                    <div>
+                        <div class="policy-type">Home Insurance</div>
+                        <div class="policy-number">Policy #67890</div>
+                    </div>
+                    <div class="status current">Current</div>
+                </div>
+                <div class="policy-details">
+                    <div class="policy-detail">
+                        <span>Property:</span>
+                        <strong>123 Main St, Boston, MA</strong>
+                    </div>
+                    <div class="policy-detail">
+                        <span>Coverage:</span>
+                        <strong>$350,000</strong>
+                    </div>
+                    <div class="policy-detail">
+                        <span>Premium:</span>
+                        <strong>$89.00/month</strong>
+                    </div>
+                    <div class="policy-detail">
+                        <span>Next Due:</span>
+                        <strong>Jan 1, 2025</strong>
+                    </div>
+                    <div class="policy-detail">
+                        <span>Auto Pay:</span>
+                        <strong>Enabled</strong>
+                    </div>
+                </div>
+                <div class="btn-group">
+                    <a href="payment.html?policy=67890" class="btn btn-success">Pay Now</a>
+                    <a href="policy-details.html?id=67890" class="btn btn-secondary">View Details</a>
+                </div>
+            </div>
+
+            <!-- Life Insurance - Current -->
+            <div class="policy-card current">
+                <div class="policy-header">
+                    <div>
+                        <div class="policy-type">Life Insurance</div>
+                        <div class="policy-number">Policy #24680</div>
+                    </div>
+                    <div class="status current">Current</div>
+                </div>
+                <div class="policy-details">
+                    <div class="policy-detail">
+                        <span>Coverage:</span>
+                        <strong>$500,000</strong>
+                    </div>
+                    <div class="policy-detail">
+                        <span>Type:</span>
+                        <strong>Term Life (20 years)</strong>
+                    </div>
+                    <div class="policy-detail">
+                        <span>Premium:</span>
+                        <strong>$156.00/month</strong>
+                    </div>
+                    <div class="policy-detail">
+                        <span>Next Due:</span>
+                        <strong>Jan 1, 2025</strong>
+                    </div>
+                    <div class="policy-detail">
+                        <span>Beneficiary:</span>
+                        <strong>Jane Doe</strong>
+                    </div>
+                </div>
+                <div class="btn-group">
+                    <a href="payment.html?policy=24680" class="btn btn-success">Pay Now</a>
+                    <a href="policy-details.html?id=24680" class="btn btn-secondary">View Details</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Card -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Policy Summary</h2>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">Total Policies</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">$401.00</div>
+                    <div class="stat-label">Monthly Premium</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">$995,000</div>
+                    <div class="stat-label">Total Coverage</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">$171.00</div>
+                    <div class="stat-label">Amount Due</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Quick Actions</h2>
+            </div>
+            <div class="btn-group">
+                <a href="billing.html" class="btn btn-primary">View All Bills</a>
+                <a href="payment.html" class="btn btn-success">Make Payment</a>
+                <a href="autopay.html" class="btn btn-secondary">Setup AutoPay</a>
+                <button class="btn btn-secondary">Download Policy Documents</button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2024 InsuranceCorp. All rights reserved. | Privacy Policy | Terms of Service</p>
+        </div>
+    </footer>
+</body>
+</html>
