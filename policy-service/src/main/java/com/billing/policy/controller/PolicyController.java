@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -131,18 +132,20 @@ public class PolicyController {
             )
         );
 
-        return Map.of(
-            "policyId", policy.getPolicyId(),
-            "policyType", policy.getPolicyType(),
-            "premiumAmount", policy.getPremiumAmount(),
-            "billingFrequency", policy.getFrequency(),
-            "nextDueDate", policy.getNextDueDate().toString(),
-            "gracePeriodDays", policy.getGracePeriodDays(),
-            "status", policy.getStatus().toString(),
-            "daysOverdue", (int) daysOverdue,
-            "lateFee", lateFee,
-            "totalAmountDue", totalDue,
-            "schedule", scheduleItems
-        );
+        // Use HashMap instead of Map.of() to avoid the 10 key-value pair limit
+        Map<String, Object> schedule = new HashMap<>();
+        schedule.put("policyId", policy.getPolicyId());
+        schedule.put("policyType", policy.getPolicyType());
+        schedule.put("premiumAmount", policy.getPremiumAmount());
+        schedule.put("billingFrequency", policy.getFrequency());
+        schedule.put("nextDueDate", policy.getNextDueDate().toString());
+        schedule.put("gracePeriodDays", policy.getGracePeriodDays());
+        schedule.put("status", policy.getStatus().toString());
+        schedule.put("daysOverdue", (int) daysOverdue);
+        schedule.put("lateFee", lateFee);
+        schedule.put("totalAmountDue", totalDue);
+        schedule.put("schedule", scheduleItems);
+        
+        return schedule;
     }
 }
