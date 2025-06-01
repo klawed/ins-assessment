@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.containers.DockerComposeContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.junit.jupiter.Container;
@@ -31,6 +32,7 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 import org.testcontainers.utility.MountableFile;
 import org.testcontainers.containers.wait.strategy.Wait;
+
 @SpringBootTest(
     classes = PolicyServiceApplication.class,
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
@@ -39,6 +41,7 @@ import org.testcontainers.containers.wait.strategy.Wait;
     }
 )
 @Testcontainers
+@ActiveProfiles("test")
 class BillingSystemE2ETest {
 
     private static final Logger log = LoggerFactory.getLogger(BillingSystemE2ETest.class);
