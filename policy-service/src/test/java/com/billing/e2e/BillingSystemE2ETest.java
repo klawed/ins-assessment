@@ -23,6 +23,7 @@ import static org.hamcrest.Matchers.equalTo;
 
 @Testcontainers
 @ActiveProfiles("test")
+@ActiveProfiles("test")
 class BillingSystemE2ETest {
 
     private static final Logger log = LoggerFactory.getLogger(BillingSystemE2ETest.class);

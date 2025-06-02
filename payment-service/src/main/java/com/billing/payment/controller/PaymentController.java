@@ -1,17 +1,27 @@
 package com.billing.payment.controller;
 
+import com.billing.payment.service.PaymentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/payments")
+@CrossOrigin(origins = "*")
 @Slf4j
 public class PaymentController {
+    
+    private final PaymentService paymentService;
+
+    public PaymentController(PaymentService paymentService) {
+        this.paymentService = paymentService;
+    }
 
     @GetMapping("/hello")
     public ResponseEntity<Map<String, Object>> hello() {
@@ -25,53 +35,136 @@ public class PaymentController {
         ));
     }
 
-    @PostMapping("/attempt")
-    public ResponseEntity<Map<String, Object>> attemptPayment(@RequestBody Map<String, Object> paymentRequest) {
-        log.info("Processing payment attempt: {}", paymentRequest);
+    @PostMapping("/process")
+    public ResponseEntity<Map<String, Object>> processPayment(@RequestBody Map<String, Object> paymentRequest) {
+        log.info("Processing payment request: {}", paymentRequest);
         
-        // TODO: Implement actual payment processing
-        return ResponseEntity.ok(Map.of(
-            "paymentId", "PAY-" + System.currentTimeMillis(),
-            "status", "SUCCESS",
-            "message", "Payment attempt endpoint - implementation pending",
-            "timestamp", LocalDateTime.now()
-        ));
+        Map<String, Object> result = paymentService.processPayment(paymentRequest);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/history")
+    public ResponseEntity<List<Map<String, Object>>> getPaymentHistory(
+            @RequestParam(required = false) String policyId,
+            @RequestParam(required = false) String customerId,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
+            @RequestParam(required = false) String status,
+            @RequestParam(defaultValue = "50") int limit,
+            @RequestParam(defaultValue = "0") int offset) {
+        
+        log.info("Getting payment history for policyId: {}, status: {}", policyId, status);
+        
+        if (policyId != null) {
+            List<Map<String, Object>> history = paymentService.getPaymentHistory(policyId);
+            return ResponseEntity.ok(history);
+        } else {
+            // For demo purposes, return empty list when no policyId specified
+            return ResponseEntity.ok(List.of());
+        }
     }
 
     @GetMapping("/{paymentId}/status")
     public ResponseEntity<Map<String, Object>> getPaymentStatus(@PathVariable String paymentId) {
         log.info("Getting payment status for ID: {}", paymentId);
         
-        // TODO: Implement actual payment status retrieval
-        return ResponseEntity.ok(Map.of(
-            "paymentId", paymentId,
-            "status", "SUCCESS",
-            "message", "Payment status endpoint - implementation pending"
-        ));
+        Optional<Map<String, Object>> payment = paymentService.getPaymentTransaction(paymentId);
+        
+        if (payment.isPresent()) {
+            return ResponseEntity.ok(payment.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping("/{paymentId}/retry")
     public ResponseEntity<Map<String, Object>> retryPayment(@PathVariable String paymentId) {
         log.info("Retrying payment for ID: {}", paymentId);
         
-        // TODO: Implement actual payment retry logic
+        Map<String, Object> retryResult = paymentService.retryPayment(paymentId);
+        
+        if (retryResult.containsKey("error")) {
+            return ResponseEntity.notFound().build();
+        }
+        
+        return ResponseEntity.ok(retryResult);
+    }
+
+    @GetMapping("/failed")
+    public ResponseEntity<List<Map<String, Object>>> getFailedPayments() {
+        log.info("Getting failed payments");
+        
+        List<Map<String, Object>> failedPayments = paymentService.getFailedPayments();
+        return ResponseEntity.ok(failedPayments);
+    }
+    
+    @GetMapping("/policy/{policyId}")
+    public ResponseEntity<List<Map<String, Object>>> getPaymentHistoryForPolicy(@PathVariable String policyId) {
+        log.info("Getting payment history for policy: {}", policyId);
+        
+        List<Map<String, Object>> history = paymentService.getPaymentHistory(policyId);
+        return ResponseEntity.ok(history);
+    }
+    
+    @PostMapping("/{transactionId}/refund")
+    public ResponseEntity<Map<String, Object>> initiateRefund(
+            @PathVariable String transactionId,
+            @RequestBody(required = false) Map<String, Object> refundRequest) {
+        log.info("Initiating refund for transaction: {}", transactionId);
+        
+        BigDecimal amount = null;
+        if (refundRequest != null && refundRequest.containsKey("amount")) {
+            amount = new BigDecimal(refundRequest.get("amount").toString());
+        }
+        
+        Map<String, Object> refundResult = paymentService.initiateRefund(transactionId, amount);
+        
+        if (refundResult.containsKey("error")) {
+            return ResponseEntity.notFound().build();
+        }
+        
+        return ResponseEntity.ok(refundResult);
+    }
+    
+    @GetMapping("/statistics")
+    public ResponseEntity<Map<String, Object>> getPaymentStatistics() {
+        log.info("Getting payment statistics");
+        
+        Map<String, Object> stats = paymentService.getPaymentStatistics();
+        return ResponseEntity.ok(stats);
+    }
+    
+    @PutMapping("/{transactionId}/status")
+    public ResponseEntity<Map<String, Object>> updatePaymentStatus(
+            @PathVariable String transactionId,
+            @RequestBody Map<String, Object> statusUpdate) {
+        log.info("Updating payment status for transaction {} to {}", transactionId, statusUpdate);
+        
+        String status = (String) statusUpdate.get("status");
+        paymentService.updatePaymentStatus(transactionId, status);
+        
         return ResponseEntity.ok(Map.of(
-            "paymentId", paymentId,
-            "retryAttempt", 2,
-            "status", "RETRY_SCHEDULED",
-            "message", "Payment retry endpoint - implementation pending"
+            "transactionId", transactionId,
+            "status", "updated",
+            "timestamp", LocalDateTime.now()
         ));
     }
 
     @GetMapping("/delinquent")
-    public ResponseEntity<Map<String, Object>> getDelinquentPolicies() {
-        log.info("Getting delinquent policies");
+    public ResponseEntity<Map<String, Object>> getDelinquentPolicies(
+            @RequestParam(defaultValue = "50") int limit,
+            @RequestParam(defaultValue = "0") int offset,
+            @RequestParam(defaultValue = "1") int minDaysOverdue,
+            @RequestParam(required = false) String customerId) {
         
-        // TODO: Implement actual delinquent policy retrieval
+        log.info("Getting delinquent policies with minDaysOverdue: {}, customerId: {}", minDaysOverdue, customerId);
+        
+        // This endpoint delegates to billing service in a real implementation
+        // For now, return mock data structure
         return ResponseEntity.ok(Map.of(
+            "totalCount", 0,
             "delinquentPolicies", List.of(),
-            "count", 0,
-            "message", "Delinquent policies endpoint - implementation pending"
+            "message", "This endpoint should delegate to billing service"
         ));
     }
 }

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InsuranceCorp - Make Payment</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">InsuranceCorp</div>
+            <nav class="nav">
+                <a href="dashboard.html">Dashboard</a>
+                <a href="policies.html">Policies</a>
+                <a href="billing.html">Billing</a>
+                <a href="payments.html">Payment History</a>
+            </nav>
+            <div class="user-info">
+                <span>Welcome, John Doe</span>
+                <a href="login.html" class="btn btn-secondary">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <h1 class="page-title">Make Payment</h1>
+
+        <div style="max-width: 800px; margin: 0 auto;">
+            <!-- Payment Summary -->
+            <div class="payment-summary">
+                <h3>Payment Summary</h3>
+                <div class="payment-row">
+                    <span>Policy:</span>
+                    <strong>Auto Insurance #12345</strong>
+                </div>
+                <div class="payment-row">
+                    <span>Premium Amount:</span>
+                    <span>$156.00</span>
+                </div>
+                <div class="payment-row">
+                    <span>Late Fee:</span>
+                    <span>$15.00</span>
+                </div>
+                <div class="payment-row">
+                    <span>Processing Fee:</span>
+                    <span>$0.00</span>
+                </div>
+                <div class="payment-row total">
+                    <span>Total Due:</span>
+                    <strong>$171.00</strong>
+                </div>
+            </div>
+
+            <!-- Payment Method Selection -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Select Payment Method</h2>
+                </div>
+
+                <form action="payment-processing.html" method="post">
+                    <input type="hidden" name="policy_id" value="12345">
+                    <input type="hidden" name="amount" value="171.00">
+
+                    <div class="form-group">
+                        <label class="form-label">Payment Method</label>
+                        <div style="display: grid; gap: 1rem;">
+                            <label style="display: flex; align-items: center; padding: 1rem; border: 1px solid #ddd; border-radius: 8px; cursor: pointer;">
+                                <input type="radio" name="payment_method" value="saved_card" checked style="margin-right: 1rem;">
+                                <div>
+                                    <strong>💳 Visa ending in 1234</strong><br>
+                                    <small class="text-muted">Expires 12/26 • Processing fee: $0.00</small>
+                                </div>
+                            </label>
+
+                            <label style="display: flex; align-items: center; padding: 1rem; border: 1px solid #ddd; border-radius: 8px; cursor: pointer;">
+                                <input type="radio" name="payment_method" value="new_card" style="margin-right: 1rem;">
+                                <div>
+                                    <strong>💳 New Credit/Debit Card</strong><br>
+                                    <small class="text-muted">Processing fee: $0.00</small>
+                                </div>
+                            </label>
+
+                            <label style="display: flex; align-items: center; padding: 1rem; border: 1px solid #ddd; border-radius: 8px; cursor: pointer;">
+                                <input type="radio" name="payment_method" value="bank_account" style="margin-right: 1rem;">
+                                <div>
+                                    <strong>🏦 Bank Account (ACH)</strong><br>
+                                    <small class="text-muted">Processing fee: $0.00 • Takes 2-3 business days</small>
+                                </div>
+                            </label>
+
+                            <label style="display: flex; align-items: center; padding: 1rem; border: 1px solid #ddd; border-radius: 8px; cursor: pointer;">
+                                <input type="radio" name="payment_method" value="paypal" style="margin-right: 1rem;">
+                                <div>
+                                    <strong>💰 PayPal</strong><br>
+                                    <small class="text-muted">Processing fee: $2.50</small>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- New Card Form (hidden by default) -->
+                    <div id="new-card-form" style="display: none;">
+                        <h4 style="margin-bottom: 1rem;">Credit Card Information</h4>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Card Number</label>
+                            <input type="text" class="form-control" placeholder="1234 5678 9012 3456" maxlength="19">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Expiry Date</label>
+                                <input type="text" class="form-control" placeholder="MM/YY" maxlength="5">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">CVV</label>
+                                <input type="text" class="form-control" placeholder="123" maxlength="4">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Cardholder Name</label>
+                            <input type="text" class="form-control" placeholder="John Doe">
+                        </div>
+
+                        <div class="form-group">
+                            <label style="display: flex; align-items: center;">
+                                <input type="checkbox" style="margin-right: 0.5rem;">
+                                Save this card for future payments
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Bank Account Form (hidden by default) -->
+                    <div id="bank-account-form" style="display: none;">
+                        <h4 style="margin-bottom: 1rem;">Bank Account Information</h4>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Account Type</label>
+                            <select class="form-control">
+                                <option value="checking">Checking</option>
+                                <option value="savings">Savings</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Routing Number</label>
+                            <input type="text" class="form-control" placeholder="123456789" maxlength="9">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Account Number</label>
+                            <input type="text" class="form-control" placeholder="Account Number">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Account Holder Name</label>
+                            <input type="text" class="form-control" placeholder="John Doe" value="John Doe">
+                        </div>
+
+                        <div class="form-group">
+                            <label style="display: flex; align-items: center;">
+                                <input type="checkbox" style="margin-right: 0.5rem;">
+                                Save this account for future payments
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Billing Address -->
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center;">
+                            <input type="checkbox" checked style="margin-right: 0.5rem;">
+                            Billing address same as policy address
+                        </label>
+                    </div>
+
+                    <!-- AutoPay Option -->
+                    <div class="card" style="background-color: #f8f9fa; margin: 2rem 0;">
+                        <h4 style="margin-bottom: 1rem;">💡 Set Up AutoPay</h4>
+                        <p>Enable AutoPay and get a 5% discount on future premiums. Never worry about late fees again!</p>
+                        <label style="display: flex; align-items: center; margin-top: 1rem;">
+                            <input type="checkbox" name="enable_autopay" style="margin-right: 0.5rem;">
+                            <strong>Enable AutoPay for this policy (Save 5% starting next month)</strong>
+                        </label>
+                    </div>
+
+                    <!-- Payment Buttons -->
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-success">Pay $171.00</button>
+                        <a href="billing.html" class="btn btn-secondary">Cancel</a>
+                    </div>
+
+                    <div class="security-badge">
+                        🔒 Your payment information is secure and encrypted using SSL technology
+                    </div>
+                </form>
+            </div>
+
+            <!-- Payment Options Info -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Payment Information</h2>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                    <div>
+                        <h4>Processing Times</h4>
+                        <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                            <li>Credit/Debit Card: Immediate</li>
+                            <li>Bank Account (ACH): 2-3 business days</li>
+                            <li>PayPal: Immediate</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>Accepted Cards</h4>
+                        <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                            <li>Visa, MasterCard, American Express</li>
+                            <li>Discover, Diners Club</li>
+                            <li>Debit cards with Visa/MC logo</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>Security</h4>
+                        <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                            <li>PCI DSS Compliant</li>
+                            <li>SSL 256-bit Encryption</li>
+                            <li>Fraud protection included</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2024 InsuranceCorp. All rights reserved. | Privacy Policy | Terms of Service</p>
+        </div>
+    </footer>
+
+    <script>
+        // Simple form toggling
+        document.addEventListener('DOMContentLoaded', function() {
+            const paymentMethods = document.querySelectorAll('input[name="payment_method"]');
+            const newCardForm = document.getElementById('new-card-form');
+            const bankAccountForm = document.getElementById('bank-account-form');
+
+            paymentMethods.forEach(function(method) {
+                method.addEventListener('change', function() {
+                    // Hide all forms
+                    newCardForm.style.display = 'none';
+                    bankAccountForm.style.display = 'none';
+
+                    // Show relevant form
+                    if (this.value === 'new_card') {
+                        newCardForm.style.display = 'block';
+                    } else if (this.value === 'bank_account') {
+                        bankAccountForm.style.display = 'block';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
