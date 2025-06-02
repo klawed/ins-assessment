@@ -56,6 +56,21 @@
                 <span>Payments</span>
             </a>
             
+            <a href="#kafka" class="menu-item" data-view="kafka">
+                <svg class="menu-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+                <span>Kafka Topics</span>
+            </a>
+            
+            <a href="#events" class="menu-item" data-view="events">
+                <svg class="menu-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9,11 12,14 22,4"/>
+                    <path d="M21,12v7a2,2 0 0,1 -2,2H5a2,2 0 0,1 -2,-2V5a2,2 0 0,1 2,-2h11"/>
+                </svg>
+                <span>Event Stream</span>
+            </a>
+            
             <a href="#delinquent" class="menu-item" data-view="delinquent">
                 <svg class="menu-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="10"/>
@@ -104,6 +119,13 @@
                         <path d="m21 21-4.35-4.35"/>
                     </svg>
                     <input type="text" placeholder="Search policies, customers..." id="global-search">
+                </div>
+                
+                <div class="system-status">
+                    <div class="status-indicator" id="kafka-status">
+                        <div class="status-dot"></div>
+                        <span>Kafka</span>
+                    </div>
                 </div>
                 
                 <div class="notifications">
@@ -183,15 +205,13 @@
 
                     <div class="metric-card">
                         <div class="metric-header">
-                            <h3>Delinquent Accounts</h3>
+                            <h3>Kafka Events/min</h3>
                             <svg class="metric-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="10"/>
-                                <line x1="12" y1="8" x2="12" y2="12"/>
-                                <line x1="12" y1="16" x2="12.01" y2="16"/>
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                             </svg>
                         </div>
-                        <div class="metric-value" id="delinquent-count">Loading...</div>
-                        <div class="metric-change negative">+8.7% from last month</div>
+                        <div class="metric-value" id="kafka-throughput">Loading...</div>
+                        <div class="metric-change positive">+15.8% from last hour</div>
                     </div>
                 </div>
 
@@ -215,10 +235,10 @@
 
                     <div class="chart-card">
                         <div class="chart-header">
-                            <h3>Payment Methods Distribution</h3>
+                            <h3>Kafka Event Distribution</h3>
                         </div>
                         <div class="chart-container">
-                            <canvas id="payment-methods-chart"></canvas>
+                            <canvas id="kafka-events-chart"></canvas>
                         </div>
                     </div>
                 </div>
@@ -235,7 +255,190 @@
                 </div>
             </div>
 
-            <!-- Other views will be added here -->
+            <!-- Kafka Topics View -->
+            <div id="kafka-view" class="view">
+                <div class="view-header">
+                    <h2>Kafka Topics Management</h2>
+                    <div class="view-actions">
+                        <button class="btn btn-secondary" onclick="adminDashboard.refreshKafkaTopics()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+                                <path d="M21 3v5h-5"/>
+                                <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+                                <path d="M8 16H3v5"/>
+                            </svg>
+                            Refresh
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Kafka Health Overview -->
+                <div class="kafka-health-grid">
+                    <div class="health-card">
+                        <div class="health-header">
+                            <h3>Cluster Health</h3>
+                            <div class="health-status healthy" id="cluster-health">
+                                <div class="status-dot"></div>
+                                <span>Healthy</span>
+                            </div>
+                        </div>
+                        <div class="health-metrics">
+                            <div class="health-metric">
+                                <span class="metric-label">Brokers</span>
+                                <span class="metric-value" id="broker-count">3</span>
+                            </div>
+                            <div class="health-metric">
+                                <span class="metric-label">Topics</span>
+                                <span class="metric-value" id="topic-count">8</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="health-card">
+                        <div class="health-header">
+                            <h3>Message Throughput</h3>
+                            <div class="health-status" id="throughput-status">
+                                <div class="status-dot"></div>
+                                <span>Normal</span>
+                            </div>
+                        </div>
+                        <div class="health-metrics">
+                            <div class="health-metric">
+                                <span class="metric-label">Messages/sec</span>
+                                <span class="metric-value" id="messages-per-sec">247</span>
+                            </div>
+                            <div class="health-metric">
+                                <span class="metric-label">Bytes/sec</span>
+                                <span class="metric-value" id="bytes-per-sec">1.2MB</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="health-card">
+                        <div class="health-header">
+                            <h3>Consumer Lag</h3>
+                            <div class="health-status warning" id="lag-status">
+                                <div class="status-dot"></div>
+                                <span>Minor Lag</span>
+                            </div>
+                        </div>
+                        <div class="health-metrics">
+                            <div class="health-metric">
+                                <span class="metric-label">Max Lag</span>
+                                <span class="metric-value" id="max-lag">1,247</span>
+                            </div>
+                            <div class="health-metric">
+                                <span class="metric-label">Avg Lag</span>
+                                <span class="metric-value" id="avg-lag">156</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Topics Table -->
+                <div class="topics-section">
+                    <div class="section-header">
+                        <h3>Topics Overview</h3>
+                        <div class="topic-filters">
+                            <input type="text" placeholder="Search topics..." id="topic-search" class="search-input">
+                        </div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="data-table" id="kafka-topics-table">
+                            <thead>
+                                <tr>
+                                    <th>Topic Name</th>
+                                    <th>Partitions</th>
+                                    <th>Replicas</th>
+                                    <th>Messages</th>
+                                    <th>Size</th>
+                                    <th>Retention</th>
+                                    <th>Consumer Groups</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="kafka-topics-body">
+                                <!-- Topics will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Event Stream View -->
+            <div id="events-view" class="view">
+                <div class="view-header">
+                    <h2>Event Stream Monitor</h2>
+                    <div class="view-actions">
+                        <button class="btn btn-secondary" onclick="adminDashboard.toggleEventStream()" id="event-stream-toggle">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="5,3 19,12 5,21"/>
+                            </svg>
+                            Start Stream
+                        </button>
+                        <button class="btn btn-secondary" onclick="adminDashboard.clearEventStream()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="3,6 5,6 21,6"/>
+                                <path d="M19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"/>
+                            </svg>
+                            Clear
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Event Filters -->
+                <div class="event-filters">
+                    <div class="filter-group">
+                        <label>Topic Filter</label>
+                        <select id="event-topic-filter">
+                            <option value="">All Topics</option>
+                            <option value="policy.events">policy.events</option>
+                            <option value="billing.premium.calculated">billing.premium.calculated</option>
+                            <option value="billing.payment.succeeded">billing.payment.succeeded</option>
+                            <option value="billing.payment.failed">billing.payment.failed</option>
+                            <option value="billing.payment.delinquent">billing.payment.delinquent</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Event Type</label>
+                        <select id="event-type-filter">
+                            <option value="">All Types</option>
+                            <option value="policy.created">policy.created</option>
+                            <option value="policy.updated">policy.updated</option>
+                            <option value="premium.calculated">premium.calculated</option>
+                            <option value="payment.succeeded">payment.succeeded</option>
+                            <option value="payment.failed">payment.failed</option>
+                            <option value="payment.delinquent">payment.delinquent</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Policy ID</label>
+                        <input type="text" placeholder="Filter by policy ID..." id="event-policy-filter">
+                    </div>
+                </div>
+
+                <!-- Event Stream -->
+                <div class="event-stream-container">
+                    <div class="event-stream-header">
+                        <h3>Live Event Stream</h3>
+                        <div class="stream-stats">
+                            <span class="stream-stat">Events: <strong id="event-count">0</strong></span>
+                            <span class="stream-stat">Rate: <strong id="event-rate">0/sec</strong></span>
+                        </div>
+                    </div>
+                    <div class="event-stream" id="event-stream">
+                        <div class="event-placeholder">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            <p>Click "Start Stream" to monitor events in real-time</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Other existing views -->
             <div id="policies-view" class="view">
                 <div class="view-header">
                     <h2>Policy Management</h2>
