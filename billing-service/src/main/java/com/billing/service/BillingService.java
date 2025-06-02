@@ -1,4 +1,4 @@
-package com.billing.billing.service;
+package com.billing.service;
 
 import java.math.BigDecimal;
 import java.util.List;

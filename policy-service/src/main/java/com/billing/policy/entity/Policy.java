@@ -1,19 +1,19 @@
 package com.billing.policy.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "policies")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Data               // Generates getters, setters, toString, equals, hashCode
+@Builder            // Generates builder pattern methods
+@NoArgsConstructor  // Required by JPA
+@AllArgsConstructor // Required by @Builder
 public class Policy {
     @Id
     private String id;

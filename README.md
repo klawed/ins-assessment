@@ -322,3 +322,99 @@ docker system prune -f
 - [ ] Implement grace period and delinquency tracking
 - [ ] Add security with JWT authentication
 - [ ] Implement comprehensive monitoring and logging
+
+## Testing Strategy
+
+### Test Organization
+
+```
+src/
+├── test/
+│   ├── java/
+│   │   └── com/billing/policy/
+│   │       ├── unit/           # Unit tests (no external dependencies)
+│   │       │   ├── controller/ # Controller tests with @WebMvcTest
+│   │       │   ├── service/    # Service layer unit tests
+│   │       │   └── util/       # Utility class tests
+│   │       ├── integration/    # Integration tests (with TestContainers)
+│   │       │   ├── repository/ # Database integration tests
+│   │       │   └── kafka/      # Messaging integration tests
+│   │       └── e2e/           # End-to-end tests with Docker Compose
+│   └── resources/
+       ├── application-test.properties          # Unit test properties
+       └── application-integration-test.properties # Integration test properties
+```
+
+### Test Types
+
+1. **Unit Tests** (`src/test/java/*/unit/`)
+   - Fast, in-memory tests
+   - No external dependencies
+   - Use `@WebMvcTest` for controllers
+   - Run with: `mvn test`
+
+2. **Integration Tests** (`src/test/java/*/integration/`)
+   - Use TestContainers for databases/messaging
+   - Test database operations and event flows
+   - Run with: `mvn verify -Pintegration`
+
+3. **E2E Tests** (`src/test/java/*/e2e/`)
+   - Full system tests using Docker Compose
+   - Test complete user journeys
+   - Run with: `mvn verify -Pe2e`
+
+### Running Tests
+
+```bash
+# Run only unit tests (fast)
+mvn test
+
+# Run integration tests
+mvn verify -Pintegration
+
+# Run E2E tests
+mvn verify -Pe2e
+
+# Run all tests
+mvn verify
+
+# Generate test reports
+mvn site
+```
+
+### Test Reports
+
+Test reports are generated in each module's `target` directory:
+
+```bash
+target/
+├── surefire-reports/    # Unit test results
+├── failsafe-reports/    # Integration test results
+└── site/               # HTML test reports
+    └── surefire-report.html
+```
+
+View test reports:
+```bash
+open target/site/surefire-report.html
+```
+
+### Testing Guidelines
+
+1. **Unit Tests**
+   - One test class per production class
+   - Use meaningful test names describing the scenario
+   - Mock external dependencies
+   - Focus on edge cases and error conditions
+
+2. **Integration Tests**
+   - Test database operations with real database
+   - Test event flows with real message broker
+   - Use TestContainers for infrastructure
+   - Clean up test data after each test
+
+3. **E2E Tests**
+   - Test complete user journeys
+   - Verify service interactions
+   - Use Docker Compose test environment
+   - Focus on happy path scenarios

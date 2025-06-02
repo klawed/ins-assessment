@@ -41,6 +41,8 @@
         <!-- Testing -->
         <testcontainers.version>1.19.3</testcontainers.version>
         <rest-assured.version>5.4.0</rest-assured.version>
+        <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
+        <maven-failsafe-plugin.version>3.2.5</maven-failsafe-plugin.version>
 
         <!-- Other -->
         <mapstruct.version>1.5.5.Final</mapstruct.version>
@@ -210,6 +212,33 @@
                         </container>
                     </configuration>
                 </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
+                    <configuration>
+                        <includes>
+                            <include>**/unit/**/*Test.java</include>
+                        </includes>
+                        <excludes>
+                            <exclude>**/integration/**/*Test.java</exclude>
+                            <exclude>**/e2e/**/*Test.java</exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>
+                
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>${maven-failsafe-plugin.version}</version>
+                    <configuration>
+                        <includes>
+                            <include>**/integration/**/*Test.java</include>
+                            <include>**/e2e/**/*Test.java</include>
+                        </includes>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
@@ -266,10 +295,11 @@
                                 <my.e2e.config.property>someValueForE2E</my.e2e.config.property>
                             </systemPropertyVariables>
                             -->
-                            <argLine>
+                            <!-- Enable debugging for E2E tests -->
+                            <!-- <argLine>
                                 -Xdebug
                                 -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005
-                            </argLine>
+                            </argLine> -->
                         </configuration>
                     </plugin>
                 </plugins>
@@ -277,7 +307,6 @@
         </profile>
         <!-- We might want a default profile for running unit/integration tests -->
         <!-- If you don't define one, Surefire runs all *Test.java by default -->
-        <!-- Example:
         <profile>
             <id>default-tests</id>
             <activation>
@@ -297,6 +326,15 @@
                 </plugins>
             </build>
         </profile>
-        -->
+        
     </profiles>
+    <reporting>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-report-plugin</artifactId>
+            <version>3.2.5</version>
+        </plugin>
+    </plugins>
+</reporting>
 </project>

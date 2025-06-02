@@ -1,9 +1,10 @@
-package com.billing.billing.controller;
+package com.billing.controller;
 
-import com.billing.billing.service.BillingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import com.billing.service.BillingService;
 
 import java.time.LocalDateTime;
 import java.util.List;

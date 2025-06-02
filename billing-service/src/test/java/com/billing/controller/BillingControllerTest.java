@@ -1,5 +1,6 @@
-package com.billing.billing.controller;
+package com.billing.controller;
 
+import com.billing.controller.BillingController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package com.billing.billing.service;
+package com.billing.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
