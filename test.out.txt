@@ -1,0 +1,47 @@
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] Policy Billing System                                              [pom]
+[INFO] Shared Models                                                      [jar]
+[INFO] policy-service                                                     [jar]
+[INFO] Billing Service                                                    [jar]
+[INFO] Notification Service                                               [jar]
+[INFO] Payment Service                                                    [jar]
+[INFO] payment-gateway-mock                                               [jar]
+[INFO] 
+[INFO] ----------------< com.insurance:policy-billing-system >-----------------
+[INFO] Building Policy Billing System 1.0.0-SNAPSHOT                      [1/7]
+[INFO]   from pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ policy-billing-system ---
+[INFO] 
+[INFO] --------------------< com.insurance:shared-models >---------------------
+[INFO] Building Shared Models 1.0.0-SNAPSHOT                              [2/7]
+[INFO]   from shared-models\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ shared-models ---
+[INFO] Deleting C:\Users\claude\src\ins-assessment\shared-models\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ shared-models ---
+[INFO] skip non existing resourceDirectory C:\Users\claude\src\ins-assessment\shared-models\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ shared-models ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 15 source files with javac [debug release 21] to target\classes
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ shared-models ---
+[INFO] skip non existing resourceDirectory C:\Users\claude\src\ins-assessment\shared-models\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ shared-models ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- surefire:3.2.5:test (default-test) @ shared-models ---
+[INFO] No tests to run.
+[INFO] 
+[INFO] --------------------< com.insurance:policy-service >--------------------
+[INFO] Building policy-service 1.0.0-SNAPSHOT                             [3/7]
+[INFO]   from policy-service\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
