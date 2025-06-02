@@ -1,0 +1,53 @@
+# version: '3.8' # Optional, inherits from base or can be omitted
+
+services:
+  mariadb:
+    environment:
+      MYSQL_ROOT_PASSWORD: e2e_very_secret_root_password
+      MYSQL_DATABASE: billing_system_e2e
+      MYSQL_USER: app_user_e2e
+      MYSQL_PASSWORD: e2e_very_secret_app_password
+
+  kafka:
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+
+  policy-service:
+    environment:
+      SPRING_PROFILES_ACTIVE: e2e
+      DB_NAME: billing_system_e2e
+      DB_USER: app_user_e2e
+      DB_PASSWORD: e2e_very_secret_app_password
+      # Other E2E specific env vars for policy-service can go here if needed
+
+  billing-service:
+    environment:
+      SPRING_PROFILES_ACTIVE: e2e
+      DB_NAME: billing_system_e2e
+      DB_USER: app_user_e2e
+      DB_PASSWORD: e2e_very_secret_app_password
+      POLICY_SERVICE_URL: http://policy-service:8080/api/policies
+      # Other E2E specific env vars for billing-service
+
+  payment-service:
+    environment:
+      SPRING_PROFILES_ACTIVE: e2e
+      DB_NAME: billing_system_e2e
+      DB_USER: app_user_e2e
+      DB_PASSWORD: e2e_very_secret_app_password
+      # PAYMENT_GATEWAY_MOCK_URL is inherited from base if not overridden
+      # Other E2E specific env vars for payment-service
+
+  notification-service:
+    environment:
+      SPRING_PROFILES_ACTIVE: e2e
+      DB_NAME: billing_system_e2e
+      DB_USER: app_user_e2e
+      DB_PASSWORD: e2e_very_secret_app_password
+      # Other E2E specific env vars for notification-service
+
+  payment-gateway-mock:
+  
+    environment:
+      SPRING_PROFILES_ACTIVE: e2e
+      # Any E2E specific behavior for the mock

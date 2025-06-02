@@ -1,0 +1,61 @@
+# docker-compose.dev.yml (Overrides for local development)
+version: '3.8'
+
+services:
+  mariadb:
+    ports:
+      - "13306:3306" # Expose MariaDB on host port 13306 to avoid conflicts
+    environment:
+      MYSQL_ROOT_PASSWORD: dev_root_password
+      MYSQL_DATABASE: billing_system_dev
+      MYSQL_USER: billing_user_dev
+      MYSQL_PASSWORD: billing_password_dev
+    volumes:
+      - mariadb_dev_data:/var/lib/mysql # Persist data for dev
+      - ./docker/mariadb/init:/docker-entrypoint-initdb.d # If you have init scripts for dev DB
+
+  zookeeper:
+    ports:
+      - "12181:2181" # Expose Zookeeper on host port 12181
+
+  kafka:
+    ports:
+      - "19092:9092" # Expose Kafka on host port 19092 (for PLAINTEXT_HOST)
+    environment:
+      # Advertise Kafka on localhost for external connections from IDE
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:19092
+    volumes:
+      - kafka_dev_data:/var/lib/kafka/data # Persist Kafka data for dev
+
+  redis:
+    ports:
+      - "16379:6379" # Expose Redis on host port 16379
+    volumes:
+      - redis_dev_data:/data # Persist Redis data for dev
+
+  # Services (policy, billing, etc.) are typically run from the IDE in this scenario.
+  # If you wanted to run them in Docker for dev as well, you'd add overrides here:
+  # policy-service:
+  #   ports:
+  #     - "8081:8081"
+  #   environment:
+  #     SPRING_PROFILES_ACTIVE: local # Or 'dev'
+  #     DB_NAME: billing_system_dev
+  #     DB_USER: billing_user_dev
+  #     DB_PASSWORD: billing_password_dev
+  #     KAFKA_BOOTSTRAP_SERVERS: localhost:19092 # If connecting to Kafka exposed on host
+  #     REDIS_HOST: localhost
+  #     REDIS_PORT: 16379
+  #     SPRING_JPA_HIBERNATE_DDL_AUTO: update # More lenient for dev
+  #   # volumes: # Optional: For hot reloading if your build supports it
+  #   #   - ./policy-service/target/classes:/app/classes
+  # payment-gateway-mock:
+  #   ports:
+  #     - "8090:8090"
+  #   environment:
+  #     SPRING_PROFILES_ACTIVE: local # Or 'dev'
+
+volumes: # Define named volumes for data persistence in dev
+  mariadb_dev_data:
+  kafka_dev_data:
+  redis_dev_data:

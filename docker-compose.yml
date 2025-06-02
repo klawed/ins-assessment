@@ -1,75 +1,75 @@
+# version: '3.8' # This line is optional with modern Docker Compose
+
 services:
-  # Infrastructure Services
   mariadb:
     image: mariadb:11.0
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: billing_system
-      MYSQL_USER: billing_user
-      MYSQL_PASSWORD: billing_password
-    ports:
-      - "3306:3306"
-    volumes:
-      - mariadb_data:/var/lib/mysql
-      - ./docker/mariadb/init:/docker-entrypoint-initdb.d
-    networks:
-      - billing-network
+    healthcheck:
+    
+      test: ["CMD-SHELL", "mysqlshow -h 127.0.0.1 -u root -p$$MYSQL_ROOT_PASSWORD --status > /tmp/healthcheck_status.log 2>&1 || exit 1"]
+      #test: ["CMD", "mysql", "-h", "127.0.0.1", "-u", "root", "-pe2e_very_secret_root_password", "-e", "SELECT 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12 # Increased from your original 5 for more resilience
+      start_period: 60s # Increased from your original 30s for more init time
+    restart: on-failure
+    # Default environment variables for MariaDB can be added here if desired for non-E2E local 'docker-compose up'
+    # For E2E, these will be overridden by docker-compose.e2e.yml
+    # environment:
+    #   MYSQL_ROOT_PASSWORD: default_root_password_dev
+    #   MYSQL_DATABASE: billing_system_dev
+    #   MYSQL_USER: billing_user_dev
+    #   MYSQL_PASSWORD: billing_password_dev
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.4.0
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
-    networks:
-      - billing-network
+    restart: on-failure
 
   kafka:
     image: confluentinc/cp-kafka:7.4.0
     depends_on:
-      - zookeeper
-    ports:
-      - "9092:9092"
+      zookeeper:
+        condition: service_started
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-    networks:
-      - billing-network
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      # KAFKA_ADVERTISED_LISTENERS: is set in e2e/dev/prod override files
+    restart: on-failure
 
   redis:
-    image: redis:7-alpine
-    ports:
-      - "6379:6379"
-    networks:
-      - billing-network
+    image: redis:7.2-alpine
+    restart: on-failure
 
-  # Microservices
   policy-service:
     build:
       context: .
       dockerfile: policy-service/Dockerfile
     ports:
       - "8081:8080"
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-      - DB_HOST=mariadb
-      - DB_PORT=3306
-      - DB_NAME=billing_system
-      - DB_USER=billing_user
-      - DB_PASSWORD=billing_password
-      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
     depends_on:
-      - mariadb
-      - kafka
-    networks:
-      - billing-network
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
+      mariadb:
+        condition: service_started
+      kafka:
+        condition: service_started
+      redis:
+        condition: service_started
+    restart: on-failure
+    environment:
+      DB_HOST: mariadb
+      DB_PORT: 3306
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      SPRING_FLYWAY_ENABLED: true
+      # DB_NAME, DB_USER, DB_PASSWORD will come from override files or app defaults
 
   billing-service:
     build:
@@ -77,27 +77,22 @@ services:
       dockerfile: billing-service/Dockerfile
     ports:
       - "8082:8080"
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-      - DB_HOST=mariadb
-      - DB_PORT=3306
-      - DB_NAME=billing_system
-      - DB_USER=billing_user
-      - DB_PASSWORD=billing_password
-      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
-      - POLICY_SERVICE_URL=http://policy-service:8080
     depends_on:
-      - mariadb
-      - kafka
-      - policy-service
-    networks:
-      - billing-network
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
+      mariadb:
+        condition: service_started
+      kafka:
+        condition: service_started
+      redis:
+        condition: service_started
+    restart: on-failure
+    environment:
+      DB_HOST: mariadb
+      DB_PORT: 3306
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      SPRING_FLYWAY_ENABLED: true
 
   payment-service:
     build:
@@ -105,30 +100,25 @@ services:
       dockerfile: payment-service/Dockerfile
     ports:
       - "8083:8080"
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-      - DB_HOST=mariadb
-      - DB_PORT=3306
-      - DB_NAME=billing_system
-      - DB_USER=billing_user
-      - DB_PASSWORD=billing_password
-      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - PAYMENT_GATEWAY_URL=http://payment-gateway-mock:8080
     depends_on:
-      - mariadb
-      - kafka
-      - redis
-      - payment-gateway-mock
-    networks:
-      - billing-network
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
+      mariadb:
+        condition: service_started
+      kafka:
+        condition: service_started
+      redis:
+        condition: service_started
+      payment-gateway-mock:
+        condition: service_started
+    restart: on-failure
+    environment:
+      DB_HOST: mariadb
+      DB_PORT: 3306
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      PAYMENT_GATEWAY_MOCK_URL: http://payment-gateway-mock:8090/api/gateway
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      SPRING_FLYWAY_ENABLED: true
 
   notification-service:
     build:
@@ -136,45 +126,28 @@ services:
       dockerfile: notification-service/Dockerfile
     ports:
       - "8084:8080"
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
-      - DB_HOST=mariadb
-      - DB_PORT=3306
-      - DB_NAME=billing_system
-      - DB_USER=billing_user
-      - DB_PASSWORD=billing_password
+    command: /bin/sh -c "java -jar app.jar > /app/startup.out 2>&1 || (echo 'NOTIFICATION SERVICE CRASHED - STDOUT:' && cat /app/startup.out && echo 'NOTIFICATION SERVICE CRASHED - STDERR (if different from STDOUT):' && echo 'SLEEPING NOW' && sleep 300)"
     depends_on:
-      - kafka
-      - mariadb
-    networks:
-      - billing-network
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
+      mariadb:
+        condition: service_started
+      kafka:
+        condition: service_started
+      redis:
+        condition: service_started
+    restart: on-failure
+    environment:
+      DB_HOST: mariadb
+      DB_PORT: 3306
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      SPRING_FLYWAY_ENABLED: true
 
-  # Mock Payment Gateway
   payment-gateway-mock:
     build:
       context: .
       dockerfile: payment-gateway-mock/Dockerfile
     ports:
       - "8090:8080"
-    networks:
-      - billing-network
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 30s
-
-volumes:
-  mariadb_data:
-
-networks:
-  billing-network:
-    driver: bridge
+    restart: on-failure
