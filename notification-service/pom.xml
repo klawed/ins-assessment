@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.billing</groupId>
+        <groupId>com.insurance</groupId>
         <artifactId>policy-billing-system</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
@@ -48,6 +48,12 @@
             <artifactId>mariadb-java-client</artifactId>
         </dependency>
         
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
@@ -96,8 +102,9 @@
 
         <!-- Shared Models -->
         <dependency>
-            <groupId>com.billing</groupId>
+            <groupId>com.insurance</groupId>
             <artifactId>shared-models</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
         <!-- Testing -->
@@ -134,6 +141,13 @@
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
+            <scope>test</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>5.5.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

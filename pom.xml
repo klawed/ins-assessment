@@ -4,7 +4,7 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.billing</groupId>
+    <groupId>com.insurance</groupId>
     <artifactId>policy-billing-system</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
@@ -70,7 +70,7 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-
+           
             <!-- Database -->
             <dependency>
                 <groupId>org.mariadb.jdbc</groupId>
@@ -89,7 +89,17 @@
                 <artifactId>flyway-mysql</artifactId>
                 <version>${flyway.version}</version>
             </dependency>
-
+            <!-- Logging -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>2.0.7</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>1.4.11</version>
+            </dependency>
             <!-- Security -->
             <dependency>
                 <groupId>com.auth0</groupId>
@@ -149,7 +159,7 @@
 
             <!-- Shared Models -->
             <dependency>
-                <groupId>com.billing</groupId>
+                <groupId>com.insurance</groupId>
                 <artifactId>shared-models</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -227,7 +237,7 @@
                         </excludes>
                     </configuration>
                 </plugin>
-                
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
@@ -326,15 +336,15 @@
                 </plugins>
             </build>
         </profile>
-        
+
     </profiles>
     <reporting>
-    <plugins>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-report-plugin</artifactId>
-            <version>3.2.5</version>
-        </plugin>
-    </plugins>
-</reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>3.2.5</version>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>

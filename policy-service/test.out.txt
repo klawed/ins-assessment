@@ -1,0 +1,482 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------------< com.billing:policy-service >---------------------
+[INFO] Building policy-service 1.0.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ policy-service ---
+[INFO] Deleting C:\Users\claude\src\ins-assessment\policy-service\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ policy-service ---
+[INFO] Copying 2 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ policy-service ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 2 source files with javac [debug release 21] to target\classes
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ policy-service ---
+[INFO] Copying 1 resource from src\test\resources to target\test-classes
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ policy-service ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] Compiling 4 source files with javac [debug release 21] to target\test-classes
+[INFO] /C:/Users/claude/src/ins-assessment/policy-service/src/test/java/com/billing/policy/PolicyServiceIntegrationTest.java: C:\Users\claude\src\ins-assessment\policy-service\src\test\java\com\billing\policy\PolicyServiceIntegrationTest.java uses unchecked or unsafe operations.
+[INFO] /C:/Users/claude/src/ins-assessment/policy-service/src/test/java/com/billing/policy/PolicyServiceIntegrationTest.java: Recompile with -Xlint:unchecked for details.
+[INFO] 
+[INFO] --- surefire:3.2.5:test (default-test) @ policy-service ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.billing.e2e.BillingSystemE2ETest
+18:26:50.109 [main] INFO org.testcontainers.images.PullPolicy -- Image pull policy will be performed by: DefaultPullPolicy()
+18:26:50.114 [main] INFO org.testcontainers.utility.ImageNameSubstitutor -- Image name substitution will be performed by: DefaultImageNameSubstitutor (composite of 'ConfigurationFileImageNameSubstitutor' and 'PrefixingImageNameSubstitutor')
+[ERROR] Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.153 s <<< FAILURE! -- in com.billing.e2e.BillingSystemE2ETest
+[ERROR] com.billing.e2e.BillingSystemE2ETest -- Time elapsed: 0.153 s <<< ERROR!
+java.lang.ExceptionInInitializerError
+	at java.base/jdk.internal.misc.Unsafe.ensureClassInitialized0(Native Method)
+	at java.base/jdk.internal.misc.Unsafe.ensureClassInitialized(Unsafe.java:1161)
+	at java.base/java.lang.reflect.Field.acquireOverrideFieldAccessor(Field.java:1200)
+	at java.base/java.lang.reflect.Field.getOverrideFieldAccessor(Field.java:1169)
+	at java.base/java.lang.reflect.Field.get(Field.java:444)
+	at org.testcontainers.junit.jupiter.TestcontainersExtension.getContainerInstance(TestcontainersExtension.java:252)
+	at org.testcontainers.junit.jupiter.TestcontainersExtension.lambda$findSharedContainers$10(TestcontainersExtension.java:213)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:215)
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1709)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:570)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:560)
+	at java.base/java.util.stream.ReduceOps$ReduceOp.evaluateSequential(ReduceOps.java:921)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:265)
+	at java.base/java.util.stream.ReferencePipeline.collect(ReferencePipeline.java:727)
+	at org.testcontainers.junit.jupiter.TestcontainersExtension.findSharedContainers(TestcontainersExtension.java:214)
+	at org.testcontainers.junit.jupiter.TestcontainersExtension.beforeAll(TestcontainersExtension.java:54)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+Caused by: java.lang.IllegalArgumentException: Unable to parse YAML file from C:\Users\claude\src\ins-assessment\policy-service\..\docker-compose.e2e.yml
+	at org.testcontainers.containers.ParsedDockerComposeFile.<init>(ParsedDockerComposeFile.java:44)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:215)
+	at java.base/java.util.Spliterators$ArraySpliterator.forEachRemaining(Spliterators.java:1024)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:570)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:560)
+	at java.base/java.util.stream.ReduceOps$ReduceOp.evaluateSequential(ReduceOps.java:921)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:265)
+	at java.base/java.util.stream.ReferencePipeline.collect(ReferencePipeline.java:727)
+	at org.testcontainers.containers.DockerComposeFiles.<init>(DockerComposeFiles.java:18)
+	at org.testcontainers.containers.ComposeDelegate.<init>(ComposeDelegate.java:92)
+	at org.testcontainers.containers.DockerComposeContainer.<init>(DockerComposeContainer.java:89)
+	at org.testcontainers.containers.DockerComposeContainer.<init>(DockerComposeContainer.java:81)
+	at org.testcontainers.containers.DockerComposeContainer.<init>(DockerComposeContainer.java:77)
+	at com.billing.e2e.BillingSystemE2ETest.<clinit>(BillingSystemE2ETest.java:41)
+	... 17 more
+Caused by: java.io.FileNotFoundException: ..\docker-compose.e2e.yml (The system cannot find the file specified)
+	at java.base/java.io.FileInputStream.open0(Native Method)
+	at java.base/java.io.FileInputStream.open(FileInputStream.java:219)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:159)
+	at org.testcontainers.shaded.org.apache.commons.io.FileUtils.openInputStream(FileUtils.java:2501)
+	at org.testcontainers.containers.ParsedDockerComposeFile.<init>(ParsedDockerComposeFile.java:41)
+	... 30 more
+
+[INFO] Running com.billing.policy.controller.PolicyControllerTest
+18:26:50.323 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.billing.policy.controller.PolicyControllerTest]: PolicyControllerTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+18:26:50.488 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.billing.policy.PolicyServiceApplication for test class com.billing.policy.controller.PolicyControllerTest
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.0)
+
+2025-06-01T18:26:50.926-04:00  INFO 9776 --- [policy-service] [           main] c.b.p.controller.PolicyControllerTest    : Starting PolicyControllerTest using Java 23.0.2 with PID 9776 (started by claude in C:\Users\claude\src\ins-assessment\policy-service)
+2025-06-01T18:26:50.927-04:00 DEBUG 9776 --- [policy-service] [           main] c.b.p.controller.PolicyControllerTest    : Running with Spring Boot v3.2.0, Spring v6.1.1
+2025-06-01T18:26:50.928-04:00  INFO 9776 --- [policy-service] [           main] c.b.p.controller.PolicyControllerTest    : No active profile set, falling back to 1 default profile: "default"
+2025-06-01T18:26:52.403-04:00  WARN 9776 --- [policy-service] [           main] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 7449c809-03db-4851-9f5e-54673cba7d92
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-06-01T18:26:52.520-04:00  INFO 9776 --- [policy-service] [           main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@f03ee8f, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@40dd552c, org.springframework.security.web.context.SecurityContextHolderFilter@2755617b, org.springframework.security.web.header.HeaderWriterFilter@5b332439, org.springframework.web.filter.CorsFilter@33f4c769, org.springframework.security.web.csrf.CsrfFilter@5170bc02, org.springframework.security.web.authentication.logout.LogoutFilter@221b77d7, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@a457c2b, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@6009cd34, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@4ebd6fd6, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@184afb78, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@d9f5fce, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@49653791, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@5e5a8718, org.springframework.security.web.access.ExceptionTranslationFilter@3ef3f661, org.springframework.security.web.access.intercept.AuthorizationFilter@570b2057]
+2025-06-01T18:26:52.583-04:00  INFO 9776 --- [policy-service] [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2025-06-01T18:26:52.583-04:00  INFO 9776 --- [policy-service] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2025-06-01T18:26:52.585-04:00  INFO 9776 --- [policy-service] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 2 ms
+2025-06-01T18:26:52.605-04:00  INFO 9776 --- [policy-service] [           main] c.b.p.controller.PolicyControllerTest    : Started PolicyControllerTest in 2.025 seconds (process running for 3.303)
+2025-06-01T18:26:53.154-04:00  WARN 9776 --- [policy-service] [           main] o.s.w.s.h.HandlerMappingIntrospector     : Cache miss for REQUEST dispatch to '/api/policies/POLICY-123' (previous null). Performing CorsConfiguration lookup. This is logged once only at WARN level, and every time at TRACE.
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.094 s -- in com.billing.policy.controller.PolicyControllerTest
+[INFO] Running com.billing.policy.PolicyServiceIntegrationTest
+2025-06-01T18:26:53.311-04:00  INFO 9776 --- [policy-service] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.billing.policy.PolicyServiceIntegrationTest]: PolicyServiceIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2025-06-01T18:26:53.323-04:00  INFO 9776 --- [policy-service] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.billing.policy.PolicyServiceApplication for test class com.billing.policy.PolicyServiceIntegrationTest
+2025-06-01T18:26:53.540-04:00  INFO 9776 --- [policy-service] [           main] o.t.d.DockerClientProviderStrategy       : Loaded org.testcontainers.dockerclient.NpipeSocketClientProviderStrategy from ~/.testcontainers.properties, will try it first
+2025-06-01T18:26:53.802-04:00  INFO 9776 --- [policy-service] [           main] o.t.d.DockerClientProviderStrategy       : Found Docker environment with local Npipe socket (npipe:////./pipe/docker_engine)
+2025-06-01T18:26:53.803-04:00  INFO 9776 --- [policy-service] [           main] org.testcontainers.DockerClientFactory   : Docker host IP address is localhost
+2025-06-01T18:26:53.812-04:00  INFO 9776 --- [policy-service] [           main] org.testcontainers.DockerClientFactory   : Connected to docker: 
+  Server Version: 28.1.1
+  API Version: 1.49
+  Operating System: Docker Desktop
+  Total Memory: 7813 MB
+2025-06-01T18:26:53.839-04:00  INFO 9776 --- [policy-service] [           main] tc.testcontainers/ryuk:0.5.1             : Creating container for image: testcontainers/ryuk:0.5.1
+2025-06-01T18:26:53.943-04:00  INFO 9776 --- [policy-service] [           main] o.t.utility.RegistryAuthLocator          : Credential helper/store (docker-credential-desktop) does not have credentials for https://index.docker.io/v1/
+2025-06-01T18:26:54.045-04:00  INFO 9776 --- [policy-service] [           main] tc.testcontainers/ryuk:0.5.1             : Container testcontainers/ryuk:0.5.1 is starting: b743eee701aae10f3801b07cf57e60ee3d9f74f9911aa68013d8b7d757ea197f
+2025-06-01T18:26:54.382-04:00  INFO 9776 --- [policy-service] [           main] tc.testcontainers/ryuk:0.5.1             : Container testcontainers/ryuk:0.5.1 started in PT0.5430724S
+2025-06-01T18:26:54.389-04:00  INFO 9776 --- [policy-service] [           main] o.t.utility.RyukResourceReaper           : Ryuk started - will monitor and terminate Testcontainers containers on JVM exit
+2025-06-01T18:26:54.390-04:00  INFO 9776 --- [policy-service] [           main] org.testcontainers.DockerClientFactory   : Checking the system...
+2025-06-01T18:26:54.390-04:00  INFO 9776 --- [policy-service] [           main] org.testcontainers.DockerClientFactory   : ?? Docker server version should be at least 1.6.0
+2025-06-01T18:26:54.391-04:00  INFO 9776 --- [policy-service] [           main] tc.confluentinc/cp-kafka:7.4.0           : Creating container for image: confluentinc/cp-kafka:7.4.0
+2025-06-01T18:26:54.391-04:00  WARN 9776 --- [policy-service] [           main] tc.confluentinc/cp-kafka:7.4.0           : Reuse was requested but the environment does not support the reuse of containers
+To enable reuse of containers, you must set 'testcontainers.reuse.enable=true' in a file located at C:\Users\claude\.testcontainers.properties
+2025-06-01T18:26:54.441-04:00  INFO 9776 --- [policy-service] [           main] tc.confluentinc/cp-kafka:7.4.0           : Container confluentinc/cp-kafka:7.4.0 is starting: 226aa76867fdfd15b95cfa3e205cde59282dcc098281697f01bf9298b3d81a65
+2025-06-01T18:27:00.822-04:00  INFO 9776 --- [policy-service] [           main] tc.confluentinc/cp-kafka:7.4.0           : Container confluentinc/cp-kafka:7.4.0 started in PT6.4312519S
+2025-06-01T18:27:00.825-04:00  INFO 9776 --- [policy-service] [           main] tc.mariadb:11.0                          : Creating container for image: mariadb:11.0
+2025-06-01T18:27:00.828-04:00  WARN 9776 --- [policy-service] [           main] tc.mariadb:11.0                          : Reuse was requested but the environment does not support the reuse of containers
+To enable reuse of containers, you must set 'testcontainers.reuse.enable=true' in a file located at C:\Users\claude\.testcontainers.properties
+2025-06-01T18:27:00.922-04:00  INFO 9776 --- [policy-service] [           main] tc.mariadb:11.0                          : Container mariadb:11.0 is starting: 7b22288f3621c85ead8a9d0817cff6b614af2ff5004026f9166d8dec4f1d8565
+2025-06-01T18:27:01.335-04:00  INFO 9776 --- [policy-service] [           main] tc.mariadb:11.0                          : Waiting for database connection to become available at jdbc:mariadb://localhost:55261/billing_system using query 'SELECT 1'
+2025-06-01T18:27:06.839-04:00  INFO 9776 --- [policy-service] [           main] tc.mariadb:11.0                          : Container mariadb:11.0 started in PT6.0138539S
+2025-06-01T18:27:06.839-04:00  INFO 9776 --- [policy-service] [           main] tc.mariadb:11.0                          : Container is started (JDBC URL: jdbc:mariadb://localhost:55261/billing_system)
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.0)
+
+2025-06-01T18:27:06.925-04:00  INFO 9776 --- [policy-service] [           main] c.b.policy.PolicyServiceIntegrationTest  : Starting PolicyServiceIntegrationTest using Java 23.0.2 with PID 9776 (started by claude in C:\Users\claude\src\ins-assessment\policy-service)
+2025-06-01T18:27:06.925-04:00 DEBUG 9776 --- [policy-service] [           main] c.b.policy.PolicyServiceIntegrationTest  : Running with Spring Boot v3.2.0, Spring v6.1.1
+2025-06-01T18:27:06.925-04:00  INFO 9776 --- [policy-service] [           main] c.b.policy.PolicyServiceIntegrationTest  : The following 1 profile is active: "test"
+2025-06-01T18:27:07.792-04:00  INFO 9776 --- [policy-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-01T18:27:07.818-04:00  INFO 9776 --- [policy-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 13 ms. Found 0 JPA repository interfaces.
+2025-06-01T18:27:09.362-04:00  INFO 9776 --- [policy-service] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 0 (http)
+2025-06-01T18:27:09.381-04:00  INFO 9776 --- [policy-service] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-06-01T18:27:09.382-04:00  INFO 9776 --- [policy-service] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.16]
+2025-06-01T18:27:09.599-04:00  INFO 9776 --- [policy-service] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-06-01T18:27:09.600-04:00  INFO 9776 --- [policy-service] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2673 ms
+2025-06-01T18:27:10.393-04:00  INFO 9776 --- [policy-service] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-01T18:27:10.570-04:00  INFO 9776 --- [policy-service] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.3.1.Final
+2025-06-01T18:27:10.697-04:00  INFO 9776 --- [policy-service] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-06-01T18:27:11.025-04:00  INFO 9776 --- [policy-service] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-01T18:27:11.088-04:00  INFO 9776 --- [policy-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-06-01T18:27:11.120-04:00  INFO 9776 --- [policy-service] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.mariadb.jdbc.Connection@f1f41b5
+2025-06-01T18:27:11.124-04:00  INFO 9776 --- [policy-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-06-01T18:27:11.187-04:00  WARN 9776 --- [policy-service] [           main] org.hibernate.orm.deprecation            : HHH90000025: MariaDBDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-01T18:27:12.328-04:00  INFO 9776 --- [policy-service] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-06-01T18:27:12.336-04:00  INFO 9776 --- [policy-service] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-01T18:27:12.597-04:00  WARN 9776 --- [policy-service] [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-06-01T18:27:13.294-04:00  INFO 9776 --- [policy-service] [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 3 endpoint(s) beneath base path '/actuator'
+2025-06-01T18:27:13.360-04:00  INFO 9776 --- [policy-service] [           main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@e39df43, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@3dcb28de, org.springframework.security.web.context.SecurityContextHolderFilter@648ebda1, org.springframework.security.web.header.HeaderWriterFilter@7effa21e, org.springframework.web.filter.CorsFilter@4a16325, org.springframework.security.web.authentication.logout.LogoutFilter@519f1a7d, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@65bd41d8, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@441eae0b, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@450555ac, org.springframework.security.web.access.ExceptionTranslationFilter@60c588cf, org.springframework.security.web.access.intercept.AuthorizationFilter@30eb427c]
+2025-06-01T18:27:15.207-04:00  INFO 9776 --- [policy-service] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 55322 (http) with context path ''
+2025-06-01T18:27:15.235-04:00  INFO 9776 --- [policy-service] [           main] c.b.policy.PolicyServiceIntegrationTest  : Started PolicyServiceIntegrationTest in 8.392 seconds (process running for 25.934)
+2025-06-01T18:27:15.539-04:00  INFO 9776 --- [policy-service] [o-auto-1-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-06-01T18:27:15.539-04:00  INFO 9776 --- [policy-service] [o-auto-1-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-06-01T18:27:15.541-04:00  INFO 9776 --- [policy-service] [o-auto-1-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2025-06-01T18:27:15.555-04:00  WARN 9776 --- [policy-service] [o-auto-1-exec-1] o.s.w.s.h.HandlerMappingIntrospector     : Cache miss for REQUEST dispatch to '/actuator/health' (previous null). Performing CorsConfiguration lookup. This is logged once only at WARN level, and every time at TRACE.
+2025-06-01T18:27:15.559-04:00  WARN 9776 --- [policy-service] [o-auto-1-exec-1] o.s.w.s.h.HandlerMappingIntrospector     : Cache miss for REQUEST dispatch to '/actuator/health' (previous null). Performing MatchableHandlerMapping lookup. This is logged once only at WARN level, and every time at TRACE.
+2025-06-01T18:27:15.845-04:00 DEBUG 9776 --- [policy-service] [           main] o.t.s.c.g.d.core.command.AbstrDockerCmd  : Cmd: 7b22288f3621c85ead8a9d0817cff6b614af2ff5004026f9166d8dec4f1d8565,false
+2025-06-01T18:27:15.856-04:00 DEBUG 9776 --- [policy-service] [           main] o.t.s.c.g.d.c.e.InspectContainerCmdExec  : GET: DefaultWebTarget{path=[/containers/7b22288f3621c85ead8a9d0817cff6b614af2ff5004026f9166d8dec4f1d8565/json], queryParams={}}
+2025-06-01T18:27:15.857-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ex-0000004B: preparing request execution
+2025-06-01T18:27:15.857-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.p.RequestAddCookies  : Cookie spec selected: strict
+2025-06-01T18:27:15.857-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.p.RequestAuthCache   : Auth cache not set in the context
+2025-06-01T18:27:15.857-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.ProtocolExec     : ex-0000004B: target auth state: UNCHALLENGED
+2025-06-01T18:27:15.857-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.ProtocolExec     : ex-0000004B: proxy auth state: UNCHALLENGED
+2025-06-01T18:27:15.857-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.ConnectExec      : ex-0000004B: acquiring connection with route {}->npipe://localhost:2375
+2025-06-01T18:27:15.858-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ex-0000004B: acquiring endpoint (3 MINUTES)
+2025-06-01T18:27:15.859-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ex-0000004B: endpoint lease request (3 MINUTES) [route: {}->npipe://localhost:2375][total available: 1; route allocated: 1 of 2147483647; total allocated: 1 of 2147483647]
+2025-06-01T18:27:15.859-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ex-0000004B: endpoint leased [route: {}->npipe://localhost:2375][total available: 0; route allocated: 1 of 2147483647; total allocated: 1 of 2147483647]
+2025-06-01T18:27:15.859-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ex-0000004B: acquired ep-0000004A
+2025-06-01T18:27:15.859-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ex-0000004B: acquired endpoint ep-0000004A
+2025-06-01T18:27:15.859-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.MainClientExec   : ex-0000004B: executing GET /v1.32/containers/7b22288f3621c85ead8a9d0817cff6b614af2ff5004026f9166d8dec4f1d8565/json HTTP/1.1
+2025-06-01T18:27:15.860-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ep-0000004A: start execution ex-0000004B
+2025-06-01T18:27:15.860-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ep-0000004A: executing exchange ex-0000004B over http-outgoing-4
+2025-06-01T18:27:15.860-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> GET /v1.32/containers/7b22288f3621c85ead8a9d0817cff6b614af2ff5004026f9166d8dec4f1d8565/json HTTP/1.1
+2025-06-01T18:27:15.860-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> accept: application/json
+2025-06-01T18:27:15.860-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> x-tc-sid: e9a59148-5f9f-4de0-b429-6b5ea869574b
+2025-06-01T18:27:15.860-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> User-Agent: tc-java/1.19.3
+2025-06-01T18:27:15.860-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> Accept-Encoding: gzip, x-gzip, deflate
+2025-06-01T18:27:15.860-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> Host: localhost:2375
+2025-06-01T18:27:15.860-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> Connection: keep-alive
+2025-06-01T18:27:15.865-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << HTTP/1.1 200 OK
+2025-06-01T18:27:15.865-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Api-Version: 1.49
+2025-06-01T18:27:15.866-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Content-Type: application/json
+2025-06-01T18:27:15.866-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Date: Sun, 01 Jun 2025 22:27:15 GMT
+2025-06-01T18:27:15.866-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Docker-Experimental: false
+2025-06-01T18:27:15.866-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Ostype: linux
+2025-06-01T18:27:15.866-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Server: Docker/28.1.1 (linux)
+2025-06-01T18:27:15.866-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Transfer-Encoding: chunked
+2025-06-01T18:27:15.866-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.MainClientExec   : ex-0000004B: connection can be kept alive for 3 MINUTES
+2025-06-01T18:27:15.869-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ep-0000004A: releasing valid endpoint
+2025-06-01T18:27:15.869-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ep-0000004A: releasing endpoint
+2025-06-01T18:27:15.869-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ep-0000004A: connection http-outgoing-4 can be kept alive for 3 MINUTES
+2025-06-01T18:27:15.869-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ep-0000004A: connection released [route: {}->npipe://localhost:2375][total available: 1; route allocated: 1 of 2147483647; total allocated: 1 of 2147483647]
+2025-06-01T18:27:15.871-04:00 DEBUG 9776 --- [policy-service] [           main] o.t.s.c.g.d.core.command.AbstrDockerCmd  : Cmd: 7b22288f3621c85ead8a9d0817cff6b614af2ff5004026f9166d8dec4f1d8565,<null>
+2025-06-01T18:27:15.872-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ex-0000004C: preparing request execution
+2025-06-01T18:27:15.872-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.p.RequestAddCookies  : Cookie spec selected: strict
+2025-06-01T18:27:15.872-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.p.RequestAuthCache   : Auth cache not set in the context
+2025-06-01T18:27:15.872-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.ProtocolExec     : ex-0000004C: target auth state: UNCHALLENGED
+2025-06-01T18:27:15.872-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.ProtocolExec     : ex-0000004C: proxy auth state: UNCHALLENGED
+2025-06-01T18:27:15.872-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.ConnectExec      : ex-0000004C: acquiring connection with route {}->npipe://localhost:2375
+2025-06-01T18:27:15.873-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ex-0000004C: acquiring endpoint (3 MINUTES)
+2025-06-01T18:27:15.873-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ex-0000004C: endpoint lease request (3 MINUTES) [route: {}->npipe://localhost:2375][total available: 1; route allocated: 1 of 2147483647; total allocated: 1 of 2147483647]
+2025-06-01T18:27:15.873-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ex-0000004C: endpoint leased [route: {}->npipe://localhost:2375][total available: 0; route allocated: 1 of 2147483647; total allocated: 1 of 2147483647]
+2025-06-01T18:27:15.873-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ex-0000004C: acquired ep-0000004B
+2025-06-01T18:27:15.873-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ex-0000004C: acquired endpoint ep-0000004B
+2025-06-01T18:27:15.873-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.MainClientExec   : ex-0000004C: executing POST /v1.32/containers/7b22288f3621c85ead8a9d0817cff6b614af2ff5004026f9166d8dec4f1d8565/kill HTTP/1.1
+2025-06-01T18:27:15.873-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ep-0000004B: start execution ex-0000004C
+2025-06-01T18:27:15.873-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ep-0000004B: executing exchange ex-0000004C over http-outgoing-4
+2025-06-01T18:27:15.873-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> POST /v1.32/containers/7b22288f3621c85ead8a9d0817cff6b614af2ff5004026f9166d8dec4f1d8565/kill HTTP/1.1
+2025-06-01T18:27:15.873-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> accept: application/json
+2025-06-01T18:27:15.874-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> content-type: application/json
+2025-06-01T18:27:15.874-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> x-tc-sid: e9a59148-5f9f-4de0-b429-6b5ea869574b
+2025-06-01T18:27:15.874-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> User-Agent: tc-java/1.19.3
+2025-06-01T18:27:15.874-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> Accept-Encoding: gzip, x-gzip, deflate
+2025-06-01T18:27:15.874-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> Host: localhost:2375
+2025-06-01T18:27:15.874-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> Connection: keep-alive
+2025-06-01T18:27:16.280-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << HTTP/1.1 204 No Content
+2025-06-01T18:27:16.281-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Api-Version: 1.49
+2025-06-01T18:27:16.281-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Date: Sun, 01 Jun 2025 22:27:16 GMT
+2025-06-01T18:27:16.281-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Docker-Experimental: false
+2025-06-01T18:27:16.281-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Ostype: linux
+2025-06-01T18:27:16.281-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Server: Docker/28.1.1 (linux)
+2025-06-01T18:27:16.281-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.MainClientExec   : ex-0000004C: connection can be kept alive for 3 MINUTES
+2025-06-01T18:27:16.281-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ep-0000004B: releasing valid endpoint
+2025-06-01T18:27:16.282-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ep-0000004B: releasing endpoint
+2025-06-01T18:27:16.282-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ep-0000004B: connection http-outgoing-4 can be kept alive for 3 MINUTES
+2025-06-01T18:27:16.282-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ep-0000004B: connection released [route: {}->npipe://localhost:2375][total available: 1; route allocated: 1 of 2147483647; total allocated: 1 of 2147483647]
+2025-06-01T18:27:16.282-04:00 DEBUG 9776 --- [policy-service] [           main] o.t.s.c.g.d.core.command.AbstrDockerCmd  : Cmd: 7b22288f3621c85ead8a9d0817cff6b614af2ff5004026f9166d8dec4f1d8565,false
+2025-06-01T18:27:16.282-04:00 DEBUG 9776 --- [policy-service] [           main] o.t.s.c.g.d.c.e.InspectContainerCmdExec  : GET: DefaultWebTarget{path=[/containers/7b22288f3621c85ead8a9d0817cff6b614af2ff5004026f9166d8dec4f1d8565/json], queryParams={}}
+2025-06-01T18:27:16.283-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ex-0000004D: preparing request execution
+2025-06-01T18:27:16.283-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.p.RequestAddCookies  : Cookie spec selected: strict
+2025-06-01T18:27:16.283-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.p.RequestAuthCache   : Auth cache not set in the context
+2025-06-01T18:27:16.283-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.ProtocolExec     : ex-0000004D: target auth state: UNCHALLENGED
+2025-06-01T18:27:16.283-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.ProtocolExec     : ex-0000004D: proxy auth state: UNCHALLENGED
+2025-06-01T18:27:16.283-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.ConnectExec      : ex-0000004D: acquiring connection with route {}->npipe://localhost:2375
+2025-06-01T18:27:16.283-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ex-0000004D: acquiring endpoint (3 MINUTES)
+2025-06-01T18:27:16.283-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ex-0000004D: endpoint lease request (3 MINUTES) [route: {}->npipe://localhost:2375][total available: 1; route allocated: 1 of 2147483647; total allocated: 1 of 2147483647]
+2025-06-01T18:27:16.283-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ex-0000004D: endpoint leased [route: {}->npipe://localhost:2375][total available: 0; route allocated: 1 of 2147483647; total allocated: 1 of 2147483647]
+2025-06-01T18:27:16.283-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ex-0000004D: acquired ep-0000004C
+2025-06-01T18:27:16.283-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ex-0000004D: acquired endpoint ep-0000004C
+2025-06-01T18:27:16.283-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.MainClientExec   : ex-0000004D: executing GET /v1.32/containers/7b22288f3621c85ead8a9d0817cff6b614af2ff5004026f9166d8dec4f1d8565/json HTTP/1.1
+2025-06-01T18:27:16.283-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ep-0000004C: start execution ex-0000004D
+2025-06-01T18:27:16.284-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ep-0000004C: executing exchange ex-0000004D over http-outgoing-4
+2025-06-01T18:27:16.284-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> GET /v1.32/containers/7b22288f3621c85ead8a9d0817cff6b614af2ff5004026f9166d8dec4f1d8565/json HTTP/1.1
+2025-06-01T18:27:16.284-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> accept: application/json
+2025-06-01T18:27:16.284-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> x-tc-sid: e9a59148-5f9f-4de0-b429-6b5ea869574b
+2025-06-01T18:27:16.284-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> User-Agent: tc-java/1.19.3
+2025-06-01T18:27:16.284-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> Accept-Encoding: gzip, x-gzip, deflate
+2025-06-01T18:27:16.284-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> Host: localhost:2375
+2025-06-01T18:27:16.284-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> Connection: keep-alive
+2025-06-01T18:27:16.294-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << HTTP/1.1 200 OK
+2025-06-01T18:27:16.295-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Api-Version: 1.49
+2025-06-01T18:27:16.295-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Content-Type: application/json
+2025-06-01T18:27:16.295-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Date: Sun, 01 Jun 2025 22:27:16 GMT
+2025-06-01T18:27:16.295-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Docker-Experimental: false
+2025-06-01T18:27:16.295-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Ostype: linux
+2025-06-01T18:27:16.295-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Server: Docker/28.1.1 (linux)
+2025-06-01T18:27:16.295-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Transfer-Encoding: chunked
+2025-06-01T18:27:16.295-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.MainClientExec   : ex-0000004D: connection can be kept alive for 3 MINUTES
+2025-06-01T18:27:16.299-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ep-0000004C: releasing valid endpoint
+2025-06-01T18:27:16.299-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ep-0000004C: releasing endpoint
+2025-06-01T18:27:16.299-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ep-0000004C: connection http-outgoing-4 can be kept alive for 3 MINUTES
+2025-06-01T18:27:16.300-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ep-0000004C: connection released [route: {}->npipe://localhost:2375][total available: 1; route allocated: 1 of 2147483647; total allocated: 1 of 2147483647]
+2025-06-01T18:27:16.302-04:00 DEBUG 9776 --- [policy-service] [           main] o.t.s.c.g.d.core.command.AbstrDockerCmd  : Cmd: 7b22288f3621c85ead8a9d0817cff6b614af2ff5004026f9166d8dec4f1d8565,true,true
+2025-06-01T18:27:16.303-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ex-0000004E: preparing request execution
+2025-06-01T18:27:16.303-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.p.RequestAddCookies  : Cookie spec selected: strict
+2025-06-01T18:27:16.304-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.p.RequestAuthCache   : Auth cache not set in the context
+2025-06-01T18:27:16.304-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.ProtocolExec     : ex-0000004E: target auth state: UNCHALLENGED
+2025-06-01T18:27:16.304-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.ProtocolExec     : ex-0000004E: proxy auth state: UNCHALLENGED
+2025-06-01T18:27:16.304-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.ConnectExec      : ex-0000004E: acquiring connection with route {}->npipe://localhost:2375
+2025-06-01T18:27:16.304-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ex-0000004E: acquiring endpoint (3 MINUTES)
+2025-06-01T18:27:16.304-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ex-0000004E: endpoint lease request (3 MINUTES) [route: {}->npipe://localhost:2375][total available: 1; route allocated: 1 of 2147483647; total allocated: 1 of 2147483647]
+2025-06-01T18:27:16.304-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ex-0000004E: endpoint leased [route: {}->npipe://localhost:2375][total available: 0; route allocated: 1 of 2147483647; total allocated: 1 of 2147483647]
+2025-06-01T18:27:16.304-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ex-0000004E: acquired ep-0000004D
+2025-06-01T18:27:16.304-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ex-0000004E: acquired endpoint ep-0000004D
+2025-06-01T18:27:16.304-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.MainClientExec   : ex-0000004E: executing DELETE /v1.32/containers/7b22288f3621c85ead8a9d0817cff6b614af2ff5004026f9166d8dec4f1d8565?v=true&force=true HTTP/1.1
+2025-06-01T18:27:16.304-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ep-0000004D: start execution ex-0000004E
+2025-06-01T18:27:16.304-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ep-0000004D: executing exchange ex-0000004E over http-outgoing-4
+2025-06-01T18:27:16.304-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> DELETE /v1.32/containers/7b22288f3621c85ead8a9d0817cff6b614af2ff5004026f9166d8dec4f1d8565?v=true&force=true HTTP/1.1
+2025-06-01T18:27:16.305-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> accept: application/json
+2025-06-01T18:27:16.305-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> x-tc-sid: e9a59148-5f9f-4de0-b429-6b5ea869574b
+2025-06-01T18:27:16.305-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> User-Agent: tc-java/1.19.3
+2025-06-01T18:27:16.305-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> Accept-Encoding: gzip, x-gzip, deflate
+2025-06-01T18:27:16.305-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> Host: localhost:2375
+2025-06-01T18:27:16.305-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> Connection: keep-alive
+2025-06-01T18:27:16.357-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << HTTP/1.1 204 No Content
+2025-06-01T18:27:16.357-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Api-Version: 1.49
+2025-06-01T18:27:16.357-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Date: Sun, 01 Jun 2025 22:27:16 GMT
+2025-06-01T18:27:16.358-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Docker-Experimental: false
+2025-06-01T18:27:16.358-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Ostype: linux
+2025-06-01T18:27:16.358-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Server: Docker/28.1.1 (linux)
+2025-06-01T18:27:16.358-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.MainClientExec   : ex-0000004E: connection can be kept alive for 3 MINUTES
+2025-06-01T18:27:16.358-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ep-0000004D: releasing valid endpoint
+2025-06-01T18:27:16.358-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ep-0000004D: releasing endpoint
+2025-06-01T18:27:16.358-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ep-0000004D: connection http-outgoing-4 can be kept alive for 3 MINUTES
+2025-06-01T18:27:16.358-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ep-0000004D: connection released [route: {}->npipe://localhost:2375][total available: 1; route allocated: 1 of 2147483647; total allocated: 1 of 2147483647]
+2025-06-01T18:27:16.359-04:00 DEBUG 9776 --- [policy-service] [           main] o.testcontainers.utility.ResourceReaper  : Removed container and associated volume(s): mariadb:11.0
+2025-06-01T18:27:16.359-04:00 DEBUG 9776 --- [policy-service] [           main] o.t.s.c.g.d.core.command.AbstrDockerCmd  : Cmd: 226aa76867fdfd15b95cfa3e205cde59282dcc098281697f01bf9298b3d81a65,false
+2025-06-01T18:27:16.359-04:00 DEBUG 9776 --- [policy-service] [           main] o.t.s.c.g.d.c.e.InspectContainerCmdExec  : GET: DefaultWebTarget{path=[/containers/226aa76867fdfd15b95cfa3e205cde59282dcc098281697f01bf9298b3d81a65/json], queryParams={}}
+2025-06-01T18:27:16.360-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ex-0000004F: preparing request execution
+2025-06-01T18:27:16.360-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.p.RequestAddCookies  : Cookie spec selected: strict
+2025-06-01T18:27:16.360-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.p.RequestAuthCache   : Auth cache not set in the context
+2025-06-01T18:27:16.360-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.ProtocolExec     : ex-0000004F: target auth state: UNCHALLENGED
+2025-06-01T18:27:16.360-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.ProtocolExec     : ex-0000004F: proxy auth state: UNCHALLENGED
+2025-06-01T18:27:16.360-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.ConnectExec      : ex-0000004F: acquiring connection with route {}->npipe://localhost:2375
+2025-06-01T18:27:16.360-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ex-0000004F: acquiring endpoint (3 MINUTES)
+2025-06-01T18:27:16.360-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ex-0000004F: endpoint lease request (3 MINUTES) [route: {}->npipe://localhost:2375][total available: 1; route allocated: 1 of 2147483647; total allocated: 1 of 2147483647]
+2025-06-01T18:27:16.361-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ex-0000004F: endpoint leased [route: {}->npipe://localhost:2375][total available: 0; route allocated: 1 of 2147483647; total allocated: 1 of 2147483647]
+2025-06-01T18:27:16.361-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ex-0000004F: acquired ep-0000004E
+2025-06-01T18:27:16.361-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ex-0000004F: acquired endpoint ep-0000004E
+2025-06-01T18:27:16.361-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.MainClientExec   : ex-0000004F: executing GET /v1.32/containers/226aa76867fdfd15b95cfa3e205cde59282dcc098281697f01bf9298b3d81a65/json HTTP/1.1
+2025-06-01T18:27:16.361-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ep-0000004E: start execution ex-0000004F
+2025-06-01T18:27:16.361-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ep-0000004E: executing exchange ex-0000004F over http-outgoing-4
+2025-06-01T18:27:16.361-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> GET /v1.32/containers/226aa76867fdfd15b95cfa3e205cde59282dcc098281697f01bf9298b3d81a65/json HTTP/1.1
+2025-06-01T18:27:16.361-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> accept: application/json
+2025-06-01T18:27:16.361-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> x-tc-sid: e9a59148-5f9f-4de0-b429-6b5ea869574b
+2025-06-01T18:27:16.361-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> User-Agent: tc-java/1.19.3
+2025-06-01T18:27:16.361-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> Accept-Encoding: gzip, x-gzip, deflate
+2025-06-01T18:27:16.362-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> Host: localhost:2375
+2025-06-01T18:27:16.362-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> Connection: keep-alive
+2025-06-01T18:27:16.367-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << HTTP/1.1 200 OK
+2025-06-01T18:27:16.368-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Api-Version: 1.49
+2025-06-01T18:27:16.368-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Content-Type: application/json
+2025-06-01T18:27:16.368-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Date: Sun, 01 Jun 2025 22:27:16 GMT
+2025-06-01T18:27:16.368-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Docker-Experimental: false
+2025-06-01T18:27:16.368-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Ostype: linux
+2025-06-01T18:27:16.368-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Server: Docker/28.1.1 (linux)
+2025-06-01T18:27:16.368-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Transfer-Encoding: chunked
+2025-06-01T18:27:16.368-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.MainClientExec   : ex-0000004F: connection can be kept alive for 3 MINUTES
+2025-06-01T18:27:16.378-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ep-0000004E: releasing valid endpoint
+2025-06-01T18:27:16.379-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ep-0000004E: releasing endpoint
+2025-06-01T18:27:16.379-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ep-0000004E: connection http-outgoing-4 can be kept alive for 3 MINUTES
+2025-06-01T18:27:16.379-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ep-0000004E: connection released [route: {}->npipe://localhost:2375][total available: 1; route allocated: 1 of 2147483647; total allocated: 1 of 2147483647]
+2025-06-01T18:27:16.379-04:00 DEBUG 9776 --- [policy-service] [           main] o.t.s.c.g.d.core.command.AbstrDockerCmd  : Cmd: 226aa76867fdfd15b95cfa3e205cde59282dcc098281697f01bf9298b3d81a65,<null>
+2025-06-01T18:27:16.380-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ex-00000050: preparing request execution
+2025-06-01T18:27:16.380-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.p.RequestAddCookies  : Cookie spec selected: strict
+2025-06-01T18:27:16.380-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.p.RequestAuthCache   : Auth cache not set in the context
+2025-06-01T18:27:16.380-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.ProtocolExec     : ex-00000050: target auth state: UNCHALLENGED
+2025-06-01T18:27:16.380-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.ProtocolExec     : ex-00000050: proxy auth state: UNCHALLENGED
+2025-06-01T18:27:16.380-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.ConnectExec      : ex-00000050: acquiring connection with route {}->npipe://localhost:2375
+2025-06-01T18:27:16.380-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ex-00000050: acquiring endpoint (3 MINUTES)
+2025-06-01T18:27:16.380-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ex-00000050: endpoint lease request (3 MINUTES) [route: {}->npipe://localhost:2375][total available: 1; route allocated: 1 of 2147483647; total allocated: 1 of 2147483647]
+2025-06-01T18:27:16.381-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ex-00000050: endpoint leased [route: {}->npipe://localhost:2375][total available: 0; route allocated: 1 of 2147483647; total allocated: 1 of 2147483647]
+2025-06-01T18:27:16.381-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ex-00000050: acquired ep-0000004F
+2025-06-01T18:27:16.381-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ex-00000050: acquired endpoint ep-0000004F
+2025-06-01T18:27:16.381-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.MainClientExec   : ex-00000050: executing POST /v1.32/containers/226aa76867fdfd15b95cfa3e205cde59282dcc098281697f01bf9298b3d81a65/kill HTTP/1.1
+2025-06-01T18:27:16.381-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ep-0000004F: start execution ex-00000050
+2025-06-01T18:27:16.381-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ep-0000004F: executing exchange ex-00000050 over http-outgoing-4
+2025-06-01T18:27:16.381-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> POST /v1.32/containers/226aa76867fdfd15b95cfa3e205cde59282dcc098281697f01bf9298b3d81a65/kill HTTP/1.1
+2025-06-01T18:27:16.381-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> accept: application/json
+2025-06-01T18:27:16.381-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> content-type: application/json
+2025-06-01T18:27:16.381-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> x-tc-sid: e9a59148-5f9f-4de0-b429-6b5ea869574b
+2025-06-01T18:27:16.381-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> User-Agent: tc-java/1.19.3
+2025-06-01T18:27:16.381-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> Accept-Encoding: gzip, x-gzip, deflate
+2025-06-01T18:27:16.382-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> Host: localhost:2375
+2025-06-01T18:27:16.382-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> Connection: keep-alive
+2025-06-01T18:27:17.132-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << HTTP/1.1 204 No Content
+2025-06-01T18:27:17.132-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Api-Version: 1.49
+2025-06-01T18:27:17.132-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Date: Sun, 01 Jun 2025 22:27:17 GMT
+2025-06-01T18:27:17.132-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Docker-Experimental: false
+2025-06-01T18:27:17.132-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Ostype: linux
+2025-06-01T18:27:17.132-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Server: Docker/28.1.1 (linux)
+2025-06-01T18:27:17.132-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.MainClientExec   : ex-00000050: connection can be kept alive for 3 MINUTES
+2025-06-01T18:27:17.132-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ep-0000004F: releasing valid endpoint
+2025-06-01T18:27:17.132-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ep-0000004F: releasing endpoint
+2025-06-01T18:27:17.132-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ep-0000004F: connection http-outgoing-4 can be kept alive for 3 MINUTES
+2025-06-01T18:27:17.132-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ep-0000004F: connection released [route: {}->npipe://localhost:2375][total available: 1; route allocated: 1 of 2147483647; total allocated: 1 of 2147483647]
+2025-06-01T18:27:17.132-04:00 DEBUG 9776 --- [policy-service] [           main] o.t.s.c.g.d.core.command.AbstrDockerCmd  : Cmd: 226aa76867fdfd15b95cfa3e205cde59282dcc098281697f01bf9298b3d81a65,false
+2025-06-01T18:27:17.133-04:00 DEBUG 9776 --- [policy-service] [           main] o.t.s.c.g.d.c.e.InspectContainerCmdExec  : GET: DefaultWebTarget{path=[/containers/226aa76867fdfd15b95cfa3e205cde59282dcc098281697f01bf9298b3d81a65/json], queryParams={}}
+2025-06-01T18:27:17.133-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ex-00000051: preparing request execution
+2025-06-01T18:27:17.133-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.p.RequestAddCookies  : Cookie spec selected: strict
+2025-06-01T18:27:17.133-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.p.RequestAuthCache   : Auth cache not set in the context
+2025-06-01T18:27:17.133-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.ProtocolExec     : ex-00000051: target auth state: UNCHALLENGED
+2025-06-01T18:27:17.133-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.ProtocolExec     : ex-00000051: proxy auth state: UNCHALLENGED
+2025-06-01T18:27:17.133-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.ConnectExec      : ex-00000051: acquiring connection with route {}->npipe://localhost:2375
+2025-06-01T18:27:17.133-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ex-00000051: acquiring endpoint (3 MINUTES)
+2025-06-01T18:27:17.133-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ex-00000051: endpoint lease request (3 MINUTES) [route: {}->npipe://localhost:2375][total available: 1; route allocated: 1 of 2147483647; total allocated: 1 of 2147483647]
+2025-06-01T18:27:17.133-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ex-00000051: endpoint leased [route: {}->npipe://localhost:2375][total available: 0; route allocated: 1 of 2147483647; total allocated: 1 of 2147483647]
+2025-06-01T18:27:17.133-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ex-00000051: acquired ep-00000050
+2025-06-01T18:27:17.133-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ex-00000051: acquired endpoint ep-00000050
+2025-06-01T18:27:17.133-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.MainClientExec   : ex-00000051: executing GET /v1.32/containers/226aa76867fdfd15b95cfa3e205cde59282dcc098281697f01bf9298b3d81a65/json HTTP/1.1
+2025-06-01T18:27:17.133-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ep-00000050: start execution ex-00000051
+2025-06-01T18:27:17.134-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ep-00000050: executing exchange ex-00000051 over http-outgoing-4
+2025-06-01T18:27:17.134-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> GET /v1.32/containers/226aa76867fdfd15b95cfa3e205cde59282dcc098281697f01bf9298b3d81a65/json HTTP/1.1
+2025-06-01T18:27:17.134-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> accept: application/json
+2025-06-01T18:27:17.134-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> x-tc-sid: e9a59148-5f9f-4de0-b429-6b5ea869574b
+2025-06-01T18:27:17.134-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> User-Agent: tc-java/1.19.3
+2025-06-01T18:27:17.134-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> Accept-Encoding: gzip, x-gzip, deflate
+2025-06-01T18:27:17.134-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> Host: localhost:2375
+2025-06-01T18:27:17.134-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> Connection: keep-alive
+2025-06-01T18:27:17.137-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << HTTP/1.1 200 OK
+2025-06-01T18:27:17.138-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Api-Version: 1.49
+2025-06-01T18:27:17.138-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Content-Type: application/json
+2025-06-01T18:27:17.139-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Date: Sun, 01 Jun 2025 22:27:17 GMT
+2025-06-01T18:27:17.139-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Docker-Experimental: false
+2025-06-01T18:27:17.139-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Ostype: linux
+2025-06-01T18:27:17.139-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Server: Docker/28.1.1 (linux)
+2025-06-01T18:27:17.139-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Transfer-Encoding: chunked
+2025-06-01T18:27:17.139-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.MainClientExec   : ex-00000051: connection can be kept alive for 3 MINUTES
+2025-06-01T18:27:17.141-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ep-00000050: releasing valid endpoint
+2025-06-01T18:27:17.141-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ep-00000050: releasing endpoint
+2025-06-01T18:27:17.141-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ep-00000050: connection http-outgoing-4 can be kept alive for 3 MINUTES
+2025-06-01T18:27:17.141-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ep-00000050: connection released [route: {}->npipe://localhost:2375][total available: 1; route allocated: 1 of 2147483647; total allocated: 1 of 2147483647]
+2025-06-01T18:27:17.141-04:00 DEBUG 9776 --- [policy-service] [           main] o.t.s.c.g.d.core.command.AbstrDockerCmd  : Cmd: 226aa76867fdfd15b95cfa3e205cde59282dcc098281697f01bf9298b3d81a65,true,true
+2025-06-01T18:27:17.142-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ex-00000052: preparing request execution
+2025-06-01T18:27:17.142-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.p.RequestAddCookies  : Cookie spec selected: strict
+2025-06-01T18:27:17.142-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.p.RequestAuthCache   : Auth cache not set in the context
+2025-06-01T18:27:17.142-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.ProtocolExec     : ex-00000052: target auth state: UNCHALLENGED
+2025-06-01T18:27:17.142-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.ProtocolExec     : ex-00000052: proxy auth state: UNCHALLENGED
+2025-06-01T18:27:17.142-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.ConnectExec      : ex-00000052: acquiring connection with route {}->npipe://localhost:2375
+2025-06-01T18:27:17.142-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ex-00000052: acquiring endpoint (3 MINUTES)
+2025-06-01T18:27:17.142-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ex-00000052: endpoint lease request (3 MINUTES) [route: {}->npipe://localhost:2375][total available: 1; route allocated: 1 of 2147483647; total allocated: 1 of 2147483647]
+2025-06-01T18:27:17.142-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ex-00000052: endpoint leased [route: {}->npipe://localhost:2375][total available: 0; route allocated: 1 of 2147483647; total allocated: 1 of 2147483647]
+2025-06-01T18:27:17.142-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ex-00000052: acquired ep-00000051
+2025-06-01T18:27:17.142-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ex-00000052: acquired endpoint ep-00000051
+2025-06-01T18:27:17.143-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.MainClientExec   : ex-00000052: executing DELETE /v1.32/containers/226aa76867fdfd15b95cfa3e205cde59282dcc098281697f01bf9298b3d81a65?v=true&force=true HTTP/1.1
+2025-06-01T18:27:17.143-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ep-00000051: start execution ex-00000052
+2025-06-01T18:27:17.143-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ep-00000051: executing exchange ex-00000052 over http-outgoing-4
+2025-06-01T18:27:17.143-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> DELETE /v1.32/containers/226aa76867fdfd15b95cfa3e205cde59282dcc098281697f01bf9298b3d81a65?v=true&force=true HTTP/1.1
+2025-06-01T18:27:17.143-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> accept: application/json
+2025-06-01T18:27:17.143-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> x-tc-sid: e9a59148-5f9f-4de0-b429-6b5ea869574b
+2025-06-01T18:27:17.143-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> User-Agent: tc-java/1.19.3
+2025-06-01T18:27:17.143-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> Accept-Encoding: gzip, x-gzip, deflate
+2025-06-01T18:27:17.143-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> Host: localhost:2375
+2025-06-01T18:27:17.143-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 >> Connection: keep-alive
+2025-06-01T18:27:17.161-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << HTTP/1.1 204 No Content
+2025-06-01T18:27:17.161-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Api-Version: 1.49
+2025-06-01T18:27:17.161-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Date: Sun, 01 Jun 2025 22:27:17 GMT
+2025-06-01T18:27:17.161-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Docker-Experimental: false
+2025-06-01T18:27:17.161-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Ostype: linux
+2025-06-01T18:27:17.161-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.hc.client5.http.headers    : http-outgoing-4 << Server: Docker/28.1.1 (linux)
+2025-06-01T18:27:17.161-04:00 DEBUG 9776 --- [policy-service] [           main] c.g.d.z.s.o.a.h.c.h.i.c.MainClientExec   : ex-00000052: connection can be kept alive for 3 MINUTES
+2025-06-01T18:27:17.161-04:00 DEBUG 9776 --- [policy-service] [           main] g.d.z.s.o.a.h.c.h.i.c.InternalHttpClient : ep-00000051: releasing valid endpoint
+2025-06-01T18:27:17.161-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ep-00000051: releasing endpoint
+2025-06-01T18:27:17.162-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ep-00000051: connection http-outgoing-4 can be kept alive for 3 MINUTES
+2025-06-01T18:27:17.162-04:00 DEBUG 9776 --- [policy-service] [           main] h.i.i.PoolingHttpClientConnectionManager : ep-00000051: connection released [route: {}->npipe://localhost:2375][total available: 1; route allocated: 1 of 2147483647; total allocated: 1 of 2147483647]
+2025-06-01T18:27:17.162-04:00 DEBUG 9776 --- [policy-service] [           main] o.testcontainers.utility.ResourceReaper  : Removed container and associated volume(s): confluentinc/cp-kafka:7.4.0
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 23.86 s -- in com.billing.policy.PolicyServiceIntegrationTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[ERROR] Errors: 
+[ERROR]   BillingSystemE2ETest » ExceptionInInitializer
+[INFO] 
+[ERROR] Tests run: 8, Failures: 0, Errors: 1, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  32.527 s
+[INFO] Finished at: 2025-06-01T18:27:17-04:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.2.5:test (default-test) on project policy-service: 
+[ERROR] 
+[ERROR] Please refer to C:\Users\claude\src\ins-assessment\policy-service\target\surefire-reports for the individual test results.
+[ERROR] Please refer to dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
