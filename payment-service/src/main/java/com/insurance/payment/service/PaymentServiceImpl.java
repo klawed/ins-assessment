@@ -284,7 +284,7 @@ public class PaymentServiceImpl implements PaymentService {
             .toList();
 
         long totalCount = transactions.values().stream()
-                         t.get("attemptedAt") instanceof LocalDateTime &&
+                         .get("attemptedAt") instanceof LocalDateTime &&
                          ((LocalDateTime) t.get("attemptedAt")).isBefore(LocalDateTime.now().minusDays(minDaysOverdue)))
             .map(t -> t.get("policyId"))
             .distinct()
