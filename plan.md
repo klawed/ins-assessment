@@ -179,6 +179,276 @@ Based on test compilation errors and business requirements, the following models
 - **Error Scenarios**: Failure handling and recovery testing
 - **Cross-Service Workflows**: Full business process validation
 
+### Unit Testing Implementation Guide
+
+Based on the established patterns in policy-service, here's how to implement unit tests for billing-service and payment-service:
+
+#### Billing Service Unit Tests
+
+**1. Controller Layer Testing (`BillingControllerTest.java`)**
+```java
+@WebMvcTest(BillingController.class)
+@Import(WebSecurityTestConfig.class)
+class BillingControllerTest {
+    
+    @Autowired
+    private MockMvc mockMvc;
+    
+    @MockBean
+    private BillingService billingService;
+    
+    @Test
+    void shouldCalculatePremiumForPolicy() throws Exception {
+        BillingDto mockBilling = BillingDto.builder()
+            .policyId("POLICY-123")
+            .baseAmount(new BigDecimal("156.00"))
+            .lateFees(new BigDecimal("15.00"))
+            .totalDue(new BigDecimal("171.00"))
+            .dueDate(LocalDate.now().plusDays(30))
+            .build();
+            
+        when(billingService.calculatePremium("POLICY-123"))
+            .thenReturn(mockBilling);
+            
+        mockMvc.perform(get("/api/billing/POLICY-123/calculate"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.policyId").value("POLICY-123"))
+            .andExpect(jsonPath("$.totalDue").value(171.00));
+    }
+    
+    @Test
+    void shouldGetDelinquentPolicies() throws Exception {
+        List<DelinquentPolicyDto> delinquentPolicies = Arrays.asList(
+            DelinquentPolicyDto.builder()
+                .policyId("POLICY-123")
+                .customerId("CUST-001")
+                .daysOverdue(15)
+                .amountOverdue(new BigDecimal("171.00"))
+                .build()
+        );
+        
+        when(billingService.getDelinquentPolicies())
+            .thenReturn(delinquentPolicies);
+            
+        mockMvc.perform(get("/api/billing/delinquent"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$[0].policyId").value("POLICY-123"))
+            .andExpect(jsonPath("$[0].daysOverdue").value(15));
+    }
+}
+```
+
+**2. Service Layer Testing (`BillingServiceImplTest.java`)**
+```java
+@ExtendWith(MockitoExtension.class)
+class BillingServiceImplTest {
+    
+    @Mock
+    private BillingRepository billingRepository;
+    
+    @Mock
+    private PolicyService policyService;
+    
+    @InjectMocks
+    private BillingServiceImpl billingService;
+    
+    @Test
+    void shouldCalculatePremiumWithLateFees() {
+        // Given
+        PolicyDto policy = PolicyDto.builder()
+            .policyId("POLICY-123")
+            .status(PolicyDto.PolicyStatus.OVERDUE)
+            .premiumAmount(new BigDecimal("156.00"))
+            .build();
+            
+        when(policyService.getPolicyById("POLICY-123"))
+            .thenReturn(Optional.of(policy));
+            
+        // When
+        BillingDto result = billingService.calculatePremium("POLICY-123");
+        
+        // Then
+        assertThat(result.getPolicyId()).isEqualTo("POLICY-123");
+        assertThat(result.getLateFees()).isEqualTo(new BigDecimal("15.00"));
+        assertThat(result.getTotalDue()).isEqualTo(new BigDecimal("171.00"));
+    }
+    
+    @Test
+    void shouldIdentifyDelinquentPolicies() {
+        // Given
+        List<BillingRecord> overdueRecords = Arrays.asList(
+            createOverdueBillingRecord("POLICY-123", 15)
+        );
+        
+        when(billingRepository.findOverduePolicies())
+            .thenReturn(overdueRecords);
+            
+        // When
+        List<DelinquentPolicyDto> result = billingService.getDelinquentPolicies();
+        
+        // Then
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getPolicyId()).isEqualTo("POLICY-123");
+        assertThat(result.get(0).getDaysOverdue()).isEqualTo(15);
+    }
+}
+```
+
+**3. Test Configuration (`WebSecurityTestConfig.java`)**
+```java
+// Copy the same WebSecurityTestConfig.java from policy-service to:
+// billing-service/src/test/java/com/billing/billing/config/WebSecurityTestConfig.java
+package com.billing.billing.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.web.SecurityFilterChain;
+
+@Configuration
+@EnableWebSecurity
+public class WebSecurityTestConfig {
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+            .csrf(csrf -> csrf.disable());
+        return http.build();
+    }
+}
+```
+
+**4. Test Properties (`application-test.properties`)**
+```properties
+# Copy the same test configuration pattern from policy-service:
+# billing-service/src/test/resources/application-test.properties
+spring.security.enabled=false
+spring.main.allow-bean-definition-overriding=true
+spring.jpa.hibernate.ddl-auto=create-drop
+spring.datasource.driver-class-name=org.h2.Driver
+spring.datasource.url=jdbc:h2:mem:billingdb;DB_CLOSE_DELAY=-1
+spring.datasource.username=sa
+spring.datasource.password=
+spring.flyway.enabled=false
+logging.level.com.billing=DEBUG
+```
+
+#### Payment Service Unit Tests
+
+**1. Controller Layer Testing (`PaymentControllerTest.java`)**
+```java
+@WebMvcTest(PaymentController.class)
+@Import(WebSecurityTestConfig.class)
+class PaymentControllerTest {
+    
+    @Autowired
+    private MockMvc mockMvc;
+    
+    @MockBean
+    private PaymentService paymentService;
+    
+    @Test
+    void shouldProcessPaymentSuccessfully() throws Exception {
+        PaymentTransactionDto transaction = PaymentTransactionDto.builder()
+            .transactionId("TXN-123")
+            .policyId("POLICY-123")
+            .amount(new BigDecimal("156.00"))
+            .status(PaymentStatus.COMPLETED)
+            .paymentMethod("CREDIT_CARD")
+            .build();
+            
+        when(paymentService.processPayment(any(PaymentTransactionDto.class)))
+            .thenReturn(transaction);
+            
+        mockMvc.perform(post("/api/payments/process")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(createPaymentRequest())))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.transactionId").value("TXN-123"))
+            .andExpect(jsonPath("$.status").value("COMPLETED"));
+    }
+    
+    @Test
+    void shouldRetryFailedPayment() throws Exception {
+        when(paymentService.retryPayment("TXN-FAILED"))
+            .thenReturn(createRetryResult());
+            
+        mockMvc.perform(post("/api/payments/TXN-FAILED/retry"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.retryAttempt").value(2))
+            .andExpected(jsonPath("$.nextRetryAt").exists());
+    }
+}
+```
+
+**2. Service Layer Testing (`PaymentServiceImplTest.java`)**
+```java
+@ExtendWith(MockitoExtension.class)
+class PaymentServiceImplTest {
+    
+    @Mock
+    private PaymentGateway paymentGateway;
+    
+    @Mock
+    private PaymentRepository paymentRepository;
+    
+    @Mock
+    private NotificationService notificationService;
+    
+    @InjectMocks
+    private PaymentServiceImpl paymentService;
+    
+    @Test
+    void shouldProcessPaymentWithRetryLogic() {
+        // Given
+        PaymentTransactionDto transaction = createPaymentTransaction();
+        when(paymentGateway.processPayment(any())).thenReturn(PaymentResult.success());
+        
+        // When
+        PaymentTransactionDto result = paymentService.processPayment(transaction);
+        
+        // Then
+        assertThat(result.getStatus()).isEqualTo(PaymentStatus.COMPLETED);
+        verify(notificationService).sendPaymentConfirmation(any());
+    }
+    
+    @Test
+    void shouldCalculateExponentialBackoffForRetries() {
+        // Given
+        PaymentTransactionDto failedTransaction = createFailedTransaction();
+        
+        // When
+        LocalDateTime nextRetry = paymentService.calculateNextRetryTime(2);
+        
+        // Then
+        assertThat(nextRetry).isAfter(LocalDateTime.now().plusMinutes(4));
+        assertThat(nextRetry).isBefore(LocalDateTime.now().plusMinutes(6));
+    }
+}
+```
+
+#### Key Testing Patterns to Follow
+
+1. **Test Structure**: Use the same structure as `PolicyControllerTest.java`:
+   - `@WebMvcTest` for controller tests
+   - `@Import(WebSecurityTestConfig.class)` for security config
+   - `@MockBean` for service dependencies
+   - Proper test data setup using builder patterns
+
+2. **Security Configuration**: Create identical `WebSecurityTestConfig.java` in each service's test package
+
+3. **Test Properties**: Use consistent `application-test.properties` with H2 database and disabled security
+
+4. **Mocking Strategy**: Mock service dependencies and focus on testing the specific layer
+   - Controllers: Mock services, test HTTP handling
+   - Services: Mock repositories and external services, test business logic
+
+5. **Assertion Patterns**: Use AssertJ and JSONPath for clear, readable assertions
+
+6. **Test Data**: Create builder-based factory methods for consistent test data creation
+
 ### Performance Testing
 - **Service Level Objectives (SLOs)**:
   - API Response Time: < 200ms (95th percentile)
