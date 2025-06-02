@@ -11,7 +11,7 @@ import java.util.Optional;
  * retry logic, and transaction state management.
  */
 public interface PaymentService {
-    
+
     /**
      * Process a payment transaction
      * @param paymentRequest Map containing payment details
@@ -81,4 +81,24 @@ public interface PaymentService {
      * @return Map containing payment statistics
      */
     Map<String, Object> getPaymentStatistics();
+
+    /**
+     * Get the status of a specific payment transaction
+     * @param transactionId The transaction identifier
+     * @return Map containing transaction status details
+     */
+    Map<String, Object> getPaymentStatus(String transactionId);
+
+    /**
+     * Delete a specific payment transaction
+     * @param transactionId The transaction identifier
+     */
+    void deletePayment(String transactionId);
+
+    /**
+     * Validate a payment request
+     * @param paymentRequest Map containing payment details
+     * @return true if the request is valid, false otherwise
+     */
+    boolean validatePaymentRequest(Map<String, Object> paymentRequest);
 }

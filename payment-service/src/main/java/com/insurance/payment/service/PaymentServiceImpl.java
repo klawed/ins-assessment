@@ -231,6 +231,40 @@ public class PaymentServiceImpl implements PaymentService {
         return stats;
     }
     
+    @Override
+    public Map<String, Object> getPaymentStatus(String transactionId) {
+        Map<String, Object> transaction = transactions.get(transactionId);
+        if (transaction == null) {
+            throw new IllegalArgumentException("Transaction not found: " + transactionId);
+        }
+        return Map.of(
+            "transactionId", transactionId,
+            "status", transaction.get("status"),
+            "amount", transaction.get("amount"),
+            "policyId", transaction.get("policyId"),
+            "billId", transaction.get("billId"),
+            "attemptedAt", transaction.get("attemptedAt")
+        );
+    }
+    
+    @Override
+    public void deletePayment(String transactionId) {
+        log.info("Deleting payment transaction: {}", transactionId);
+        if (transactions.remove(transactionId) == null) {
+            throw new IllegalArgumentException("Transaction not found: " + transactionId);
+        }
+    }
+    
+    @Override
+    public boolean validatePaymentRequest(Map<String, Object> paymentRequest) {
+        log.info("Validating payment request: {}", paymentRequest);
+        if (!paymentRequest.containsKey("policyId") || !paymentRequest.containsKey("amount") || !paymentRequest.containsKey("paymentMethod")) {
+            return false;
+        }
+        BigDecimal amount = (BigDecimal) paymentRequest.get("amount");
+        return amount.compareTo(BigDecimal.ZERO) > 0;
+    }
+    
     private String generateTransactionId() {
         return "TXN-" + System.currentTimeMillis() + "-" + random.nextInt(1000);
     }

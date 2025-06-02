@@ -2,6 +2,7 @@ package com.insurance.payment.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.insurance.payment.service.PaymentService;
+import com.insurance.shared.dto.PaymentRequestDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -9,6 +10,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -31,12 +34,19 @@ class PaymentControllerTest {
     @Test
     void shouldProcessPaymentSuccessfully() throws Exception {
         // Given
-        Map<String, Object> request = createPaymentRequest();
+        PaymentRequestDto request = PaymentRequestDto.builder()
+                .billId("BILL-1")
+                .policyId("POLICY-123")
+                .amount(new BigDecimal("171.00"))
+                .paymentMethod("CREDIT_CARD")
+                .build();
+
         when(paymentService.processPayment(any())).thenReturn(Map.of(
             "transactionId", "TXN-12345",
             "status", "COMPLETED",
             "amount", 171.00,
-            "policyId", "POLICY-123"
+            "policyId", "POLICY-123",
+            "billId", "BILL-1"
         ));
 
         // When & Then
@@ -48,7 +58,8 @@ class PaymentControllerTest {
                 .andExpect(jsonPath("$.transactionId").value("TXN-12345"))
                 .andExpect(jsonPath("$.status").value("COMPLETED"))
                 .andExpect(jsonPath("$.amount").value(171.00))
-                .andExpect(jsonPath("$.policyId").value("POLICY-123"));
+                .andExpect(jsonPath("$.policyId").value("POLICY-123"))
+                .andExpect(jsonPath("$.billId").value("BILL-1"));
     }
 
     @Test
@@ -114,11 +125,23 @@ class PaymentControllerTest {
     @Test
     void shouldGetPaymentStatus() throws Exception {
         // Given
-        when(paymentService.getPaymentStatus("TXN-2024-001235")).thenReturn(null);
+        when(paymentService.getPaymentStatus("TXN-2024-001235")).thenReturn(Map.of(
+            "transactionId", "TXN-2024-001235",
+            "status", "COMPLETED",
+            "amount", 171.00,
+            "policyId", "POLICY-123",
+            "billId", "BILL-1"
+        ));
 
         // When & Then
         mockMvc.perform(get("/api/payments/TXN-2024-001235/status"))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.transactionId").value("TXN-2024-001235"))
+                .andExpect(jsonPath("$.status").value("COMPLETED"))
+                .andExpect(jsonPath("$.amount").value(171.00))
+                .andExpect(jsonPath("$.policyId").value("POLICY-123"))
+                .andExpect(jsonPath("$.billId").value("BILL-1"));
     }
 
     @Test
@@ -128,16 +151,5 @@ class PaymentControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.service").value("payment-service"))
                 .andExpect(jsonPath("$.status").value("UP"));
-    }
-
-    private Map<String, Object> createPaymentRequest() {
-        return Map.of(
-            "policyId", "POLICY-123",
-            "amount", 171.00,
-            "paymentMethod", Map.of(
-                "type", "credit_card",
-                "cardNumber", "4532123456789012"
-            )
-        );
     }
 }

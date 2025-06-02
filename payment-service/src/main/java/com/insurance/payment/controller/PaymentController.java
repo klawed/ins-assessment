@@ -3,7 +3,7 @@ package com.insurance.payment.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.http.HttpStatus;
 import com.insurance.payment.service.PaymentService;
 
 import java.math.BigDecimal;
@@ -65,16 +65,13 @@ public class PaymentController {
         }
     }
 
-    @GetMapping("/{paymentId}/status")
-    public ResponseEntity<Map<String, Object>> getPaymentStatus(@PathVariable String paymentId) {
-        log.info("Getting payment status for ID: {}", paymentId);
-        
-        Optional<Map<String, Object>> payment = paymentService.getPaymentTransaction(paymentId);
-        
-        if (payment.isPresent()) {
-            return ResponseEntity.ok(payment.get());
-        } else {
-            return ResponseEntity.notFound().build();
+    @GetMapping("/payments/{transactionId}/status")
+    public ResponseEntity<Map<String, Object>> getPaymentStatus(@PathVariable String transactionId) {
+        try {
+            Map<String, Object> status = paymentService.getPaymentStatus(transactionId);
+            return ResponseEntity.ok(status);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
         }
     }
 
