@@ -1,6 +1,7 @@
 package com.insurance.payment.service;
 
 import com.insurance.payment.repository.PaymentRepository;
+import com.insurance.payment.entity.PaymentEntity;
 import com.insurance.shared.dto.PaymentDto;
 import com.insurance.shared.dto.PaymentRequestDto;
 import com.insurance.shared.enums.PaymentStatus;
@@ -61,9 +62,9 @@ class PaymentServiceTest {
     void shouldGetPaymentsByPolicy() {
         String policyId = "POLICY-123";
 
-        List<PaymentDto> mockPayments = List.of(
-                PaymentDto.builder().id("PAYMENT-1").policyId(policyId).amount(new BigDecimal("200.00")).build(),
-                PaymentDto.builder().id("PAYMENT-2").policyId(policyId).amount(new BigDecimal("150.00")).build()
+        List<PaymentEntity> mockPayments = List.of(
+            new PaymentEntity("PAYMENT-1", policyId, new BigDecimal("200.00"), PaymentStatus.SUCCESS, LocalDateTime.now(), "CREDIT_CARD"),
+            new PaymentEntity("PAYMENT-2", policyId, new BigDecimal("150.00"), PaymentStatus.SUCCESS, LocalDateTime.now(), "CREDIT_CARD")
         );
 
         when(paymentRepository.findByPolicyId(policyId)).thenReturn(mockPayments);

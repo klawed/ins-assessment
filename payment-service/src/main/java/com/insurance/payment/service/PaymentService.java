@@ -101,4 +101,13 @@ public interface PaymentService {
      * @return true if the request is valid, false otherwise
      */
     boolean validatePaymentRequest(Map<String, Object> paymentRequest);
+
+    /**
+     * Get a list of delinquent policies based on overdue payments
+     * @param limit The maximum number of results to return
+     * @param offset The starting point for pagination
+     * @param minDaysOverdue The minimum number of days a payment is overdue
+     * @return Map containing total count and a list of delinquent policies
+     */
+    Map<String, Object> getDelinquentPolicies(int limit, int offset, int minDaysOverdue);
 }

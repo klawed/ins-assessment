@@ -150,19 +150,12 @@ public class PaymentController {
 
     @GetMapping("/delinquent")
     public ResponseEntity<Map<String, Object>> getDelinquentPolicies(
-            @RequestParam(defaultValue = "50") int limit,
-            @RequestParam(defaultValue = "0") int offset,
-            @RequestParam(defaultValue = "1") int minDaysOverdue,
-            @RequestParam(required = false) String customerId) {
-        
+            @RequestParam int limit,
+            @RequestParam int offset,
+            @RequestParam int minDaysOverdue) {
         log.info("Getting delinquent policies with minDaysOverdue: {}, customerId: {}", minDaysOverdue, customerId);
         
-        // This endpoint delegates to billing service in a real implementation
-        // For now, return mock data structure
-        return ResponseEntity.ok(Map.of(
-            "totalCount", 0,
-            "delinquentPolicies", List.of(),
-            "message", "This endpoint should delegate to billing service"
-        ));
+        Map<String, Object> result = paymentService.getDelinquentPolicies(limit, offset, minDaysOverdue);
+        return ResponseEntity.ok(result);
     }
 }

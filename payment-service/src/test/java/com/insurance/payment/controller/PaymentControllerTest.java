@@ -119,7 +119,9 @@ class PaymentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.totalCount").value(2))
-                .andExpect(jsonPath("$.delinquentPolicies").isArray());
+                .andExpect(jsonPath("$.delinquentPolicies").isArray())
+                .andExpect(jsonPath("$.delinquentPolicies[0]").value("POLICY-123"))
+                .andExpect(jsonPath("$.delinquentPolicies[1]").value("POLICY-456"));
     }
 
     @Test

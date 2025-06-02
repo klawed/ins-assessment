@@ -265,6 +265,37 @@ public class PaymentServiceImpl implements PaymentService {
         return amount.compareTo(BigDecimal.ZERO) > 0;
     }
     
+    @Override
+    public Map<String, Object> getDelinquentPolicies(int limit, int offset, int minDaysOverdue) {
+        log.info("Fetching delinquent policies with minDaysOverdue={}, limit={}, offset={}", minDaysOverdue, limit, offset);
+
+        // Filter transactions to find delinquent policies
+        List<String> delinquentPolicies = transactions.values().stream()
+            .filter(t -> "FAILED".equals(t.get("status")) && 
+                         t.containsKey("attemptedAt") &&
+                         t.get("attemptedAt") instanceof LocalDateTime &&
+                         ((LocalDateTime) t.get("attemptedAt")).isBefore(LocalDateTime.now().minusDays(minDaysOverdue)))
+            .map(t -> (String) t.get("policyId"))
+            .distinct()
+            .skip(offset)
+            .limit(limit)
+            .toList();
+
+        long totalCount = transactions.values().stream()
+            .filter(t -> "FAILED".equals(t.get("status")) && 
+                         t.containsKey("attemptedAt") &&
+                         t.get("attemptedAt") instanceof LocalDateTime &&
+                         ((LocalDateTime) t.get("attemptedAt")).isBefore(LocalDateTime.now().minusDays(minDaysOverdue)))
+            .map(t -> t.get("policyId"))
+            .distinct()
+            .count();
+
+        return Map.of(
+            "totalCount", totalCount,
+            "delinquentPolicies", delinquentPolicies
+        );
+    }
+    
     private String generateTransactionId() {
         return "TXN-" + System.currentTimeMillis() + "-" + random.nextInt(1000);
     }
