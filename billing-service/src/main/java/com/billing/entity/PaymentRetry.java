@@ -9,24 +9,34 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "grace_period_configs")
+@Table(name = "payment_retries")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GracePeriodConfig {
+public class PaymentRetry {
     @Id
     private String id;
     
-    @Column(name = "policy_type")
-    private String policyType;
+    @Column(nullable = false)
+    private String paymentId;
     
-    @Column(name = "payment_frequency")
+    @Column(nullable = false)
+    private String billingId;
+    
+    @Column(nullable = false)
+    private Integer retryAttempt;
+    
+    @Column(nullable = false)
+    private LocalDateTime scheduledAt;
+    
+    private LocalDateTime attemptedAt;
+    
     @Enumerated(EnumType.STRING)
-    private PaymentFrequency frequency;
+    @Column(nullable = false)
+    private RetryStatus status;
     
-    @Column(name = "grace_period_days")
-    private Integer gracePeriodDays;
+    private String failureReason;
     
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -34,8 +44,8 @@ public class GracePeriodConfig {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
     
-    public enum PaymentFrequency {
-        MONTHLY, QUARTERLY, SEMI_ANNUAL, ANNUAL
+    public enum RetryStatus {
+        SCHEDULED, IN_PROGRESS, SUCCESS, FAILED, SKIPPED, EXHAUSTED
     }
     
     @PrePersist
