@@ -1,3 +1,13 @@
+package com.billing.entity;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "grace_period_configs")
 @Data
@@ -23,4 +33,19 @@ public class GracePeriodConfig {
     
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+    
+    public enum PaymentFrequency {
+        MONTHLY, QUARTERLY, SEMI_ANNUAL, ANNUAL
+    }
+    
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+    
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 }
