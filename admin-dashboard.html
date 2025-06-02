@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Policy Billing Admin Dashboard</title>
+    <link rel="stylesheet" href="admin-styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@2.29.3/index.min.js"></script>
+</head>
+<body>
+    <!-- Navigation Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <svg class="logo-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+                <span class="logo-text">Billing Admin</span>
+            </div>
+        </div>
+        
+        <div class="sidebar-menu">
+            <a href="#dashboard" class="menu-item active" data-view="dashboard">
+                <svg class="menu-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7"/>
+                    <rect x="14" y="3" width="7" height="7"/>
+                    <rect x="14" y="14" width="7" height="7"/>
+                    <rect x="3" y="14" width="7" height="7"/>
+                </svg>
+                <span>Dashboard</span>
+            </a>
+            
+            <a href="#policies" class="menu-item" data-view="policies">
+                <svg class="menu-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14,2 14,8 20,8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                    <polyline points="10,9 9,9 8,9"/>
+                </svg>
+                <span>Policies</span>
+            </a>
+            
+            <a href="#payments" class="menu-item" data-view="payments">
+                <svg class="menu-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                    <line x1="1" y1="10" x2="23" y2="10"/>
+                </svg>
+                <span>Payments</span>
+            </a>
+            
+            <a href="#delinquent" class="menu-item" data-view="delinquent">
+                <svg class="menu-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                <span>Delinquent</span>
+            </a>
+            
+            <a href="#analytics" class="menu-item" data-view="analytics">
+                <svg class="menu-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>
+                </svg>
+                <span>Analytics</span>
+            </a>
+            
+            <a href="#settings" class="menu-item" data-view="settings">
+                <svg class="menu-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1"/>
+                </svg>
+                <span>Settings</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <button class="sidebar-toggle" aria-label="Toggle sidebar">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <line x1="3" y1="12" x2="21" y2="12"/>
+                        <line x1="3" y1="18" x2="21" y2="18"/>
+                    </svg>
+                </button>
+                <h1 id="page-title">Dashboard</h1>
+            </div>
+            
+            <div class="header-right">
+                <div class="search-box">
+                    <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
+                    <input type="text" placeholder="Search policies, customers..." id="global-search">
+                </div>
+                
+                <div class="notifications">
+                    <button class="notification-btn" aria-label="Notifications">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                        </svg>
+                        <span class="notification-badge">3</span>
+                    </button>
+                </div>
+                
+                <div class="user-menu">
+                    <button class="user-btn" aria-label="User menu">
+                        <div class="user-avatar">AD</div>
+                        <span>Admin User</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6,9 12,15 18,9"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content Views -->
+        <div class="content">
+            <!-- Dashboard View -->
+            <div id="dashboard-view" class="view active">
+                <!-- Status Alert -->
+                <div class="alert alert-info">
+                    <svg class="alert-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="16" x2="12" y2="12"/>
+                        <line x1="12" y1="8" x2="12.01" y2="8"/>
+                    </svg>
+                    <div>
+                        <strong>System Status:</strong> All services operational. Last sync: <span id="last-sync">Loading...</span>
+                    </div>
+                </div>
+
+                <!-- Key Metrics Cards -->
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <h3>Total Policies</h3>
+                            <svg class="metric-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14,2 14,8 20,8"/>
+                            </svg>
+                        </div>
+                        <div class="metric-value" id="total-policies">Loading...</div>
+                        <div class="metric-change positive">+5.2% from last month</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <h3>Outstanding Amount</h3>
+                            <svg class="metric-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="1" x2="12" y2="23"/>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                            </svg>
+                        </div>
+                        <div class="metric-value" id="outstanding-amount">Loading...</div>
+                        <div class="metric-change negative">+12.3% from last month</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <h3>Payment Success Rate</h3>
+                            <svg class="metric-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>
+                            </svg>
+                        </div>
+                        <div class="metric-value" id="success-rate">Loading...</div>
+                        <div class="metric-change positive">+2.1% from last month</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <h3>Delinquent Accounts</h3>
+                            <svg class="metric-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="12" y1="8" x2="12" y2="12"/>
+                                <line x1="12" y1="16" x2="12.01" y2="16"/>
+                            </svg>
+                        </div>
+                        <div class="metric-value" id="delinquent-count">Loading...</div>
+                        <div class="metric-change negative">+8.7% from last month</div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Payment Volume Trend</h3>
+                            <div class="chart-controls">
+                                <select id="volume-period">
+                                    <option value="7d">Last 7 days</option>
+                                    <option value="30d" selected>Last 30 days</option>
+                                    <option value="90d">Last 90 days</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="payment-volume-chart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Payment Methods Distribution</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="payment-methods-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activities -->
+                <div class="activities-section">
+                    <div class="section-header">
+                        <h3>Recent Activities</h3>
+                        <a href="#" class="view-all-link">View All</a>
+                    </div>
+                    <div class="activities-list" id="recent-activities">
+                        <!-- Activities will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Other views will be added here -->
+            <div id="policies-view" class="view">
+                <div class="view-header">
+                    <h2>Policy Management</h2>
+                    <div class="view-actions">
+                        <button class="btn btn-primary">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                            New Policy
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="filters-bar">
+                    <div class="filter-group">
+                        <input type="text" placeholder="Search policies..." class="search-input" id="policy-search">
+                    </div>
+                    <div class="filter-group">
+                        <select id="policy-status-filter">
+                            <option value="">All Statuses</option>
+                            <option value="current">Current</option>
+                            <option value="overdue">Overdue</option>
+                            <option value="grace">Grace Period</option>
+                            <option value="lapsed">Lapsed</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <select id="policy-type-filter">
+                            <option value="">All Types</option>
+                            <option value="auto_insurance">Auto Insurance</option>
+                            <option value="home_insurance">Home Insurance</option>
+                            <option value="life_insurance">Life Insurance</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table" id="policies-table">
+                        <thead>
+                            <tr>
+                                <th>Policy ID</th>
+                                <th>Customer</th>
+                                <th>Type</th>
+                                <th>Premium</th>
+                                <th>Due Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="policies-table-body">
+                            <!-- Data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Placeholder for other views -->
+            <div id="payments-view" class="view">
+                <div class="view-header">
+                    <h2>Payment Management</h2>
+                </div>
+                <p>Payment management interface coming soon...</p>
+            </div>
+
+            <div id="delinquent-view" class="view">
+                <div class="view-header">
+                    <h2>Delinquent Accounts</h2>
+                </div>
+                <p>Delinquent accounts management coming soon...</p>
+            </div>
+
+            <div id="analytics-view" class="view">
+                <div class="view-header">
+                    <h2>Analytics & Reports</h2>
+                </div>
+                <p>Analytics dashboard coming soon...</p>
+            </div>
+
+            <div id="settings-view" class="view">
+                <div class="view-header">
+                    <h2>System Settings</h2>
+                </div>
+                <p>Settings management coming soon...</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Loading...</p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="admin-app.js"></script>
+</body>
+</html>
