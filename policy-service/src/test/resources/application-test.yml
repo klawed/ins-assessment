@@ -32,4 +32,4 @@ logging:
     org.testcontainers: DEBUG
     com.github.dockerjava: DEBUG
     root: INFO
-    com.billing: DEBUG
+    com.insurance: DEBUG

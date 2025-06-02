@@ -5,9 +5,9 @@ This document outlines the implementation plan for the billing repository layer 
 
 ## Architecture Reference
 Following the established pattern from:
-- `policy-service/src/main/java/com/billing/policy/entity/Policy.java`
-- `policy-service/src/main/java/com/billing/policy/repository/PolicyRepository.java`  
-- `policy-service/src/main/java/com/billing/policy/mapper/PolicyMapper.java`
+- `policy-service/src/main/java/com.insurance/policy/entity/Policy.java`
+- `policy-service/src/main/java/com.insurance/policy/repository/PolicyRepository.java`  
+- `policy-service/src/main/java/com.insurance/policy/mapper/PolicyMapper.java`
 
 ## Core Requirements
 The billing repository must support:
@@ -316,7 +316,7 @@ public interface BillingEventMapper {
 ## Directory Structure
 
 ```
-billing-service/src/main/java/com/billing/
+billing-service/src/main/java/com.insurance/
 ├── entity/
 │   ├── Billing.java
 │   ├── Payment.java
@@ -542,7 +542,7 @@ class BillingEventIntegrationTest {
 Add to shared-models module:
 
 ```java
-// filepath: shared-models/src/main/java/com/billing/shared/dto/BillingDto.java
+// filepath: shared-models/src/main/java/com.insurance/shared/dto/BillingDto.java
 public class BillingDto {
     private String id;
     private String policyId;
@@ -554,7 +554,7 @@ public class BillingDto {
 ```
 
 ```java
-// filepath: shared-models/src/main/java/com/billing/shared/event/BillingEvent.java
+// filepath: shared-models/src/main/java/com.insurance/shared/event/BillingEvent.java
 public class BillingEvent {
     private String billingId;
     private String policyId;
@@ -565,7 +565,7 @@ public class BillingEvent {
 ```
 
 ```java
-// filepath: shared-models/src/main/java/com/billing/shared/enums/BillingStatus.java
+// filepath: shared-models/src/main/java/com.insurance/shared/enums/BillingStatus.java
 public enum BillingStatus {
     PENDING, PAID, OVERDUE, GRACE_PERIOD, DELINQUENT, CANCELLED
 }
@@ -574,7 +574,7 @@ public enum BillingStatus {
 ### Test Data Factories
 
 ```java
-// filepath: billing-service/src/test/java/com/billing/test/TestDataFactory.java
+// filepath: billing-service/src/test/java/com.insurance/test/TestDataFactory.java
 public class TestDataFactory {
     public static Billing createTestBilling() {
         return Billing.builder()

@@ -1,6 +1,8 @@
-package com.billing.payment.controller;
+package com.insurance.payment.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.insurance.payment.controller.PaymentController;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

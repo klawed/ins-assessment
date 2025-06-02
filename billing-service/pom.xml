@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.billing</groupId>
+        <groupId>com.insurance</groupId>
         <artifactId>policy-billing-system</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
@@ -14,6 +14,11 @@
     <packaging>jar</packaging>
     <name>Billing Service</name>
     <description>Calculates premiums and manages billing cycles</description>
+
+    <properties>
+        <mapstruct.version>1.5.5.Final</mapstruct.version>
+        <lombok.version>1.18.30</lombok.version>
+    </properties>
 
     <dependencies>
         <!-- Spring Boot Starters -->
@@ -74,6 +79,7 @@
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
+            <version>${mapstruct.version}</version>
         </dependency>
         
         <dependency>
@@ -96,8 +102,9 @@
 
         <!-- Shared Models -->
         <dependency>
-            <groupId>com.billing</groupId>
+            <groupId>com.insurance</groupId>
             <artifactId>shared-models</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- Testing -->
@@ -178,7 +185,16 @@
                         <artifactId>mapstruct-processor</artifactId>
                         <version>${mapstruct.version}</version>
                     </path>
+                    <path>
+                        <groupId>org.projectlombok</groupId>
+                        <artifactId>lombok-mapstruct-binding</artifactId>
+                        <version>0.2.0</version>
+                    </path>
                 </annotationProcessorPaths>
+                <compilerArgs>
+                    <arg>-Amapstruct.defaultComponentModel=spring</arg>
+                    <arg>-Amapstruct.verbose=true</arg>
+                </compilerArgs>
             </configuration>
             </plugin>
             

@@ -298,8 +298,8 @@ class BillingServiceImplTest {
 **3. Test Configuration (`WebSecurityTestConfig.java`)**
 ```java
 // Copy the same WebSecurityTestConfig.java from policy-service to:
-// billing-service/src/test/java/com/billing/billing/config/WebSecurityTestConfig.java
-package com.billing.billing.config;
+// billing-service/src/test/java/com.insurance/billing/config/WebSecurityTestConfig.java
+package com.insurance.billing.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -332,7 +332,7 @@ spring.datasource.url=jdbc:h2:mem:billingdb;DB_CLOSE_DELAY=-1
 spring.datasource.username=sa
 spring.datasource.password=
 spring.flyway.enabled=false
-logging.level.com.billing=DEBUG
+logging.level.com.insurance=DEBUG
 ```
 
 #### Payment Service Unit Tests

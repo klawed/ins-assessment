@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.billing</groupId>
+        <groupId>com.insurance</groupId>
         <artifactId>policy-billing-system</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
@@ -96,7 +96,7 @@
 
         <!-- Shared Models -->
         <dependency>
-            <groupId>com.billing</groupId>
+            <groupId>com.insurance</groupId>
             <artifactId>shared-models</artifactId>
         </dependency>
 

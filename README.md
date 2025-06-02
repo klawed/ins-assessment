@@ -159,7 +159,7 @@ policy-billing-system/
 ├── docker/
 │   └── mariadb/init/
 ├── shared-models/
-│   └── src/main/java/com/billing/shared/
+│   └── src/main/java/com.insurance/shared/
 ├── policy-service/
 │   ├── Dockerfile
 │   ├── pom.xml
@@ -331,7 +331,7 @@ docker system prune -f
 src/
 ├── test/
 │   ├── java/
-│   │   └── com/billing/policy/
+│   │   └── com.insurance/policy/
 │   │       ├── unit/           # Unit tests (no external dependencies)
 │   │       │   ├── controller/ # Controller tests with @WebMvcTest
 │   │       │   ├── service/    # Service layer unit tests
