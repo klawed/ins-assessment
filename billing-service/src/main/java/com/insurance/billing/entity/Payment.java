@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import com.insurance.shared.enums.PaymentStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -53,10 +54,7 @@ public class Payment {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
     
-    public enum PaymentStatus {
-        PENDING, SUCCESS, FAILED, CANCELLED, REFUNDED
-    }
-    
+  
     public enum PaymentMethod {
         CREDIT_CARD, DEBIT_CARD, BANK_TRANSFER, ACH, PAYPAL, STRIPE
     }

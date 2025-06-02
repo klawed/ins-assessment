@@ -57,17 +57,6 @@ public class PolicyServiceImpl implements PolicyService {
     @Override
     public Optional<PremiumScheduleDto> getPremiumScheduleForPolicy(String id) {
         return policyRepository.findById(id)
-                .map(policy -> PremiumScheduleDto.builder()
-                        .policyId(policy.getId())
-                        .premiumAmount(policy.getPremiumAmount())
-                        .billingFrequency(policy.getFrequency().name())
-                        .nextDueDate(policy.getNextDueDate())
-                        .gracePeriodDays(policy.getGracePeriodDays())
-                        .status(policy.getStatus().name())
-                        .daysOverdue(null) // Calculate if needed
-                        .lateFee(null) // Calculate if needed
-                        .totalAmountDue(null) // Calculate if needed
-                        .schedule(List.of()) // Populate if needed
-                        .build());
+                .map(policyMapper::toPremiumScheduleDto); // Ensure this method is called
     }
 }

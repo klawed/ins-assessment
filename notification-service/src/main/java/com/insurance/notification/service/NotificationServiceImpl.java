@@ -1,6 +1,6 @@
 package com.insurance.notification.service;
 
-import lombok.extern.slf4j.Slf4j;
+import com.insurance.shared.dto.NotificationDto;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -11,257 +11,166 @@ import java.util.*;
  * communication management, and notification preferences.
  */
 @Service
-@Slf4j
 public class NotificationServiceImpl implements NotificationService {
-    
-    // Simulated in-memory storage for demonstration
+
     private final Map<String, Map<String, Object>> notifications = new HashMap<>();
-    private final Map<String, Map<String, Object>> customerPreferences = new HashMap<>();
-    private final Random random = new Random();
-    
+    private final Map<String, Map<String, Object>> notificationPreferences = new HashMap<>();
+    private final Map<String, Integer> retryCounters = new HashMap<>();
+    private static final int MAX_RETRIES = 3;
+
     @Override
     public Map<String, Object> sendNotification(Map<String, Object> notificationRequest) {
-        String notificationId = generateNotificationId();
-        log.info("Sending notification with ID: {}", notificationId);
-        
-        String customerId = (String) notificationRequest.get("customerId");
-        String type = (String) notificationRequest.get("type");
-        String channel = (String) notificationRequest.get("channel");
-        String message = (String) notificationRequest.get("message");
-        
-        // Check customer preferences
-        Map<String, Object> preferences = getNotificationPreferences(customerId);
-        boolean allowedChannel = isChannelAllowed(channel, preferences);
-        
-        Map<String, Object> notification = new HashMap<>();
-        notification.put("notificationId", notificationId);
-        notification.put("customerId", customerId);
-        notification.put("type", type);
-        notification.put("channel", channel);
-        notification.put("message", message);
-        notification.put("sentAt", LocalDateTime.now());
-        notification.put("status", allowedChannel ? "SENT" : "BLOCKED");
-        
-        if (!allowedChannel) {
-            notification.put("reason", "Customer has disabled " + channel + " notifications");
-        }
-        
-        // Store notification
-        notifications.put(notificationId, notification);
-        
-        return notification;
+        String notificationId = UUID.randomUUID().toString();
+        notifications.put(notificationId, notificationRequest);
+        return Map.of("status", "success", "message", "Notification sent", "notificationId", notificationId);
     }
-    
+
     @Override
     public Map<String, Object> sendPaymentReminder(String policyId, String customerId, LocalDateTime dueDate) {
-        log.info("Sending payment reminder for policy {} to customer {}", policyId, customerId);
-        
-        Map<String, Object> request = Map.of(
-            "customerId", customerId,
-            "type", "PAYMENT_REMINDER",
-            "channel", "EMAIL",
-            "message", "Your payment for policy " + policyId + " is due on " + dueDate.toLocalDate(),
-            "policyId", policyId,
-            "dueDate", dueDate
+        Map<String, Object> reminder = Map.of(
+                "policyId", policyId,
+                "customerId", customerId,
+                "dueDate", dueDate,
+                "type", "PAYMENT_REMINDER"
         );
-        
-        return sendNotification(request);
+        return sendNotification(reminder);
     }
-    
+
     @Override
     public Map<String, Object> sendPaymentConfirmation(String transactionId, String customerId) {
-        log.info("Sending payment confirmation for transaction {} to customer {}", transactionId, customerId);
-        
-        Map<String, Object> request = Map.of(
-            "customerId", customerId,
-            "type", "PAYMENT_CONFIRMATION",
-            "channel", "EMAIL",
-            "message", "Payment confirmed. Transaction ID: " + transactionId,
-            "transactionId", transactionId
+        Map<String, Object> confirmation = Map.of(
+                "transactionId", transactionId,
+                "customerId", customerId,
+                "type", "PAYMENT_CONFIRMATION"
         );
-        
-        return sendNotification(request);
+        return sendNotification(confirmation);
     }
-    
+
     @Override
     public Map<String, Object> sendOverdueNotification(String policyId, String customerId, int daysOverdue) {
-        log.info("Sending overdue notification for policy {} to customer {} ({} days overdue)", 
-                policyId, customerId, daysOverdue);
-        
-        String urgency = daysOverdue > 30 ? "URGENT" : "STANDARD";
-        String channel = daysOverdue > 30 ? "SMS" : "EMAIL";
-        
-        Map<String, Object> request = Map.of(
-            "customerId", customerId,
-            "type", "PAYMENT_OVERDUE",
-            "channel", channel,
-            "message", "Your payment for policy " + policyId + " is " + daysOverdue + " days overdue",
-            "policyId", policyId,
-            "daysOverdue", daysOverdue,
-            "urgency", urgency
+        Map<String, Object> overdueNotification = Map.of(
+                "policyId", policyId,
+                "customerId", customerId,
+                "daysOverdue", daysOverdue,
+                "type", "OVERDUE_NOTIFICATION"
         );
-        
-        return sendNotification(request);
+        return sendNotification(overdueNotification);
     }
-    
+
     @Override
     public List<Map<String, Object>> getNotificationHistory(String customerId) {
-        log.info("Getting notification history for customer: {}", customerId);
-        
         List<Map<String, Object>> history = new ArrayList<>();
-        
-        for (Map<String, Object> notification : notifications.values()) {
+        for (Map.Entry<String, Map<String, Object>> entry : notifications.entrySet()) {
+            Map<String, Object> notification = entry.getValue();
             if (customerId.equals(notification.get("customerId"))) {
-                history.add(new HashMap<>(notification));
+                history.add(notification);
             }
         }
-        
-        // Sort by sent date, most recent first
-        history.sort((n1, n2) -> {
-            LocalDateTime date1 = (LocalDateTime) n1.get("sentAt");
-            LocalDateTime date2 = (LocalDateTime) n2.get("sentAt");
-            return date2.compareTo(date1);
-        });
-        
         return history;
     }
-    
+
     @Override
     public Optional<Map<String, Object>> getNotification(String notificationId) {
-        log.info("Getting notification: {}", notificationId);
-        
-        Map<String, Object> notification = notifications.get(notificationId);
-        return Optional.ofNullable(notification != null ? new HashMap<>(notification) : null);
+        return Optional.ofNullable(notifications.get(notificationId));
     }
-    
+
     @Override
     public Map<String, Object> updateNotificationPreferences(String customerId, Map<String, Object> preferences) {
-        log.info("Updating notification preferences for customer: {}", customerId);
-        
-        customerPreferences.put(customerId, new HashMap<>(preferences));
-        
-        Map<String, Object> result = new HashMap<>();
-        result.put("customerId", customerId);
-        result.put("preferences", preferences);
-        result.put("updatedAt", LocalDateTime.now());
-        result.put("status", "UPDATED");
-        
-        return result;
+        notificationPreferences.put(customerId, preferences);
+        return Map.of("status", "success", "message", "Preferences updated");
     }
-    
+
     @Override
     public Map<String, Object> getNotificationPreferences(String customerId) {
-        log.info("Getting notification preferences for customer: {}", customerId);
-        
-        Map<String, Object> preferences = customerPreferences.get(customerId);
-        
-        if (preferences == null) {
-            // Default preferences
-            preferences = Map.of(
-                "email", true,
-                "sms", true,
-                "push", false,
-                "paymentReminders", true,
-                "overdueNotifications", true,
-                "confirmations", true
-            );
-        }
-        
-        return new HashMap<>(preferences);
+        return notificationPreferences.getOrDefault(customerId, Map.of());
     }
-    
+
     @Override
     public Map<String, Object> scheduleNotification(Map<String, Object> notificationRequest, LocalDateTime sendAt) {
-        String scheduleId = generateNotificationId();
-        log.info("Scheduling notification {} to be sent at {}", scheduleId, sendAt);
-        
         Map<String, Object> scheduledNotification = new HashMap<>(notificationRequest);
-        scheduledNotification.put("scheduleId", scheduleId);
-        scheduledNotification.put("scheduledFor", sendAt);
-        scheduledNotification.put("status", "SCHEDULED");
-        scheduledNotification.put("createdAt", LocalDateTime.now());
-        
-        // In a real implementation, this would be stored and processed by a scheduler
-        return scheduledNotification;
+        scheduledNotification.put("sendAt", sendAt);
+        return sendNotification(scheduledNotification);
     }
-    
+
     @Override
     public Map<String, Object> processEvent(Map<String, Object> event) {
-        String eventType = (String) event.get("eventType");
-        log.info("Processing event: {}", eventType);
-        
-        Map<String, Object> result = new HashMap<>();
-        result.put("eventType", eventType);
-        result.put("processedAt", LocalDateTime.now());
-        result.put("status", "PROCESSED");
-        
-        // Process different event types
-        switch (eventType) {
-            case "PAYMENT_FAILED":
-                String policyId = (String) event.get("policyId");
-                String customerId = (String) event.get("customerId");
-                sendOverdueNotification(policyId, customerId, 1);
-                result.put("action", "Sent overdue notification");
-                break;
-                
-            case "PAYMENT_SUCCEEDED":
-                String transactionId = (String) event.get("transactionId");
-                String customerIdSuccess = (String) event.get("customerId");
-                sendPaymentConfirmation(transactionId, customerIdSuccess);
-                result.put("action", "Sent payment confirmation");
-                break;
-                
-            case "PAYMENT_DUE":
-                String policyIdDue = (String) event.get("policyId");
-                String customerIdDue = (String) event.get("customerId");
-                LocalDateTime dueDate = (LocalDateTime) event.get("dueDate");
-                sendPaymentReminder(policyIdDue, customerIdDue, dueDate);
-                result.put("action", "Sent payment reminder");
-                break;
-                
-            default:
-                result.put("action", "Event type not recognized");
-                log.warn("Unknown event type: {}", eventType);
+        String eventType = (String) event.get("type");
+        if ("PAYMENT_FAILED".equals(eventType)) {
+            return retryNotification(event);
+        } else if ("PAYMENT_SUCCEEDED".equals(eventType)) {
+            return sendNotification(Map.of("type", "PAYMENT_SUCCEEDED", "details", event));
         }
-        
-        return result;
+        return Map.of("status", "ignored", "message", "Event type not handled");
     }
-    
+
     @Override
     public Map<String, Object> getNotificationStatistics() {
-        log.info("Getting notification statistics");
-        
-        int totalNotifications = notifications.size();
-        long sentCount = notifications.values().stream()
-            .mapToLong(n -> "SENT".equals(n.get("status")) ? 1 : 0)
-            .sum();
-        long blockedCount = notifications.values().stream()
-            .mapToLong(n -> "BLOCKED".equals(n.get("status")) ? 1 : 0)
-            .sum();
-        
-        // Count by channel
-        Map<String, Long> channelStats = new HashMap<>();
-        notifications.values().forEach(n -> {
-            String channel = (String) n.get("channel");
-            channelStats.merge(channel, 1L, Long::sum);
-        });
-        
-        Map<String, Object> stats = new HashMap<>();
-        stats.put("totalNotifications", totalNotifications);
-        stats.put("sentNotifications", sentCount);
-        stats.put("blockedNotifications", blockedCount);
-        stats.put("deliveryRate", totalNotifications > 0 ? (double) sentCount / totalNotifications : 0.0);
-        stats.put("channelBreakdown", channelStats);
-        stats.put("generatedAt", LocalDateTime.now());
-        
-        return stats;
+        return Map.of(
+                "totalNotifications", notifications.size(),
+                "totalPreferences", notificationPreferences.size(),
+                "totalRetries", retryCounters.size()
+        );
     }
-    
-    private boolean isChannelAllowed(String channel, Map<String, Object> preferences) {
-        return preferences.getOrDefault(channel.toLowerCase(), true).equals(true);
+
+    @Override
+    public void sendNotification(NotificationDto notification) {
+        Map<String, Object> notificationMap = Map.of(
+                "id", notification.getId(),
+                "recipient", notification.getRecipient(),
+                "message", notification.getMessage(),
+                "timestamp", notification.getTimestamp(),
+                "status", notification.getStatus(),
+                "type", notification.getType()
+        );
+        notifications.put(notification.getId(), notificationMap);
     }
-    
-    private String generateNotificationId() {
-        return "NOT-" + System.currentTimeMillis() + "-" + random.nextInt(1000);
+
+    @Override
+    public List<NotificationDto> getNotificationsByRecipient(String recipient) {
+        List<NotificationDto> result = new ArrayList<>();
+        for (Map<String, Object> notification : notifications.values()) {
+            if (recipient.equals(notification.get("recipient"))) {
+                result.add(NotificationDto.builder()
+                        .id((String) notification.get("id"))
+                        .recipient((String) notification.get("recipient"))
+                        .message((String) notification.get("message"))
+                        .timestamp((LocalDateTime) notification.get("timestamp"))
+                        .status((String) notification.get("status"))
+                        .type((String) notification.get("type"))
+                        .build());
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public List<NotificationDto> getAllNotifications() {
+        List<NotificationDto> result = new ArrayList<>();
+        for (Map<String, Object> notification : notifications.values()) {
+            result.add(NotificationDto.builder()
+                    .id((String) notification.get("id"))
+                    .recipient((String) notification.get("recipient"))
+                    .message((String) notification.get("message"))
+                    .timestamp((LocalDateTime) notification.get("timestamp"))
+                    .status((String) notification.get("status"))
+                    .type((String) notification.get("type"))
+                    .build());
+        }
+        return result;
+    }
+
+    @Override
+    public void deleteNotification(String notificationId) {
+        notifications.remove(notificationId);
+    }
+
+    private Map<String, Object> retryNotification(Map<String, Object> event) {
+        String notificationId = (String) event.get("notificationId");
+        int retryCount = retryCounters.getOrDefault(notificationId, 0);
+        if (retryCount >= MAX_RETRIES) {
+            return Map.of("status", "failed", "message", "Max retries reached");
+        }
+        retryCounters.put(notificationId, retryCount + 1);
+        return sendNotification(event);
     }
 }

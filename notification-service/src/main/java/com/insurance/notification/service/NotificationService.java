@@ -1,10 +1,11 @@
 package com.insurance.notification.service;
 
-import java.time.LocalDateTime;
+import com.insurance.shared.dto.NotificationDto;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
+import java.time.LocalDateTime;
 /**
  * Service interface for notification management including event-driven notifications,
  * communication channels, and notification preferences.
@@ -93,4 +94,16 @@ public interface NotificationService {
      * @return Map containing notification statistics
      */
     Map<String, Object> getNotificationStatistics();
+
+    // Sends a notification
+    void sendNotification(NotificationDto notification);
+
+    // Retrieves notifications for a specific recipient
+    List<NotificationDto> getNotificationsByRecipient(String recipient);
+
+    // Retrieves all notifications
+    List<NotificationDto> getAllNotifications();
+
+    // Deletes a notification by its ID
+    void deleteNotification(String notificationId);
 }

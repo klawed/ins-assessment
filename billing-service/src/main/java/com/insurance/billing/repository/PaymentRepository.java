@@ -6,7 +6,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.insurance.billing.entity.Payment;
-import com.insurance.billing.entity.Payment.PaymentStatus;
+import com.insurance.shared.enums.PaymentStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;

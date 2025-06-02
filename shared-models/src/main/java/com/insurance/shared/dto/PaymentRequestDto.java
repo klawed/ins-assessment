@@ -4,8 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+
 import java.math.BigDecimal;
 
 @Data
@@ -13,12 +12,8 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PaymentRequestDto {
-    @NotNull
-    private String billingId;
-    
-    @NotNull
-    @Positive
-    private BigDecimal amount;
-    
-    private String paymentMethod;
+    private String billId; // Unique identifier for the bill
+    private String policyId; // Unique identifier for the policy
+    private BigDecimal amount; // Payment amount
+    private String paymentMethod; // Payment method (e.g., CREDIT_CARD, BANK_TRANSFER)
 }

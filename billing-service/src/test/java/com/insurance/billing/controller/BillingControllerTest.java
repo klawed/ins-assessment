@@ -1,18 +1,21 @@
 package com.insurance.billing.controller;
 
-import com.insurance.billing.BillingService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.insurance.shared.enums.PaymentStatus;
 import com.insurance.billing.service.BillingService;
+import com.insurance.shared.dto.BillingDto;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.test.mock.mockito.MockBean;
-
+import com.insurance.shared.dto.PaymentRequestDto;
+import com.insurance.shared.enums.BillingStatus;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-
+import java.util.List;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -84,7 +87,7 @@ class BillingControllerTest {
     @Test
     void shouldHandleDifferentPolicyIds() throws Exception {
         // Test with different policy IDs to ensure path variable handling
-        String[] policyIds = {"POLICY-456", "AUTO-789", "HOME-123"};
+        String[] policyIds = { "POLICY-456", "AUTO-789", "HOME-123" };
 
         for (String policyId : policyIds) {
             mockMvc.perform(get("/api/billing/" + policyId + "/premium"))
@@ -129,11 +132,25 @@ class BillingControllerTest {
 
     @Test
     void shouldSubmitPayment() throws Exception {
-        PaymentRequestDto request = new PaymentRequestDto("BILL-1", new BigDecimal("100.00"));
+        PaymentRequestDto request = PaymentRequestDto.builder()
+                .billId("BILL-1")
+                .amount(new BigDecimal("100.00"))
+                .build();
 
         mockMvc.perform(post("/api/billing/payments")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk());
+    }
+
+    private BillingDto createTestBillingDto() {
+        return BillingDto.builder()
+                .id("BILL-1")
+                .policyId("POL-1")
+                .customerId("CUST-1")
+                .amount(new BigDecimal("100.00"))
+                .dueDate(LocalDate.now().plusDays(10))
+                .status(BillingStatus.PENDING)
+                .build();
     }
 }
