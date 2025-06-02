@@ -1,21 +1,27 @@
 package com.billing.payment.controller;
 
+import com.billing.payment.service.PaymentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/payments")
 @CrossOrigin(origins = "*")
 @Slf4j
 public class PaymentController {
+    
+    private final PaymentService paymentService;
+
+    public PaymentController(PaymentService paymentService) {
+        this.paymentService = paymentService;
+    }
 
     @GetMapping("/hello")
     public ResponseEntity<Map<String, Object>> hello() {
@@ -33,13 +39,8 @@ public class PaymentController {
     public ResponseEntity<Map<String, Object>> processPayment(@RequestBody Map<String, Object> paymentRequest) {
         log.info("Processing payment request: {}", paymentRequest);
         
-        String policyId = (String) paymentRequest.get("policyId");
-        BigDecimal amount = new BigDecimal(paymentRequest.get("amount").toString());
-        
-        // Simulate payment processing with different outcomes
-        Map<String, Object> response = simulatePaymentProcessing(policyId, amount);
-        
-        return ResponseEntity.ok(response);
+        Map<String, Object> result = paymentService.processPayment(paymentRequest);
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/history")
@@ -53,18 +54,24 @@ public class PaymentController {
             @RequestParam(defaultValue = "0") int offset) {
         
         log.info("Getting payment history for policyId: {}, status: {}", policyId, status);
-        List<Map<String, Object>> history = getMockPaymentHistory(policyId, status);
-        return ResponseEntity.ok(history);
+        
+        if (policyId != null) {
+            List<Map<String, Object>> history = paymentService.getPaymentHistory(policyId);
+            return ResponseEntity.ok(history);
+        } else {
+            // For demo purposes, return empty list when no policyId specified
+            return ResponseEntity.ok(List.of());
+        }
     }
 
     @GetMapping("/{paymentId}/status")
     public ResponseEntity<Map<String, Object>> getPaymentStatus(@PathVariable String paymentId) {
         log.info("Getting payment status for ID: {}", paymentId);
         
-        Map<String, Object> payment = findMockPaymentByTransactionId(paymentId);
+        Optional<Map<String, Object>> payment = paymentService.getPaymentTransaction(paymentId);
         
-        if (payment != null) {
-            return ResponseEntity.ok(payment);
+        if (payment.isPresent()) {
+            return ResponseEntity.ok(payment.get());
         } else {
             return ResponseEntity.notFound().build();
         }
@@ -74,17 +81,73 @@ public class PaymentController {
     public ResponseEntity<Map<String, Object>> retryPayment(@PathVariable String paymentId) {
         log.info("Retrying payment for ID: {}", paymentId);
         
-        Map<String, Object> retryResponse = Map.of(
-            "originalTransactionId", paymentId,
-            "newTransactionId", "TXN-" + LocalDateTime.now().getYear() + "-" + 
-                String.format("%06d", (int)(Math.random() * 1000000)),
-            "status", "PROCESSING",
-            "retryAttempt", 1,
-            "timestamp", LocalDateTime.now().toString(),
-            "estimatedCompletionTime", LocalDateTime.now().plusMinutes(5).toString()
-        );
+        Map<String, Object> retryResult = paymentService.retryPayment(paymentId);
         
-        return ResponseEntity.ok(retryResponse);
+        if (retryResult.containsKey("error")) {
+            return ResponseEntity.notFound().build();
+        }
+        
+        return ResponseEntity.ok(retryResult);
+    }
+
+    @GetMapping("/failed")
+    public ResponseEntity<List<Map<String, Object>>> getFailedPayments() {
+        log.info("Getting failed payments");
+        
+        List<Map<String, Object>> failedPayments = paymentService.getFailedPayments();
+        return ResponseEntity.ok(failedPayments);
+    }
+    
+    @GetMapping("/policy/{policyId}")
+    public ResponseEntity<List<Map<String, Object>>> getPaymentHistoryForPolicy(@PathVariable String policyId) {
+        log.info("Getting payment history for policy: {}", policyId);
+        
+        List<Map<String, Object>> history = paymentService.getPaymentHistory(policyId);
+        return ResponseEntity.ok(history);
+    }
+    
+    @PostMapping("/{transactionId}/refund")
+    public ResponseEntity<Map<String, Object>> initiateRefund(
+            @PathVariable String transactionId,
+            @RequestBody(required = false) Map<String, Object> refundRequest) {
+        log.info("Initiating refund for transaction: {}", transactionId);
+        
+        BigDecimal amount = null;
+        if (refundRequest != null && refundRequest.containsKey("amount")) {
+            amount = new BigDecimal(refundRequest.get("amount").toString());
+        }
+        
+        Map<String, Object> refundResult = paymentService.initiateRefund(transactionId, amount);
+        
+        if (refundResult.containsKey("error")) {
+            return ResponseEntity.notFound().build();
+        }
+        
+        return ResponseEntity.ok(refundResult);
+    }
+    
+    @GetMapping("/statistics")
+    public ResponseEntity<Map<String, Object>> getPaymentStatistics() {
+        log.info("Getting payment statistics");
+        
+        Map<String, Object> stats = paymentService.getPaymentStatistics();
+        return ResponseEntity.ok(stats);
+    }
+    
+    @PutMapping("/{transactionId}/status")
+    public ResponseEntity<Map<String, Object>> updatePaymentStatus(
+            @PathVariable String transactionId,
+            @RequestBody Map<String, Object> statusUpdate) {
+        log.info("Updating payment status for transaction {} to {}", transactionId, statusUpdate);
+        
+        String status = (String) statusUpdate.get("status");
+        paymentService.updatePaymentStatus(transactionId, status);
+        
+        return ResponseEntity.ok(Map.of(
+            "transactionId", transactionId,
+            "status", "updated",
+            "timestamp", LocalDateTime.now()
+        ));
     }
 
     @GetMapping("/delinquent")
@@ -96,137 +159,12 @@ public class PaymentController {
         
         log.info("Getting delinquent policies with minDaysOverdue: {}, customerId: {}", minDaysOverdue, customerId);
         
-        List<Map<String, Object>> delinquentPolicies = getMockDelinquentPolicies(customerId, minDaysOverdue);
-        
-        Map<String, Object> response = Map.of(
-            "totalCount", delinquentPolicies.size(),
-            "delinquentPolicies", delinquentPolicies
-        );
-        
-        return ResponseEntity.ok(response);
-    }
-
-    // Mock data generation methods
-    private Map<String, Object> simulatePaymentProcessing(String policyId, BigDecimal amount) {
-        String transactionId = "TXN-" + LocalDateTime.now().getYear() + "-" + 
-            String.format("%06d", (int)(Math.random() * 1000000));
-        
-        // Simulate different outcomes based on policy ID for predictable testing
-        boolean shouldFail = policyId.equals("POLICY-FAIL") || Math.random() < 0.2; // 20% failure rate
-        
-        if (shouldFail) {
-            return Map.of(
-                "transactionId", transactionId,
-                "status", "FAILED",
-                "amount", amount,
-                "policyId", policyId,
-                "paymentMethod", "visa_****1234",
-                "timestamp", LocalDateTime.now().toString(),
-                "errorCode", "INSUFFICIENT_FUNDS",
-                "message", "Payment declined due to insufficient funds",
-                "retrySchedule", Map.of(
-                    "nextRetryDate", LocalDateTime.now().plusDays(3).toString(),
-                    "maxRetries", 3,
-                    "currentRetryCount", 0
-                )
-            );
-        } else {
-            return Map.of(
-                "transactionId", transactionId,
-                "status", "SUCCESS",
-                "amount", amount,
-                "policyId", policyId,
-                "paymentMethod", "visa_****1234",
-                "timestamp", LocalDateTime.now().toString(),
-                "confirmationCode", "CONF-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase(),
-                "processingFee", BigDecimal.ZERO,
-                "message", "Payment processed successfully"
-            );
-        }
-    }
-
-    private List<Map<String, Object>> getMockPaymentHistory(String policyId, String status) {
-        return Arrays.asList(
-            Map.of(
-                "transactionId", "TXN-2024-001235",
-                "policyId", "POLICY-123",
-                "amount", new BigDecimal("171.00"),
-                "status", "FAILED",
-                "paymentMethod", "visa_****1234",
-                "timestamp", LocalDateTime.now().minusDays(1).toString(),
-                "errorCode", "INSUFFICIENT_FUNDS",
-                "retryCount", 0
-            ),
-            Map.of(
-                "transactionId", "TXN-2024-001189",
-                "policyId", "POLICY-456",
-                "amount", new BigDecimal("89.00"),
-                "status", "SUCCESS",
-                "paymentMethod", "visa_****1234",
-                "timestamp", LocalDateTime.now().minusDays(15).toString(),
-                "confirmationCode", "CONF-ABC123",
-                "retryCount", 0
-            ),
-            Map.of(
-                "transactionId", "TXN-2024-001156",
-                "policyId", "POLICY-123",
-                "amount", new BigDecimal("156.00"),
-                "status", "SUCCESS",
-                "paymentMethod", "visa_****1234",
-                "timestamp", LocalDateTime.now().minusDays(45).toString(),
-                "confirmationCode", "CONF-DEF456",
-                "retryCount", 0
-            )
-        );
-    }
-
-    private Map<String, Object> findMockPaymentByTransactionId(String transactionId) {
-        List<Map<String, Object>> allPayments = getMockPaymentHistory(null, null);
-        
-        return allPayments.stream()
-                .filter(p -> p.get("transactionId").equals(transactionId))
-                .findFirst()
-                .orElse(null);
-    }
-
-    private List<Map<String, Object>> getMockDelinquentPolicies(String customerId, int minDaysOverdue) {
-        return Arrays.asList(
-            Map.of(
-                "policyId", "POLICY-123",
-                "customerId", "CUST-001",
-                "customerName", "John Doe",
-                "policyType", "AUTO_INSURANCE",
-                "premiumAmount", new BigDecimal("156.00"),
-                "dueDate", LocalDateTime.now().minusDays(3).toLocalDate().toString(),
-                "daysOverdue", 3,
-                "lateFee", new BigDecimal("15.00"),
-                "totalAmountDue", new BigDecimal("171.00"),
-                "status", "OVERDUE",
-                "gracePeriodExpires", LocalDateTime.now().plusDays(7).toLocalDate().toString(),
-                "lastPaymentDate", LocalDateTime.now().minusMonths(1).toLocalDate().toString(),
-                "contactInfo", Map.of(
-                    "email", "john.doe@example.com",
-                    "phone", "+1-555-123-4567"
-                )
-            ),
-            Map.of(
-                "policyId", "POLICY-111",
-                "customerId", "CUST-002",
-                "customerName", "Jane Smith",
-                "policyType", "AUTO_INSURANCE",
-                "premiumAmount", new BigDecimal("175.00"),
-                "dueDate", LocalDateTime.now().minusDays(7).toLocalDate().toString(),
-                "daysOverdue", 7,
-                "lateFee", new BigDecimal("15.00"),
-                "totalAmountDue", new BigDecimal("190.00"),
-                "status", "GRACE_PERIOD",
-                "gracePeriodExpires", LocalDateTime.now().plusDays(3).toLocalDate().toString(),
-                "lastPaymentDate", LocalDateTime.now().minusMonths(2).toLocalDate().toString(),
-                "contactInfo", Map.of(
-                    "email", "jane.smith@example.com",
-                    "phone", "+1-555-987-6543"
-                )
-            )
-        );
+        // This endpoint delegates to billing service in a real implementation
+        // For now, return mock data structure
+        return ResponseEntity.ok(Map.of(
+            "totalCount", 0,
+            "delinquentPolicies", List.of(),
+            "message", "This endpoint should delegate to billing service"
+        ));
     }
 }
