@@ -2,12 +2,14 @@
 
 A microservice-based policy billing and collections system that manages recurring premiums, payment processing, retry logic, and delinquency tracking through event-driven architecture.
 
+---
+
 ## Quick Start
 
 ### Prerequisites
-- Docker and Docker Compose
-- Java 21
-- Maven 3.9+
+- **Docker** and **Docker Compose** for containerized infrastructure.
+- **Java 21** for modern language features and performance.
+- **Maven 3.9+** for building and managing dependencies.
 
 ### Running the System
 
@@ -29,7 +31,6 @@ A microservice-based policy billing and collections system that manages recurrin
 
 4. **Verify services are running**:
    ```bash
-   # Check all services are healthy
    curl http://localhost:8081/actuator/health  # Policy Service
    curl http://localhost:8082/actuator/health  # Billing Service  
    curl http://localhost:8083/actuator/health  # Payment Service
@@ -37,19 +38,7 @@ A microservice-based policy billing and collections system that manages recurrin
    curl http://localhost:8090/actuator/health  # Payment Gateway Mock
    ```
 
-### Testing the API
-
-```bash
-# Test Policy Service
-curl http://localhost:8081/api/policies/hello
-curl http://localhost:8081/api/policies/POLICY-123
-curl http://localhost:8081/api/policies/POLICY-123/schedule
-
-# Test other services (when implemented)
-curl http://localhost:8082/api/billing/hello
-curl http://localhost:8083/api/payments/hello
-curl http://localhost:8084/api/notifications/hello
-```
+---
 
 ## Development Workflow
 
@@ -69,352 +58,226 @@ curl http://localhost:8084/api/notifications/hello
    cd notification-service && mvn spring-boot:run -Dspring.profiles.active=dev
    ```
 
-3. **Or run from IDE** with Spring Boot configuration
+3. **Or run from IDE**:
+   - Import the project into your IDE (e.g., IntelliJ IDEA or Eclipse).
+   - Configure Spring Boot run configurations for each service with the `dev` profile.
 
-### Testing
-
-```bash
-# Unit tests
-mvn test
-
-# Integration tests  
-mvn verify -Pintegration
-
-# E2E tests (requires Docker Compose)
-mvn verify -Pe2e
-
-# All tests
-mvn verify
-```
-
-### Building
-
-```bash
-# Build all modules
-mvn clean package
-
-# Build Docker images
-docker-compose build
-
-# Build specific service
-mvn clean package -pl policy-service -am
-```
+---
 
 ## Architecture
 
-### Services
+### Services Overview
 
-| Service | Port | Responsibility |
-|---------|------|-----------|
-| Policy Service | 8081 | Policy metadata and premium schedules |
-| Billing Service | 8082 | Premium calculations and billing cycles |
-| Payment Service | 8083 | Payment processing and retry logic |
-| Notification Service | 8084 | Payment reminders and notifications |
-| Payment Gateway Mock | 8090 | Simulated third-party payment provider |
+| Service               | Port  | Responsibility                                      |
+|-----------------------|-------|----------------------------------------------------|
+| **Policy Service**    | 8081  | Manages policy metadata and premium schedules.     |
+| **Billing Service**   | 8082  | Handles premium calculations and billing cycles.   |
+| **Payment Service**   | 8083  | Processes payments and manages retry logic.        |
+| **Notification Service** | 8084 | Sends payment reminders and notifications.         |
+| **Payment Gateway Mock** | 8090 | Simulates a third-party payment provider.          |
 
-### Infrastructure
+### Infrastructure Components
 
-| Component | Port | Purpose |
-|-----------|------|---------|
-| MariaDB | 3306 | Primary database |
-| Kafka | 9092 | Event streaming |
-| Zookeeper | 2181 | Kafka coordination |
-| Redis | 6379 | Caching and sessions |
+| Component   | Port  | Purpose                                      |
+|-------------|-------|----------------------------------------------|
+| **MariaDB** | 3306  | Primary database for persistent storage.     |
+| **Kafka**   | 9092  | Event streaming for inter-service messaging. |
+| **Zookeeper** | 2181 | Coordinates Kafka brokers.                  |
+| **Redis**   | 6379  | Caching and session management.              |
 
-### API Endpoints
-
-#### Policy Service (Port 8081)
-- `GET /api/policies/hello` - Health check
-- `GET /api/policies/{policyId}` - Get policy details
-- `GET /api/policies/{policyId}/schedule` - Get premium schedule
-- `GET /actuator/health` - Service health
-
-#### Billing Service (Port 8082)
-- `GET /api/billing/hello` - Health check  
-- `POST /api/billing/calculate` - Calculate premium
-- `GET /api/billing/{policyId}/premium` - Get premium details
-- `GET /actuator/health` - Service health
-
-#### Payment Service (Port 8083)
-- `GET /api/payments/hello` - Health check
-- `POST /api/payments/attempt` - Process payment
-- `GET /api/payments/{paymentId}/status` - Payment status
-- `POST /api/payments/{paymentId}/retry` - Retry failed payment
-- `GET /api/payments/delinquent` - List delinquent policies
-- `GET /actuator/health` - Service health
-
-#### Notification Service (Port 8084)
-- `GET /api/notifications/hello` - Health check
-- `POST /api/notifications/send` - Send notification
-- `GET /api/notifications/{policyId}` - Get notifications
-- `GET /actuator/health` - Service health
-
-## Project Structure
-
-```
-policy-billing-system/
-├── docker-compose.yml
-├── pom.xml (parent)
-├── README.md
-├── docker/
-│   └── mariadb/init/
-├── shared-models/
-│   └── src/main/java/com.insurance/shared/
-├── policy-service/
-│   ├── Dockerfile
-│   ├── pom.xml
-│   └── src/
-├── billing-service/
-├── payment-service/
-├── notification-service/
-└── payment-gateway-mock/
-```
-
-## Technology Stack
-
-- **Framework**: Spring Boot 3.2 with WebMVC
-- **Database**: MariaDB 11.0 with JPA/Hibernate  
-- **Messaging**: Apache Kafka
-- **Security**: Spring Security with JWT
-- **Testing**: JUnit 5, TestContainers, RestAssured
-- **Build**: Maven multi-module
-- **Containerization**: Docker
+---
 
 ## Event-Driven Architecture
 
 ### Kafka Topics
 
-```
-billing.policy.created
-billing.premium.calculated
-billing.payment.attempted
-billing.payment.succeeded
-billing.payment.failed
-billing.retry.scheduled
-billing.notification.requested
-billing.policy.delinquent
-```
+The system uses Kafka for inter-service communication. Below are the key topics:
+
+| Topic Name                  | Description                                      |
+|-----------------------------|--------------------------------------------------|
+| `billing.policy.created`    | Triggered when a new policy is created.          |
+| `billing.premium.calculated`| Triggered after premium calculation.             |
+| `billing.payment.attempted` | Triggered when a payment attempt is made.        |
+| `billing.payment.succeeded` | Triggered when a payment is successful.          |
+| `billing.payment.failed`    | Triggered when a payment fails.                  |
+| `billing.retry.scheduled`   | Triggered when a retry is scheduled.             |
+| `billing.notification.requested` | Triggered to request a notification.        |
+| `billing.policy.delinquent` | Triggered when a policy becomes delinquent.      |
 
 ### Event Flow
 
-1. **Policy Creation**: Policy Service → `billing.policy.created` → Billing Service
-2. **Payment Processing**: Payment Service → `billing.payment.attempted` → Notification Service
-3. **Failed Payment**: Payment Service → `billing.payment.failed` → Billing Service (retry logic)
-4. **Retry Scheduling**: Billing Service → `billing.retry.scheduled` → Payment Service
+1. **Policy Creation**:
+   - Policy Service → `billing.policy.created` → Billing Service.
 
-## Configuration
+2. **Payment Processing**:
+   - Payment Service → `billing.payment.attempted` → Notification Service.
 
-### Environment Variables
+3. **Failed Payment**:
+   - Payment Service → `billing.payment.failed` → Billing Service (retry logic).
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `DB_HOST` | mariadb | Database hostname |
-| `DB_PORT` | 3306 | Database port |
-| `DB_NAME` | billing_system | Database name |
-| `DB_USER` | billing_user | Database username |
-| `DB_PASSWORD` | billing_password | Database password |
-| `KAFKA_BOOTSTRAP_SERVERS` | kafka:9092 | Kafka brokers |
-| `REDIS_HOST` | redis | Redis hostname |
-| `REDIS_PORT` | 6379 | Redis port |
+4. **Retry Scheduling**:
+   - Billing Service → `billing.retry.scheduled` → Payment Service.
 
-### Spring Profiles
+---
 
-- `local` - Local development with external infrastructure
-- `docker` - Running in Docker containers
-- `test` - Unit/integration testing
+## Developer Tips
 
-## Monitoring
+### Debugging
+
+1. **Check Logs**:
+   - Use `docker-compose logs <service>` to view logs for a specific service.
+   - Example:
+     ```bash
+     docker-compose logs payment-service
+     ```
+
+2. **Enable Debug Mode**:
+   - Add `-Ddebug` to Spring Boot run commands for detailed logs.
+
+3. **Inspect Kafka Messages**:
+   - Use tools like `kafkacat` or Kafka UI to inspect messages in Kafka topics.
+
+### Testing Locally
+
+1. **Unit Tests**:
+   - Run with:
+     ```bash
+     mvn test
+     ```
+
+2. **Integration Tests**:
+   - Use TestContainers for database and Kafka integration.
+   - Run with:
+     ```bash
+     mvn verify -Pintegration
+     ```
+
+3. **End-to-End Tests**:
+   - Use Docker Compose to spin up the full system and test user journeys.
+   - Run with:
+     ```bash
+     mvn verify -Pe2e
+     ```
+
+---
+
+## API Endpoints
+
+### Payment Service (Port 8083)
+
+| Endpoint                          | Method | Description                              |
+|-----------------------------------|--------|------------------------------------------|
+| `/api/payments/hello`             | GET    | Health check.                            |
+| `/api/payments/attempt`           | POST   | Process a payment.                       |
+| `/api/payments/{paymentId}/status`| GET    | Get the status of a payment.             |
+| `/api/payments/{paymentId}/retry` | POST   | Retry a failed payment.                  |
+| `/api/payments/delinquent`        | GET    | List delinquent policies.                |
+
+---
+
+## Testing Strategy
+
+### Test Types
+
+1. **Unit Tests**:
+   - Test individual components in isolation.
+   - Use `@WebMvcTest` for controllers and mock dependencies.
+
+2. **Integration Tests**:
+   - Test database operations and Kafka messaging with TestContainers.
+
+3. **End-to-End Tests**:
+   - Test complete workflows using Docker Compose.
+
+### Running Tests
+
+```bash
+# Run unit tests
+mvn test
+
+# Run integration tests
+mvn verify -Pintegration
+
+# Run end-to-end tests
+mvn verify -Pe2e
+```
+
+---
+
+## Development Guidelines
+
+### Adding New Endpoints
+
+1. Define the endpoint in the appropriate controller.
+2. Add unit tests using `@WebMvcTest`.
+3. Add integration tests for database or messaging logic.
+4. Update the API documentation in this README.
+
+### Adding New Kafka Events
+
+1. Define the event schema in `shared-models`.
+2. Add a producer in the source service.
+3. Add a consumer in the target service.
+4. Write integration tests for the event flow.
+
+---
+
+## Monitoring and Metrics
 
 ### Health Checks
 
 All services expose health checks at `/actuator/health`:
 
 ```bash
-curl http://localhost:8081/actuator/health
+curl http://localhost:8083/actuator/health
 ```
 
 ### Metrics
 
-Metrics available at `/actuator/metrics`:
+Metrics are available at `/actuator/metrics`:
 
 ```bash
-curl http://localhost:8081/actuator/metrics
+curl http://localhost:8083/actuator/metrics
 ```
+
+---
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **Services won't start**:
-   ```bash
-   # Check if ports are available
-   netstat -tulpn | grep :8081
-   
-   # Check Docker logs
-   docker-compose logs policy-service
-   ```
+1. **Database Connection Issues**:
+   - Verify MariaDB is running:
+     ```bash
+     docker-compose ps mariadb
+     ```
+   - Check logs:
+     ```bash
+     docker-compose logs mariadb
+     ```
 
-2. **Database connection issues**:
-   ```bash
-   # Verify MariaDB is running
-   docker-compose ps mariadb
-   
-   # Check database logs
-   docker-compose logs mariadb
-   ```
+2. **Kafka Connection Issues**:
+   - Verify Kafka is running:
+     ```bash
+     docker-compose ps kafka
+     ```
+   - Check logs:
+     ```bash
+     docker-compose logs kafka
+     ```
 
-3. **Kafka connection issues**:
-   ```bash
-   # Verify Kafka is running
-   docker-compose ps kafka
-   
-   # Check Kafka logs
-   docker-compose logs kafka
-   ```
+3. **Service Not Starting**:
+   - Check if the port is already in use:
+     ```bash
+     netstat -tulpn | grep :8083
+     ```
 
-### Useful Commands
-
-```bash
-# View all running containers
-docker-compose ps
-
-# Follow logs for specific service
-docker-compose logs -f policy-service
-
-# Restart specific service
-docker-compose restart policy-service
-
-# Clean up everything
-docker-compose down -v
-docker system prune -f
-```
-
-## Development Guidelines
-
-### Adding New Endpoints
-
-1. Create controller in appropriate service
-2. Add unit tests with `@WebMvcTest`
-3. Add integration tests with TestContainers
-4. Update API documentation
-5. Add E2E test scenarios
-
-### Database Changes
-
-1. Create Flyway migration in `src/main/resources/db/migration`
-2. Update JPA entities
-3. Update integration tests
-4. Test migration with Docker
-
-### Adding New Events
-
-1. Define event in `shared-models`
-2. Add producer in source service
-3. Add consumer in target service  
-4. Add integration tests for event flow
+---
 
 ## Next Steps
 
-- [ ] Implement complete CRUD operations for policies
-- [ ] Add database migrations with Flyway
-- [ ] Implement Kafka event producers/consumers
-- [ ] Add payment processing logic with retry mechanisms
-- [ ] Implement grace period and delinquency tracking
-- [ ] Add security with JWT authentication
-- [ ] Implement comprehensive monitoring and logging
-
-## Testing Strategy
-
-### Test Organization
-
-```
-src/
-├── test/
-│   ├── java/
-│   │   └── com.insurance/policy/
-│   │       ├── unit/           # Unit tests (no external dependencies)
-│   │       │   ├── controller/ # Controller tests with @WebMvcTest
-│   │       │   ├── service/    # Service layer unit tests
-│   │       │   └── util/       # Utility class tests
-│   │       ├── integration/    # Integration tests (with TestContainers)
-│   │       │   ├── repository/ # Database integration tests
-│   │       │   └── kafka/      # Messaging integration tests
-│   │       └── e2e/           # End-to-end tests with Docker Compose
-│   └── resources/
-       ├── application-test.properties          # Unit test properties
-       └── application-integration-test.properties # Integration test properties
-```
-
-### Test Types
-
-1. **Unit Tests** (`src/test/java/*/unit/`)
-   - Fast, in-memory tests
-   - No external dependencies
-   - Use `@WebMvcTest` for controllers
-   - Run with: `mvn test`
-
-2. **Integration Tests** (`src/test/java/*/integration/`)
-   - Use TestContainers for databases/messaging
-   - Test database operations and event flows
-   - Run with: `mvn verify -Pintegration`
-
-3. **E2E Tests** (`src/test/java/*/e2e/`)
-   - Full system tests using Docker Compose
-   - Test complete user journeys
-   - Run with: `mvn verify -Pe2e`
-
-### Running Tests
-
-```bash
-# Run only unit tests (fast)
-mvn test
-
-# Run integration tests
-mvn verify -Pintegration
-
-# Run E2E tests
-mvn verify -Pe2e
-
-# Run all tests
-mvn verify
-
-# Generate test reports
-mvn site
-```
-
-### Test Reports
-
-Test reports are generated in each module's `target` directory:
-
-```bash
-target/
-├── surefire-reports/    # Unit test results
-├── failsafe-reports/    # Integration test results
-└── site/               # HTML test reports
-    └── surefire-report.html
-```
-
-View test reports:
-```bash
-open target/site/surefire-report.html
-```
-
-### Testing Guidelines
-
-1. **Unit Tests**
-   - One test class per production class
-   - Use meaningful test names describing the scenario
-   - Mock external dependencies
-   - Focus on edge cases and error conditions
-
-2. **Integration Tests**
-   - Test database operations with real database
-   - Test event flows with real message broker
-   - Use TestContainers for infrastructure
-   - Clean up test data after each test
-
-3. **E2E Tests**
-   - Test complete user journeys
-   - Verify service interactions
-   - Use Docker Compose test environment
-   - Focus on happy path scenarios
+- [ ] Implement JWT-based authentication for all services.
+- [ ] Add database migrations with Flyway.
+- [ ] Enhance retry logic with configurable backoff strategies.
+- [ ] Add support for multiple notification channels (e.g., SMS, email).
+- [ ] Implement advanced monitoring with Prometheus and Grafana.

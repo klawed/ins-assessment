@@ -1,34 +1,35 @@
 package com.insurance.payment.entity;
 
-import com.insurance.shared.enums.PaymentStatus;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
+import com.insurance.shared.enums.PaymentStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
-@Table(name = "payments")
 public class PaymentEntity {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
     private String id;
 
-    @Column(nullable = false)
     private String policyId;
-
-    @Column(nullable = false)
     private BigDecimal amount;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private PaymentStatus status;
 
-    @Column(nullable = false)
     private LocalDateTime timestamp;
-
-    @Column(nullable = false)
     private String paymentMethod;
 }
