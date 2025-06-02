@@ -13,6 +13,7 @@ import com.insurance.payment.entity.PaymentEntity;
 import com.insurance.payment.repository.PaymentRepository;
 import com.insurance.shared.enums.PaymentStatus;
 import com.insurance.payment.mapper.PaymentMapper;
+import com.insurance.payment.stream.PaymentProducer;
 
 /**
  * Implementation of PaymentService providing payment processing,
@@ -24,10 +25,12 @@ public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final PaymentMapper paymentMapper;
+    private final PaymentProducer paymentProducer;
 
-    public PaymentServiceImpl(PaymentRepository paymentRepository, PaymentMapper paymentMapper) {
+    public PaymentServiceImpl(PaymentRepository paymentRepository, PaymentMapper paymentMapper, PaymentProducer paymentProducer) {
         this.paymentRepository = paymentRepository;
         this.paymentMapper = paymentMapper;
+        this.paymentProducer = paymentProducer;
     }
 
     // Simulated in-memory storage for demonstration
@@ -51,6 +54,9 @@ public class PaymentServiceImpl implements PaymentService {
         );
 
         paymentRepository.save(paymentEntity);
+
+        // Send a message to Kafka
+        paymentProducer.sendPaymentEvent("Payment processed: " + paymentRequest.getPolicyId());
 
         return paymentMapper.toDto(paymentEntity);
     }
