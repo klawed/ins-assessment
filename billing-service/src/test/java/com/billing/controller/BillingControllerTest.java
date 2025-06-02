@@ -1,6 +1,7 @@
 package com.billing.controller;
 
 import com.billing.controller.BillingController;
+import com.billing.service.BillingService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import java.math.BigDecimal;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.mockito.Mockito.when;
 
 @WebMvcTest(BillingController.class)
 class BillingControllerTest {
@@ -21,6 +23,9 @@ class BillingControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @MockBean
+    private BillingService billingService;
 
     @Test
     void shouldHandleHealthCheck() throws Exception {
@@ -77,7 +82,7 @@ class BillingControllerTest {
     void shouldHandleDifferentPolicyIds() throws Exception {
         // Test with different policy IDs to ensure path variable handling
         String[] policyIds = {"POLICY-456", "AUTO-789", "HOME-123"};
-        
+
         for (String policyId : policyIds) {
             mockMvc.perform(get("/api/billing/" + policyId + "/premium"))
                     .andExpect(status().isOk())
@@ -106,5 +111,26 @@ class BillingControllerTest {
                 .contentType(MediaType.TEXT_PLAIN)
                 .content("invalid"))
                 .andExpect(status().isUnsupportedMediaType());
+    }
+
+    @Test
+    void shouldGetCustomerBillings() throws Exception {
+        when(billingService.getBillingsByCustomer("CUST-1"))
+                .thenReturn(List.of(createTestBillingDto()));
+
+        mockMvc.perform(get("/api/billing/customer/CUST-1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].policyId").value("POL-1"))
+                .andExpect(jsonPath("$[0].amount").value(100.00));
+    }
+
+    @Test
+    void shouldSubmitPayment() throws Exception {
+        PaymentRequestDto request = new PaymentRequestDto("BILL-1", new BigDecimal("100.00"));
+
+        mockMvc.perform(post("/api/billing/payments")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk());
     }
 }
