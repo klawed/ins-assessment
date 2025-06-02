@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import com.insurance.shared.dto.PaymentDto;
 
 /**
  * Service interface for payment processing including payment transactions,
@@ -111,4 +112,16 @@ public interface PaymentService {
      * @return Map containing total count and a list of delinquent policies
      */
     Map<String, Object> getDelinquentPolicies(int limit, int offset, int minDaysOverdue, String customerId);
+
+    /**
+     * Get payments by policy identifier
+     * @param policyId The policy identifier
+     * @return List of payment DTOs
+     */
+    List<PaymentDto> getPaymentsByPolicy(String policyId);
+
+    /**
+     * Retry all failed payments
+     */
+    void retryFailedPayments();
 }

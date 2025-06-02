@@ -40,22 +40,22 @@ class PaymentServiceTest {
                 .paymentMethod("CREDIT_CARD")
                 .build();
 
-        PaymentDto savedPayment = PaymentDto.builder()
-                .id("PAYMENT-1")
-                .policyId("POLICY-123")
-                .amount(new BigDecimal("200.00"))
-                .status(PaymentStatus.SUCCESS)
-                .timestamp(LocalDateTime.now())
-                .build();
+        PaymentEntity paymentEntity = new PaymentEntity();
+        paymentEntity.setId("PAYMENT-1");
+        paymentEntity.setPolicyId("POLICY-123");
+        paymentEntity.setAmount(new BigDecimal("200.00"));
+        paymentEntity.setStatus(PaymentStatus.SUCCESS);
+        paymentEntity.setTimestamp(LocalDateTime.now());
+        paymentEntity.setPaymentMethod("CREDIT_CARD");
 
-        when(paymentRepository.save(any(PaymentDto.class))).thenReturn(savedPayment);
+        when(paymentRepository.save(any(PaymentEntity.class))).thenReturn(paymentEntity);
 
         PaymentDto result = paymentService.processPayment(request);
 
         assertNotNull(result);
         assertEquals("PAYMENT-1", result.getId());
         assertEquals(PaymentStatus.SUCCESS, result.getStatus());
-        verify(paymentRepository).save(any(PaymentDto.class));
+        verify(paymentRepository).save(any(PaymentEntity.class));
     }
 
     @Test
@@ -81,15 +81,14 @@ class PaymentServiceTest {
     void shouldGetPaymentById() {
         String paymentId = "PAYMENT-1";
 
-        PaymentDto mockPayment = PaymentDto.builder()
-                .id(paymentId)
-                .policyId("POLICY-123")
-                .amount(new BigDecimal("200.00"))
-                .status(PaymentStatus.SUCCESS)
-                .timestamp(LocalDateTime.now())
-                .build();
+        PaymentEntity mockPaymentEntity = new PaymentEntity();
+        mockPaymentEntity.setId(paymentId);
+        mockPaymentEntity.setPolicyId("POLICY-123");
+        mockPaymentEntity.setAmount(new BigDecimal("200.00"));
+        mockPaymentEntity.setStatus(PaymentStatus.SUCCESS);
+        mockPaymentEntity.setTimestamp(LocalDateTime.now());
 
-        when(paymentRepository.findById(paymentId)).thenReturn(Optional.of(mockPayment));
+        when(paymentRepository.findById(paymentId)).thenReturn(Optional.of(mockPaymentEntity));
 
         Optional<PaymentDto> result = paymentService.getPaymentById(paymentId);
 
@@ -106,21 +105,21 @@ class PaymentServiceTest {
                 .paymentMethod("CREDIT_CARD")
                 .build();
 
-        PaymentDto failedPayment = PaymentDto.builder()
-                .id("PAYMENT-1")
-                .policyId("POLICY-123")
-                .amount(new BigDecimal("200.00"))
-                .status(PaymentStatus.FAILED)
-                .timestamp(LocalDateTime.now())
-                .build();
+        PaymentEntity paymentEntity = new PaymentEntity();
+        paymentEntity.setId("PAYMENT-1");
+        paymentEntity.setPolicyId("POLICY-123");
+        paymentEntity.setAmount(new BigDecimal("200.00"));
+        paymentEntity.setStatus(PaymentStatus.FAILED);
+        paymentEntity.setTimestamp(LocalDateTime.now());
+        paymentEntity.setPaymentMethod("CREDIT_CARD");
 
-        when(paymentRepository.save(any(PaymentDto.class))).thenReturn(failedPayment);
+        when(paymentRepository.save(any(PaymentEntity.class))).thenReturn(paymentEntity);
 
         PaymentDto result = paymentService.processPayment(request);
 
         assertNotNull(result);
         assertEquals(PaymentStatus.FAILED, result.getStatus());
-        verify(paymentRepository).save(any(PaymentDto.class));
+        verify(paymentRepository).save(any(PaymentEntity.class));
     }
 
     @Test

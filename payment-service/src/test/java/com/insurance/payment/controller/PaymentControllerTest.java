@@ -106,7 +106,7 @@ class PaymentControllerTest {
     @Test
     void shouldGetDelinquentPolicies() throws Exception {
         // Given
-        when(paymentService.getDelinquentPolicies(50, 0, 1)).thenReturn(Map.of(
+        when(paymentService.getDelinquentPolicies(50, 0, 1, null)).thenReturn(Map.of(
             "totalCount", 2,
             "delinquentPolicies", List.of("POLICY-123", "POLICY-456")
         ));

@@ -1,12 +1,16 @@
 package com.insurance.payment.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import com.insurance.shared.dto.PaymentDto;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
-
+import java.util.stream.Collectors;
+import com.insurance.payment.entity.PaymentEntity;
+import com.insurance.payment.repository.PaymentRepository;
+import com.insurance.shared.enums.PaymentStatus;
 /**
  * Implementation of PaymentService providing payment processing,
  * retry logic, and transaction state management.
@@ -14,7 +18,13 @@ import java.util.*;
 @Service
 @Slf4j
 public class PaymentServiceImpl implements PaymentService {
-    
+
+    private final PaymentRepository paymentRepository;
+
+    public PaymentServiceImpl(PaymentRepository paymentRepository) {
+        this.paymentRepository = paymentRepository;
+    }
+
     // Simulated in-memory storage for demonstration
     private final Map<String, Map<String, Object>> transactions = new HashMap<>();
     private final Random random = new Random();
@@ -298,6 +308,21 @@ public Map<String, Object> getDelinquentPolicies(int limit, int offset, int minD
         "delinquentPolicies", delinquentPolicies
     );
 }
+    
+    @Override
+    public List<PaymentDto> getPaymentsByPolicy(String policyId) {
+        return paymentRepository.findByPolicyId(policyId).stream()
+                .map(paymentMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void retryFailedPayments() {
+        List<PaymentEntity> failedPayments = paymentRepository.findByStatus(PaymentStatus.FAILED);
+        for (PaymentEntity payment : failedPayments) {
+            retryPayment(payment.getId());
+        }
+    }
     
     private String generateTransactionId() {
         return "TXN-" + System.currentTimeMillis() + "-" + random.nextInt(1000);
