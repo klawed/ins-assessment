@@ -107,7 +107,8 @@ public interface PaymentService {
      * @param limit The maximum number of results to return
      * @param offset The starting point for pagination
      * @param minDaysOverdue The minimum number of days a payment is overdue
+     * @param customerId (Optional) Filter by customer ID
      * @return Map containing total count and a list of delinquent policies
      */
-    Map<String, Object> getDelinquentPolicies(int limit, int offset, int minDaysOverdue);
+    Map<String, Object> getDelinquentPolicies(int limit, int offset, int minDaysOverdue, String customerId);
 }

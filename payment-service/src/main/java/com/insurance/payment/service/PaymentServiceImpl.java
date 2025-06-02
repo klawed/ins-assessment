@@ -266,15 +266,17 @@ public class PaymentServiceImpl implements PaymentService {
     }
     
     @Override
-    public Map<String, Object> getDelinquentPolicies(int limit, int offset, int minDaysOverdue) {
-        log.info("Fetching delinquent policies with minDaysOverdue={}, limit={}, offset={}", minDaysOverdue, limit, offset);
+    public Map<String, Object> getDelinquentPolicies(int limit, int offset, int minDaysOverdue, String customerId) {
+        log.info("Fetching delinquent policies with minDaysOverdue={}, limit={}, offset={}, customerId={}",
+                minDaysOverdue, limit, offset, customerId);
 
         // Filter transactions to find delinquent policies
         List<String> delinquentPolicies = transactions.values().stream()
-            .filter(t -> "FAILED".equals(t.get("status")) && 
+            .filter(t -> "FAILED".equals(t.get("status")) &&
                          t.containsKey("attemptedAt") &&
                          t.get("attemptedAt") instanceof LocalDateTime &&
-                         ((LocalDateTime) t.get("attemptedAt")).isBefore(LocalDateTime.now().minusDays(minDaysOverdue)))
+                         ((LocalDateTime) t.get("attemptedAt")).isBefore(LocalDateTime.now().minusDays(minDaysOverdue)) &&
+                         (customerId == null || customerId.equals(t.get("customerId"))))
             .map(t -> (String) t.get("policyId"))
             .distinct()
             .skip(offset)
@@ -282,8 +284,6 @@ public class PaymentServiceImpl implements PaymentService {
             .toList();
 
         long totalCount = transactions.values().stream()
-            .filter(t -> "FAILED".equals(t.get("status")) && 
-                         t.containsKey("attemptedAt") &&
                          t.get("attemptedAt") instanceof LocalDateTime &&
                          ((LocalDateTime) t.get("attemptedAt")).isBefore(LocalDateTime.now().minusDays(minDaysOverdue)))
             .map(t -> t.get("policyId"))
