@@ -1,9 +1,11 @@
 package com.billing.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -13,7 +15,9 @@ import java.util.*;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class BillingServiceImpl implements BillingService {
+    private final GracePeriodService gracePeriodService;
     
     @Override
     public Map<String, Object> calculatePremium(String policyId) {
@@ -147,7 +151,19 @@ public class BillingServiceImpl implements BillingService {
         // 2. Check grace period configuration
         // 3. Compare with current date and due date
         
-        // Mock implementation - assume 10-day grace period
-        return true; // Placeholder
+        // Get policy details from repository
+        Policy policy = policyRepository.findById(policyId)
+            .orElseThrow(() -> new PolicyNotFoundException(policyId));
+            
+        // Get configured grace period
+        int gracePeriodDays = gracePeriodService.getGracePeriodDays(
+            policy.getPolicyType(),
+            policy.getPaymentFrequency()
+        );
+        
+        // Calculate if within grace period
+        return LocalDate.now().isBefore(
+            policy.getNextDueDate().plusDays(gracePeriodDays)
+        );
     }
 }
