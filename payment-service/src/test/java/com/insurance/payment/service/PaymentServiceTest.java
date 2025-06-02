@@ -2,6 +2,7 @@ package com.insurance.payment.service;
 
 import com.insurance.payment.repository.PaymentRepository;
 import com.insurance.payment.entity.PaymentEntity;
+import com.insurance.payment.mapper.PaymentMapper;
 import com.insurance.shared.dto.PaymentDto;
 import com.insurance.shared.dto.PaymentRequestDto;
 import com.insurance.shared.enums.PaymentStatus;
@@ -14,15 +15,20 @@ import org.mockito.MockitoAnnotations;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class PaymentServiceTest {
 
     @Mock
     private PaymentRepository paymentRepository;
+
+    @Mock
+    private PaymentMapper paymentMapper;
 
     @InjectMocks
     private PaymentServiceImpl paymentService;
@@ -34,6 +40,7 @@ class PaymentServiceTest {
 
     @Test
     void shouldProcessPayment() {
+        
         PaymentRequestDto request = PaymentRequestDto.builder()
                 .policyId("POLICY-123")
                 .amount(new BigDecimal("200.00"))
@@ -49,6 +56,13 @@ class PaymentServiceTest {
         paymentEntity.setPaymentMethod("CREDIT_CARD");
 
         when(paymentRepository.save(any(PaymentEntity.class))).thenReturn(paymentEntity);
+        when(paymentMapper.toDto(any(PaymentEntity.class))).thenReturn(PaymentDto.builder()
+                .id("PAYMENT-1")
+                .policyId("POLICY-123")
+                .amount(new BigDecimal("200.00"))
+                .status(PaymentStatus.SUCCESS)
+                .paymentMethod("CREDIT_CARD")
+                .build());
 
         PaymentDto result = paymentService.processPayment(request);
 
@@ -81,12 +95,14 @@ class PaymentServiceTest {
     void shouldGetPaymentById() {
         String paymentId = "PAYMENT-1";
 
-        PaymentEntity mockPaymentEntity = new PaymentEntity();
-        mockPaymentEntity.setId(paymentId);
-        mockPaymentEntity.setPolicyId("POLICY-123");
-        mockPaymentEntity.setAmount(new BigDecimal("200.00"));
-        mockPaymentEntity.setStatus(PaymentStatus.SUCCESS);
-        mockPaymentEntity.setTimestamp(LocalDateTime.now());
+        PaymentEntity mockPaymentEntity = new PaymentEntity(
+            paymentId,
+            "POLICY-123",
+            new BigDecimal("200.00"),
+            PaymentStatus.SUCCESS,
+            LocalDateTime.now(),
+            "CREDIT_CARD"
+        );
 
         when(paymentRepository.findById(paymentId)).thenReturn(Optional.of(mockPaymentEntity));
 
@@ -124,9 +140,9 @@ class PaymentServiceTest {
 
     @Test
     void shouldRetryFailedPayments() {
-        List<PaymentDto> failedPayments = List.of(
-                PaymentDto.builder().id("PAYMENT-1").policyId("POLICY-123").status(PaymentStatus.FAILED).build(),
-                PaymentDto.builder().id("PAYMENT-2").policyId("POLICY-456").status(PaymentStatus.FAILED).build()
+        List<PaymentEntity> failedPayments = List.of(
+                new PaymentEntity("PAYMENT-1", "POLICY-123", new BigDecimal("200.00"), PaymentStatus.FAILED, LocalDateTime.now(), "CREDIT_CARD"),
+                new PaymentEntity("PAYMENT-2", "POLICY-456", new BigDecimal("150.00"), PaymentStatus.FAILED, LocalDateTime.now(), "CREDIT_CARD")
         );
 
         when(paymentRepository.findByStatus(PaymentStatus.FAILED)).thenReturn(failedPayments);
@@ -134,6 +150,6 @@ class PaymentServiceTest {
         paymentService.retryFailedPayments();
 
         verify(paymentRepository).findByStatus(PaymentStatus.FAILED);
-        verify(paymentRepository, times(failedPayments.size())).save(any(PaymentDto.class));
+        verify(paymentRepository, times(failedPayments.size())).save(any(PaymentEntity.class));
     }
 }

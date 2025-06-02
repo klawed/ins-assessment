@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import com.insurance.payment.service.PaymentService;
+import com.insurance.shared.dto.PaymentRequestDto;
+import com.insurance.shared.dto.PaymentDto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -37,10 +39,10 @@ public class PaymentController {
     }
 
     @PostMapping("/process")
-    public ResponseEntity<Map<String, Object>> processPayment(@RequestBody Map<String, Object> paymentRequest) {
+    public ResponseEntity<PaymentDto> processPayment(@RequestBody PaymentRequestDto paymentRequest) {
         log.info("Processing payment request: {}", paymentRequest);
 
-        Map<String, Object> result = paymentService.processPayment(paymentRequest);
+        PaymentDto result = paymentService.processPayment(paymentRequest);
         return ResponseEntity.ok(result);
     }
 

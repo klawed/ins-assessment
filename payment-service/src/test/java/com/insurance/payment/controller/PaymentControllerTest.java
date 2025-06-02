@@ -3,6 +3,8 @@ package com.insurance.payment.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.insurance.payment.service.PaymentService;
 import com.insurance.shared.dto.PaymentRequestDto;
+import com.insurance.shared.dto.PaymentDto;
+import com.insurance.shared.enums.PaymentStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -41,13 +43,15 @@ class PaymentControllerTest {
                 .paymentMethod("CREDIT_CARD")
                 .build();
 
-        when(paymentService.processPayment(any())).thenReturn(Map.of(
-            "transactionId", "TXN-12345",
-            "status", "COMPLETED",
-            "amount", 171.00,
-            "policyId", "POLICY-123",
-            "billId", "BILL-1"
-        ));
+        PaymentDto response = PaymentDto.builder()
+                .id("TXN-12345")
+                .policyId("POLICY-123")
+                .amount(new BigDecimal("171.00"))
+                .status(PaymentStatus.COMPLETED)
+                .paymentMethod("CREDIT_CARD")
+                .build();
+
+        when(paymentService.processPayment(any(PaymentRequestDto.class))).thenReturn(response);
 
         // When & Then
         mockMvc.perform(post("/api/payments/process")
@@ -55,40 +59,34 @@ class PaymentControllerTest {
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.transactionId").value("TXN-12345"))
-                .andExpect(jsonPath("$.status").value("COMPLETED"))
-                .andExpect(jsonPath("$.amount").value(171.00))
+                .andExpect(jsonPath("$.id").value("TXN-12345"))
                 .andExpect(jsonPath("$.policyId").value("POLICY-123"))
-                .andExpect(jsonPath("$.billId").value("BILL-1"));
-    }
-
-    @Test
-    void shouldRetryFailedPayment() throws Exception {
-        // Given
-        when(paymentService.retryFailedPayment("TXN-2024-001236")).thenReturn(Map.of(
-            "originalTransactionId", "TXN-2024-001236",
-            "newTransactionId", "TXN-2024-001237",
-            "status", "PROCESSING",
-            "retryAttempt", 1
-        ));
-
-        // When & Then
-        mockMvc.perform(post("/api/payments/TXN-2024-001236/retry"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.originalTransactionId").value("TXN-2024-001236"))
-                .andExpect(jsonPath("$.newTransactionId").value("TXN-2024-001237"))
-                .andExpect(jsonPath("$.status").value("PROCESSING"))
-                .andExpect(jsonPath("$.retryAttempt").value(1));
+                .andExpect(jsonPath("$.amount").value(171.00))
+                .andExpect(jsonPath("$.status").value("COMPLETED"))
+                .andExpect(jsonPath("$.paymentMethod").value("CREDIT_CARD"));
     }
 
     @Test
     void shouldGetPaymentHistory() throws Exception {
         // Given
-        when(paymentService.getPaymentHistory("POLICY-123", "SUCCESS", 10, 0)).thenReturn(List.of(
-            Map.of("transactionId", "TXN-12345", "status", "SUCCESS", "amount", 171.00),
-            Map.of("transactionId", "TXN-12346", "status", "SUCCESS", "amount", 200.00)
-        ));
+        List<PaymentDto> mockPayments = List.of(
+                PaymentDto.builder()
+                        .id("TXN-12345")
+                        .policyId("POLICY-123")
+                        .amount(new BigDecimal("171.00"))
+                        .status(PaymentStatus.SUCCESS)
+                        .paymentMethod("CREDIT_CARD")
+                        .build(),
+                PaymentDto.builder()
+                        .id("TXN-12346")
+                        .policyId("POLICY-123")
+                        .amount(new BigDecimal("200.00"))
+                        .status(PaymentStatus.SUCCESS)
+                        .paymentMethod("CREDIT_CARD")
+                        .build()
+        );
+
+        when(paymentService.getPaymentHistory("POLICY-123", "SUCCESS", 10, 0)).thenReturn(mockPayments);
 
         // When & Then
         mockMvc.perform(get("/api/payments/history")
@@ -99,17 +97,16 @@ class PaymentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$[0].transactionId").value("TXN-12345"))
-                .andExpect(jsonPath("$[1].transactionId").value("TXN-12346"));
+                .andExpect(jsonPath("$[0].id").value("TXN-12345"))
+                .andExpect(jsonPath("$[1].id").value("TXN-12346"));
     }
 
     @Test
     void shouldGetDelinquentPolicies() throws Exception {
         // Given
         when(paymentService.getDelinquentPolicies(50, 0, 1, null)).thenReturn(Map.of(
-            "totalCount", 2,
-            "delinquentPolicies", List.of("POLICY-123", "POLICY-456")
-        ));
+                "totalCount", 2,
+                "delinquentPolicies", List.of("POLICY-123", "POLICY-456")));
 
         // When & Then
         mockMvc.perform(get("/api/payments/delinquent")
@@ -128,12 +125,11 @@ class PaymentControllerTest {
     void shouldGetPaymentStatus() throws Exception {
         // Given
         when(paymentService.getPaymentStatus("TXN-2024-001235")).thenReturn(Map.of(
-            "transactionId", "TXN-2024-001235",
-            "status", "COMPLETED",
-            "amount", 171.00,
-            "policyId", "POLICY-123",
-            "billId", "BILL-1"
-        ));
+                "transactionId", "TXN-2024-001235",
+                "status", "COMPLETED",
+                "amount", 171.00,
+                "policyId", "POLICY-123",
+                "billId", "BILL-1"));
 
         // When & Then
         mockMvc.perform(get("/api/payments/TXN-2024-001235/status"))

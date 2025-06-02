@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import com.insurance.shared.dto.PaymentDto;
+import com.insurance.shared.dto.PaymentRequestDto;
 
 /**
  * Service interface for payment processing including payment transactions,
@@ -18,7 +19,7 @@ public interface PaymentService {
      * @param paymentRequest Map containing payment details
      * @return Map containing payment result
      */
-    Map<String, Object> processPayment(Map<String, Object> paymentRequest);
+    PaymentDto processPayment(PaymentRequestDto paymentRequest);
     
     /**
      * Retry a failed payment transaction
@@ -124,4 +125,27 @@ public interface PaymentService {
      * Retry all failed payments
      */
     void retryFailedPayments();
+
+    /**
+     * Get a payment by its identifier
+     * @param paymentId The payment identifier
+     * @return Optional containing the payment DTO if found
+     */
+    Optional<PaymentDto> getPaymentById(String paymentId);
+
+    /**
+     * Retry a failed payment transaction
+     * @param transactionId The transaction identifier
+     */
+    void retryFailedPayment(String transactionId);
+
+    /**
+     * Get payment history for a specific policy with pagination and status filter
+     * @param policyId The policy identifier
+     * @param status The payment status to filter by
+     * @param limit The maximum number of results to return
+     * @param offset The starting point for pagination
+     * @return List of payment DTOs
+     */
+    List<PaymentDto> getPaymentHistory(String policyId, String status, int limit, int offset);
 }
