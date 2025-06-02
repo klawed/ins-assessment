@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.containers.MariaDBContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -30,6 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
     classes = PolicyServiceApplication.class,
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
+@TestPropertySource(locations = "classpath:application-integration-test.properties")
 @Testcontainers
 @ActiveProfiles("integration-test")
 class PolicyServiceIntegrationTest {
