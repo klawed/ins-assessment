@@ -1,5 +1,6 @@
 package com.insurance.billing.entity;
 
+import com.insurance.shared.enums.CustomerTier;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,6 +34,8 @@ public class GracePeriodConfig {
     
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    private CustomerTier customerTier;
     
     public enum PaymentFrequency {
         MONTHLY, QUARTERLY, SEMI_ANNUAL, ANNUAL
