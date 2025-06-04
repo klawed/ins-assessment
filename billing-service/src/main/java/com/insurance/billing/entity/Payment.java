@@ -1,5 +1,6 @@
 package com.insurance.billing.entity;
 
+import com.insurance.shared.enums.PaymentMethod;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -53,12 +54,7 @@ public class Payment {
     
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-    
-  
-    public enum PaymentMethod {
-        CREDIT_CARD, DEBIT_CARD, BANK_TRANSFER, ACH, PAYPAL, STRIPE
-    }
-    
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();

@@ -2,145 +2,55 @@
 version: '3.8'
 
 services:
-  mariadb:
-    ports:
-      - "13306:3306" # Expose MariaDB on host port 13306 to avoid conflicts
-    environment:
-      MYSQL_ROOT_PASSWORD: dev_root_password
-      MYSQL_DATABASE: billing_system_dev
-      MYSQL_USER: billing_user_dev
-      MYSQL_PASSWORD: billing_password_dev
-    volumes:
-      - mariadb_dev_data:/var/lib/mysql # Persist data for dev
-      - ./docker/mariadb/init:/docker-entrypoint-initdb.d # If you have init scripts for dev DB
-
   zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    volumes:
+      - zookeeper_data:/var/lib/zookeeper/data
+      - zookeeper_log:/var/lib/zookeeper/log
+
     ports:
       - "12181:2181" # Expose Zookeeper on host port 12181
 
   kafka:
-    ports:
-      - "19092:9092" # Expose Kafka on host port 19092 (for PLAINTEXT_HOST)
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
     environment:
-      # Advertise Kafka on localhost for external connections from IDE
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:19092
-    volumes:
-      - kafka_dev_data:/var/lib/kafka/data # Persist Kafka data for dev
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      # KAFKA_LISTENERS defines what interfaces Kafka binds to INSIDE the container
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9092
+      # KAFKA_ADVERTISED_LISTENERS defines how clients connect to Kafka
+      # PLAINTEXT is for internal docker network communication (service name `kafka`)
+      # PLAINTEXT_HOST is for external communication (from your host machine via `localhost`)
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      #  THIS IS THE CRUCIAL MISSING PIECE VVVVV
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      #  THIS IS GOOD PRACTICE FOR THE BROKER TO KNOW WHICH LISTENER TO USE FOR INTERNAL COMMUNICATION
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      # Optional: If you encounter "Controller moved to another broker" issues with single node,
+      # you might need this, but usually KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1 is enough for single node.
+      # KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
+      # KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 1
+    ports:
+      - "9092:9092" # Exposes the PLAINTEXT_HOST listener (9092 internally) to port 9092 on host
+    restart: on-failure
+
 
   redis:
+    image: redis:7.2-alpine
+    restart: on-failure
     ports:
-      - "16379:6379" # Expose Redis on host port 16379
+      - "6379:6379" # Expose Redis on host port 16379
     volumes:
       - redis_dev_data:/data # Persist Redis data for dev
 
-  policy-service:
-    build:
-      context: .
-      dockerfile: policy-service/Dockerfile
-    volumes:
-      - ./policy-service:/app
-      - ~/.m2:/root/.m2
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev
-    ports:
-      - "8081:8080"
-    depends_on:
-      mariadb:
-        condition: service_started
-      kafka:
-        condition: service_started
-      redis:
-        condition: service_started
-      zookeeper:
-        condition: service_started
-
-  billing-service:
-    build:
-      context: .
-      dockerfile: billing-service/Dockerfile
-    volumes:
-      - ./billing-service:/app
-      - ~/.m2:/root/.m2
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev
-    ports:
-      - "8082:8080"
-    depends_on:
-      mariadb:
-        condition: service_started
-      kafka:
-        condition: service_started
-      redis:
-        condition: service_started
-      zookeeper:
-        condition: service_started
-
-  payment-service:
-    build:
-      context: .
-      dockerfile: payment-service/Dockerfile
-    volumes:
-      - ./payment-service:/app
-      - ~/.m2:/root/.m2
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev
-    ports:
-      - "8083:8080"
-    depends_on:
-      mariadb:
-        condition: service_started
-      kafka:
-        condition: service_started
-      redis:
-        condition: service_started
-      payment-gateway-mock:
-        condition: service_started
-      zookeeper:
-        condition: service_started
-
-  notification-service:
-    build:
-      context: .
-      dockerfile: notification-service/Dockerfile
-    volumes:
-      - ./notification-service:/app
-      - ~/.m2:/root/.m2
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev
-    ports:
-      - "8084:8080"
-    depends_on:
-      mariadb:
-        condition: service_started
-      kafka:
-        condition: service_started
-      redis:
-        condition: service_started
-      zookeeper:
-        condition: service_started
-
-  payment-gateway-mock:
-    build:
-      context: .
-      dockerfile: payment-gateway-mock/Dockerfile
-    volumes:
-      - ./payment-gateway-mock:/app
-      - ~/.m2:/root/.m2
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev
-    ports:
-      - "8090:8080"
-    depends_on:
-      mariadb:
-        condition: service_started
-      kafka:
-        condition: service_started
-      redis:
-        condition: service_started
-      zookeeper:
-        condition: service_started
 
 volumes:
-  mariadb_dev_data:
   kafka_dev_data:
   redis_dev_data:
+  zookeeper_data:
+  zookeeper_log:

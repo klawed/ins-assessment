@@ -1,10 +1,7 @@
 package com.insurance.payment.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import com.insurance.shared.enums.PaymentMethod;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,8 +25,12 @@ public class PaymentEntity {
     private BigDecimal amount;
 
     @Enumerated(EnumType.STRING)
+    @Column(name="status")
     private PaymentStatus status;
 
     private LocalDateTime timestamp;
-    private String paymentMethod;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PaymentMethod paymentMethod;
 }

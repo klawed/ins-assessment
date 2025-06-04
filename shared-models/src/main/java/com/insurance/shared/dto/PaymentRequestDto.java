@@ -1,5 +1,6 @@
 package com.insurance.shared.dto;
 
+import com.insurance.shared.enums.PaymentMethod;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,5 +16,5 @@ public class PaymentRequestDto {
     private String billId; // Unique identifier for the bill
     private String policyId; // Unique identifier for the policy
     private BigDecimal amount; // Payment amount
-    private String paymentMethod; // Payment method
+    private PaymentMethod paymentMethod; // Payment method
 }
