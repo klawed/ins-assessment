@@ -10,11 +10,11 @@ import java.util.Optional;
 
 @Repository
 public interface GracePeriodConfigRepository extends JpaRepository<GracePeriodConfig, String> {
-    Optional<GracePeriodConfig> findByPolicyTypeAndFrequency(String policyType, PaymentFrequency frequency);
+    Optional<GracePeriodConfig> findByPolicyTypeAndPaymentFrequency(String policyType, PaymentFrequency frequency);
     
-    Optional<GracePeriodConfig> findByPolicyTypeAndFrequencyAndCustomerTier(
+    Optional<GracePeriodConfig> findByPolicyTypeAndPaymentFrequencyAndCustomerTier(
         String policyType, 
-        PaymentFrequency frequency,
+        PaymentFrequency paymentFrequency,
         CustomerTier customerTier
     );
 }

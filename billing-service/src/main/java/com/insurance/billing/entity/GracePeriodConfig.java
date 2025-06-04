@@ -24,7 +24,7 @@ public class GracePeriodConfig {
     
     @Column(name = "payment_frequency")
     @Enumerated(EnumType.STRING)
-    private PaymentFrequency frequency;
+    private PaymentFrequency paymentFrequency;
     
     @Column(name = "grace_period_days")
     private Integer gracePeriodDays;
@@ -35,8 +35,10 @@ public class GracePeriodConfig {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "customer_tier")
     private CustomerTier customerTier;
-    
+
     public enum PaymentFrequency {
         MONTHLY, QUARTERLY, SEMI_ANNUAL, ANNUAL
     }

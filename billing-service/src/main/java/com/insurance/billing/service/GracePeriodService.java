@@ -16,8 +16,8 @@ public class GracePeriodService {
     
     public int getGracePeriodDays(String policyType, PaymentFrequency frequency) {
         return gracePeriodConfigRepository
-            .findByPolicyTypeAndFrequency(policyType, frequency)
-            .or(() -> gracePeriodConfigRepository.findByPolicyTypeAndFrequency("DEFAULT", frequency))
+            .findByPolicyTypeAndPaymentFrequency(policyType, frequency)
+            .or(() -> gracePeriodConfigRepository.findByPolicyTypeAndPaymentFrequency("DEFAULT", frequency))
             .map(GracePeriodConfig::getGracePeriodDays)
             .orElse(10); // Hardcoded fallback
     }
