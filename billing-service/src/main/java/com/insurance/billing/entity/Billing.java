@@ -25,6 +25,7 @@ public class Billing {
     private String customerId;
     private BigDecimal amount;
     private LocalDate dueDate;
+    private Integer retryCount;
     
     @Enumerated(EnumType.STRING)
     private BillingStatus status;
@@ -33,7 +34,8 @@ public class Billing {
     private String paymentStatus;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    
+    private LocalDate gracePeriodEnd;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
