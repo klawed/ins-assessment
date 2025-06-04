@@ -1,0 +1,48 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    services:
+      docker:
+        image: docker:dind
+        options: >-
+          --privileged
+          --health-cmd="docker info"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+        env:
+          DOCKER_TLS_CERTDIR: ""
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Build parent project
+      run: mvn clean install -N
+
+    - name: Build shared models
+      run: mvn clean install -pl shared-models
+
+    - name: Run Unit Tests
+      run: |
+        for module in policy-service billing-service notification-service payment-service
+        do
+          echo "Running unit tests for $module"
+          mvn test -pl $module -Dtest="!**/*E2ETest.java" -Dsurefire.failIfNoSpecifiedTests=false
+        done

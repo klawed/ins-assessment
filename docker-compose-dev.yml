@@ -1,0 +1,146 @@
+# docker-compose-dev.yml (Overrides for local development)
+version: '3.8'
+
+services:
+  mariadb:
+    ports:
+      - "13306:3306" # Expose MariaDB on host port 13306 to avoid conflicts
+    environment:
+      MYSQL_ROOT_PASSWORD: dev_root_password
+      MYSQL_DATABASE: billing_system_dev
+      MYSQL_USER: billing_user_dev
+      MYSQL_PASSWORD: billing_password_dev
+    volumes:
+      - mariadb_dev_data:/var/lib/mysql # Persist data for dev
+      - ./docker/mariadb/init:/docker-entrypoint-initdb.d # If you have init scripts for dev DB
+
+  zookeeper:
+    ports:
+      - "12181:2181" # Expose Zookeeper on host port 12181
+
+  kafka:
+    ports:
+      - "19092:9092" # Expose Kafka on host port 19092 (for PLAINTEXT_HOST)
+    environment:
+      # Advertise Kafka on localhost for external connections from IDE
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:19092
+    volumes:
+      - kafka_dev_data:/var/lib/kafka/data # Persist Kafka data for dev
+
+  redis:
+    ports:
+      - "16379:6379" # Expose Redis on host port 16379
+    volumes:
+      - redis_dev_data:/data # Persist Redis data for dev
+
+  policy-service:
+    build:
+      context: .
+      dockerfile: policy-service/Dockerfile
+    volumes:
+      - ./policy-service:/app
+      - ~/.m2:/root/.m2
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    ports:
+      - "8081:8080"
+    depends_on:
+      mariadb:
+        condition: service_started
+      kafka:
+        condition: service_started
+      redis:
+        condition: service_started
+      zookeeper:
+        condition: service_started
+
+  billing-service:
+    build:
+      context: .
+      dockerfile: billing-service/Dockerfile
+    volumes:
+      - ./billing-service:/app
+      - ~/.m2:/root/.m2
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    ports:
+      - "8082:8080"
+    depends_on:
+      mariadb:
+        condition: service_started
+      kafka:
+        condition: service_started
+      redis:
+        condition: service_started
+      zookeeper:
+        condition: service_started
+
+  payment-service:
+    build:
+      context: .
+      dockerfile: payment-service/Dockerfile
+    volumes:
+      - ./payment-service:/app
+      - ~/.m2:/root/.m2
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    ports:
+      - "8083:8080"
+    depends_on:
+      mariadb:
+        condition: service_started
+      kafka:
+        condition: service_started
+      redis:
+        condition: service_started
+      payment-gateway-mock:
+        condition: service_started
+      zookeeper:
+        condition: service_started
+
+  notification-service:
+    build:
+      context: .
+      dockerfile: notification-service/Dockerfile
+    volumes:
+      - ./notification-service:/app
+      - ~/.m2:/root/.m2
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    ports:
+      - "8084:8080"
+    depends_on:
+      mariadb:
+        condition: service_started
+      kafka:
+        condition: service_started
+      redis:
+        condition: service_started
+      zookeeper:
+        condition: service_started
+
+  payment-gateway-mock:
+    build:
+      context: .
+      dockerfile: payment-gateway-mock/Dockerfile
+    volumes:
+      - ./payment-gateway-mock:/app
+      - ~/.m2:/root/.m2
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    ports:
+      - "8090:8080"
+    depends_on:
+      mariadb:
+        condition: service_started
+      kafka:
+        condition: service_started
+      redis:
+        condition: service_started
+      zookeeper:
+        condition: service_started
+
+volumes:
+  mariadb_dev_data:
+  kafka_dev_data:
+  redis_dev_data:
