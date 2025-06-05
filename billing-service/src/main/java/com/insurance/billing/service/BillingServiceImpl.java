@@ -10,7 +10,7 @@ import com.insurance.shared.client.PolicyClient;
 import com.insurance.shared.dto.BillingDto;
 import com.insurance.shared.dto.PaymentDto;
 import com.insurance.shared.dto.PaymentRequestDto;
-import com.insurance.shared.entity.Policy;
+import com.insurance.shared.dto.PolicyDto;
 import com.insurance.billing.exception.PolicyNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -164,13 +164,13 @@ public class BillingServiceImpl implements BillingService {
     public boolean isWithinGracePeriod(String policyId) {
         log.info("Checking grace period status for policy {}", policyId);
         
-        Policy policy = policyClient.getPolicy(policyId)
+        PolicyDto policy = policyClient.getPolicy(policyId)
             .orElseThrow(() -> new PolicyNotFoundException(policyId));
         
         // Get configured grace period
         int gracePeriodDays = gracePeriodService.getGracePeriodDays(
             policy.getPolicyType(),
-            policy.getPaymentFrequency()
+            policy.getFrequency()
         );
         
         // Calculate if within grace period

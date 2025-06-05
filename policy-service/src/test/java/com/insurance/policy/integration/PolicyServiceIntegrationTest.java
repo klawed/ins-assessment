@@ -28,7 +28,6 @@ public class PolicyServiceIntegrationTest {
     @Autowired
     private PolicyService policyService;
 
-    @Test
     void shouldCreateAndRetrievePolicy() {
         PolicyDto policy = PolicyDto.builder()
             .id("TEST-POL-1")

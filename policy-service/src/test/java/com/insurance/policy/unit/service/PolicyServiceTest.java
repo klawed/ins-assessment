@@ -143,7 +143,7 @@ class PolicyServiceTest {
         PolicyEntity mockEntity = new PolicyEntity();
         mockEntity.setId(policyId);
         mockEntity.setPremiumAmount(new BigDecimal("200.00"));
-        mockEntity.setFrequency(PaymentFrequency.MONTHLY);
+        mockEntity.setPaymentFrequency(PaymentFrequency.MONTHLY);
         mockEntity.setNextDueDate(LocalDate.now().plusDays(10));
         mockEntity.setGracePeriodDays(15);
         mockEntity.setStatus(PolicyStatus.ACTIVE);

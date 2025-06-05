@@ -39,6 +39,16 @@ services:
       - "9092:9092" # Exposes the PLAINTEXT_HOST listener (9092 internally) to port 9092 on host
     restart: on-failure
 
+  mariadb:
+    image: mariadb:11.0
+    ports:
+      - "3306:3306"
+    environment:
+       MYSQL_ROOT_PASSWORD: default_root_password_dev
+       MYSQL_DATABASE: billing_system_dev
+       MYSQL_USER: billing_user_dev
+       MYSQL_PASSWORD: billing_password_dev
+
 
   redis:
     image: redis:7.2-alpine

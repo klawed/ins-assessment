@@ -51,6 +51,7 @@ public class PolicyDto {
     @PositiveOrZero(message = "Grace period days must be zero or positive")
     private Integer gracePeriodDays;
 
+
     // Add this field for the premium schedule
     private PremiumScheduleDto premiumSchedule;
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.insurance.payment.service.PaymentService;
 import com.insurance.shared.dto.PaymentRequestDto;
 import com.insurance.shared.dto.PaymentDto;
+import com.insurance.shared.enums.PaymentMethod;
 import com.insurance.shared.enums.PaymentStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ class PaymentControllerTest {
                 .billId("BILL-1")
                 .policyId("POLICY-123")
                 .amount(new BigDecimal("171.00"))
-                .paymentMethod("CREDIT_CARD")
+                .paymentMethod(PaymentMethod.CREDIT_CARD)
                 .build();
 
         PaymentDto response = PaymentDto.builder()
@@ -48,7 +49,7 @@ class PaymentControllerTest {
                 .policyId("POLICY-123")
                 .amount(new BigDecimal("171.00"))
                 .status(PaymentStatus.COMPLETED)
-                .paymentMethod("CREDIT_CARD")
+                .paymentMethod(PaymentMethod.CREDIT_CARD.name())
                 .build();
 
         when(paymentService.processPayment(any(PaymentRequestDto.class))).thenReturn(response);

@@ -5,6 +5,7 @@ import com.insurance.payment.entity.PaymentEntity;
 import com.insurance.payment.mapper.PaymentMapper;
 import com.insurance.shared.dto.PaymentDto;
 import com.insurance.shared.dto.PaymentRequestDto;
+import com.insurance.shared.enums.PaymentMethod;
 import com.insurance.shared.enums.PaymentStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,7 +45,7 @@ class PaymentServiceTest {
         PaymentRequestDto request = PaymentRequestDto.builder()
                 .policyId("POLICY-123")
                 .amount(new BigDecimal("200.00"))
-                .paymentMethod("CREDIT_CARD")
+                .paymentMethod(PaymentMethod.CREDIT_CARD)
                 .build();
 
         PaymentEntity paymentEntity = new PaymentEntity();
@@ -53,7 +54,7 @@ class PaymentServiceTest {
         paymentEntity.setAmount(new BigDecimal("200.00"));
         paymentEntity.setStatus(PaymentStatus.SUCCESS);
         paymentEntity.setTimestamp(LocalDateTime.now());
-        paymentEntity.setPaymentMethod("CREDIT_CARD");
+        paymentEntity.setPaymentMethod(PaymentMethod.CREDIT_CARD);
 
         when(paymentRepository.save(any(PaymentEntity.class))).thenReturn(paymentEntity);
         when(paymentMapper.toDto(any(PaymentEntity.class))).thenReturn(PaymentDto.builder()
@@ -77,8 +78,8 @@ class PaymentServiceTest {
         String policyId = "POLICY-123";
 
         List<PaymentEntity> mockPayments = List.of(
-            new PaymentEntity("PAYMENT-1", policyId, new BigDecimal("200.00"), PaymentStatus.SUCCESS, LocalDateTime.now(), "CREDIT_CARD"),
-            new PaymentEntity("PAYMENT-2", policyId, new BigDecimal("150.00"), PaymentStatus.SUCCESS, LocalDateTime.now(), "CREDIT_CARD")
+            new PaymentEntity("PAYMENT-1", policyId, new BigDecimal("200.00"), PaymentStatus.SUCCESS, LocalDateTime.now(), PaymentMethod.CREDIT_CARD),
+            new PaymentEntity("PAYMENT-2", policyId, new BigDecimal("150.00"), PaymentStatus.SUCCESS, LocalDateTime.now(), PaymentMethod.CREDIT_CARD)
         );
 
         when(paymentRepository.findByPolicyId(policyId)).thenReturn(mockPayments);
@@ -101,7 +102,7 @@ class PaymentServiceTest {
             new BigDecimal("200.00"),
             PaymentStatus.SUCCESS,
             LocalDateTime.now(),
-            "CREDIT_CARD"
+            PaymentMethod.CREDIT_CARD
         );
 
         when(paymentRepository.findById(paymentId)).thenReturn(Optional.of(mockPaymentEntity));
@@ -118,7 +119,7 @@ class PaymentServiceTest {
         PaymentRequestDto request = PaymentRequestDto.builder()
                 .policyId("POLICY-123")
                 .amount(new BigDecimal("200.00"))
-                .paymentMethod("CREDIT_CARD")
+                .paymentMethod(PaymentMethod.CREDIT_CARD)
                 .build();
 
         PaymentEntity paymentEntity = new PaymentEntity();
@@ -127,7 +128,7 @@ class PaymentServiceTest {
         paymentEntity.setAmount(new BigDecimal("200.00"));
         paymentEntity.setStatus(PaymentStatus.FAILED);
         paymentEntity.setTimestamp(LocalDateTime.now());
-        paymentEntity.setPaymentMethod("CREDIT_CARD");
+        paymentEntity.setPaymentMethod(PaymentMethod.CREDIT_CARD);
 
         when(paymentRepository.save(any(PaymentEntity.class))).thenReturn(paymentEntity);
 
@@ -141,8 +142,8 @@ class PaymentServiceTest {
     @Test
     void shouldRetryFailedPayments() {
         List<PaymentEntity> failedPayments = List.of(
-                new PaymentEntity("PAYMENT-1", "POLICY-123", new BigDecimal("200.00"), PaymentStatus.FAILED, LocalDateTime.now(), "CREDIT_CARD"),
-                new PaymentEntity("PAYMENT-2", "POLICY-456", new BigDecimal("150.00"), PaymentStatus.FAILED, LocalDateTime.now(), "CREDIT_CARD")
+                new PaymentEntity("PAYMENT-1", "POLICY-123", new BigDecimal("200.00"), PaymentStatus.FAILED, LocalDateTime.now(), PaymentMethod.CREDIT_CARD),
+                new PaymentEntity("PAYMENT-2", "POLICY-456", new BigDecimal("150.00"), PaymentStatus.FAILED, LocalDateTime.now(), PaymentMethod.CREDIT_CARD)
         );
 
         when(paymentRepository.findByStatus(PaymentStatus.FAILED)).thenReturn(failedPayments);

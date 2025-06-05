@@ -36,18 +36,18 @@ public class PolicyEntity {
     @Column(nullable = false)
     private PolicyStatus status;
 
-    @Column(nullable = false
+    @Column(nullable = false)
     private LocalDateTime effectiveDate;
 
     @Column(nullable = false)
-    private LocalDate expirationDate;
+    private LocalDateTime expirationDate;
 
     @Column(nullable = false)
     private BigDecimal premiumAmount;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private PaymentFrequency frequency;
+    private PaymentFrequency paymentFrequency;
 
     @Column
     Integer gracePeriodDays;

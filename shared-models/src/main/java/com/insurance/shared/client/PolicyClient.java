@@ -1,9 +1,9 @@
 package com.insurance.shared.client;
 
-import com.insurance.shared.entity.Policy;
 import java.util.Optional;
+import com.insurance.shared.dto.PolicyDto;
 
 public interface PolicyClient {
-    Optional<Policy> getPolicy(String policyId);
+    Optional<PolicyDto> getPolicy(String policyId);
     boolean existsById(String policyId);
 }

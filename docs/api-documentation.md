@@ -1,268 +1,410 @@
-# Policy Billing System - REST API Endpoints
+# Policy Billing System - Updated REST API Documentation
 
-This document outlines the REST API endpoints for the insurance policy billing system simulation.
+This document provides the current API endpoints for the insurance policy billing system based on the actual implementation.
 
-## API Base URL
-```
-http://localhost:8080/api/v1
-```
+## Service Overview
+
+The system consists of four microservices:
+- **Policy Service** (port 8081) - Manages policy metadata and premium schedules
+- **Billing Service** (port 8082) - Calculates premiums and manages billing cycles  
+- **Payment Service** (port 8083) - Handles payment processing and retry logic
+- **Notification Service** (port 8084) - Manages payment reminders and notifications
 
 ## Authentication
-All endpoints require API key authentication via header:
+
+All endpoints currently use basic authentication:
 ```
-Authorization: Bearer {api_key}
+Authorization: Basic admin:adminPassword
 ```
 
-## Core Endpoints
+## Policy Service API (Port 8081)
 
-### 1. Retrieve Premium Schedule for a Policy
-
-**GET** `/billing/policies/{policyId}/premium-schedule`
-
-Retrieves the premium schedule and billing details for a specific policy.
-
-**Parameters:**
-- `policyId` (path) - The policy identifier
+### Health Check
+**GET** `/api/policies/hello`
 
 **Response:**
 ```json
 {
-  "policyId": "12345",
-  "policyType": "auto_insurance",
+  "service": "policy-service",
+  "message": "Hello from Policy Service!",
+  "status": "UP"
+}
+```
+
+### Get Policy by ID
+**GET** `/api/policies/{id}`
+
+**Response:**
+```json
+{
+  "id": "POLICY-123",
+  "policyNumber": "PN-12345",
+  "customerId": "CUST-001",
+  "policyType": "LIFE",
+  "status": "ACTIVE",
+  "effectiveDate": "2024-01-01",
+  "expirationDate": "2025-01-01",
   "premiumAmount": 156.00,
-  "billingFrequency": "monthly",
-  "nextDueDate": "2024-12-15T00:00:00Z",
+  "frequency": "MONTHLY",
   "gracePeriodDays": 10,
-  "lateFee": 15.00,
-  "status": "overdue",
-  "daysOverdue": 3,
-  "totalAmountDue": 171.00,
-  "schedule": [
-    {
-      "dueDate": "2024-12-15T00:00:00Z",
-      "amount": 156.00,
-      "status": "overdue",
-      "lateFee": 15.00
-    },
-    {
-      "dueDate": "2025-01-15T00:00:00Z",
-      "amount": 156.00,
-      "status": "pending"
-    }
-  ]
+  "nextDueDate": "2024-12-15"
 }
 ```
 
-### 2. Record a Payment Attempt
+### Get All Policies
+**GET** `/api/policies`
 
-**POST** `/payments/process`
+**Response:** Array of policy objects
 
-Records a payment attempt and processes it through the payment gateway.
+### Create Policy
+**POST** `/api/policies`
 
 **Request Body:**
 ```json
 {
-  "policyId": "12345",
-  "amount": 171.00,
-  "paymentMethod": {
-    "type": "credit_card",
-    "cardNumber": "4532123456789012",
-    "expiryMonth": 12,
-    "expiryYear": 2026,
-    "cvv": "123",
-    "holderName": "John Doe"
-  },
-  "billingAddress": {
-    "street": "123 Main St",
-    "city": "Boston",
-    "state": "MA",
-    "zipCode": "02101"
-  }
+  "policyNumber": "PN-12345",
+  "customerId": "CUST-001",
+  "policyType": "AUTO",
+  "status": "ACTIVE",
+  "effectiveDate": "2024-01-01",
+  "expirationDate": "2025-01-01",
+  "premiumAmount": 200.00,
+  "frequency": "MONTHLY",
+  "gracePeriodDays": 15
 }
 ```
+
+### Get Policies for Customer
+**GET** `/api/policies/customer/{customerId}`
+
+### Get Premium Schedule for Policy
+**GET** `/api/policies/{id}/premium-schedule`
 
 **Response:**
 ```json
 {
-  "transactionId": "TXN-2024-001235",
-  "status": "success",
-  "amount": 171.00,
-  "policyId": "12345",
-  "paymentMethod": "visa_****1234",
-  "timestamp": "2024-12-18T15:15:00Z",
-  "confirmationCode": "CONF-ABC123",
-  "processingFee": 0.00,
-  "message": "Payment processed successfully"
+  "policyId": "POLICY-123",
+  "premiumAmount": 200.00,
+  "billingFrequency": "MONTHLY",
+  "nextDueDate": "2024-12-15",
+  "gracePeriodDays": 10,
+  "status": "ACTIVE",
+  "daysOverdue": null,
+  "lateFee": null,
+  "totalAmountDue": null,
+  "schedule": []
 }
 ```
 
-**Error Response:**
-```json
-{
-  "transactionId": "TXN-2024-001236",
-  "status": "failed",
-  "amount": 171.00,
-  "policyId": "12345",
-  "paymentMethod": "visa_****1234",
-  "timestamp": "2024-12-18T15:15:00Z",
-  "errorCode": "INSUFFICIENT_FUNDS",
-  "message": "Payment declined due to insufficient funds",
-  "retrySchedule": {
-    "nextRetryDate": "2024-12-21T00:00:00Z",
-    "maxRetries": 3,
-    "currentRetryCount": 0
-  }
-}
-```
+## Billing Service API (Port 8082)
 
-### 3. List Delinquent Policies
-
-**GET** `/billing/policies/delinquent`
-
-Returns a list of policies that are currently delinquent (overdue payments).
-
-**Query Parameters:**
-- `limit` (optional) - Number of records to return (default: 50)
-- `offset` (optional) - Number of records to skip (default: 0)
-- `minDaysOverdue` (optional) - Minimum days overdue filter
-- `customerId` (optional) - Filter by specific customer
+### Health Check
+**GET** `/api/billing/hello`
 
 **Response:**
 ```json
 {
-  "totalCount": 156,
-  "delinquentPolicies": [
-    {
-      "policyId": "12345",
-      "customerId": "CUST-001",
-      "customerName": "John Doe",
-      "policyType": "auto_insurance",
-      "premiumAmount": 156.00,
-      "dueDate": "2024-12-15T00:00:00Z",
-      "daysOverdue": 3,
-      "lateFee": 15.00,
-      "totalAmountDue": 171.00,
-      "status": "overdue",
-      "gracePeriodExpires": "2024-12-25T00:00:00Z",
-      "lastPaymentDate": "2024-11-15T00:00:00Z",
-      "contactInfo": {
-        "email": "john.doe@example.com",
-        "phone": "+1-555-123-4567"
-      }
-    }
-  ]
+  "service": "billing-service",
+  "message": "Hello from Billing Service!",
+  "timestamp": "2024-12-18T15:15:00Z",
+  "status": "UP"
 }
 ```
 
-### 4. Trigger Payment Retry
+### Get Premium for Policy
+**GET** `/api/billing/{policyId}/premium`
 
-**POST** `/payments/{transactionId}/retry`
+**Response:**
+```json
+{
+  "policyId": "POLICY-123",
+  "premiumAmount": 150.00,
+  "frequency": "MONTHLY",
+  "calculatedAt": "2024-12-18T15:15:00Z",
+  "message": "Premium calculation completed - implementation pending"
+}
+```
 
-Triggers a retry for a previously failed payment.
-
-**Parameters:**
-- `transactionId` (path) - The original transaction ID that failed
+### Calculate Premium
+**POST** `/api/billing/calculate`
 
 **Request Body:**
 ```json
 {
-  "retryReason": "customer_request",
-  "useAlternatePaymentMethod": false,
-  "newPaymentMethod": null
+  "policyType": "AUTO_INSURANCE",
+  "coverageAmount": 50000,
+  "riskFactors": ["GOOD_DRIVER"]
 }
 ```
 
 **Response:**
 ```json
 {
-  "originalTransactionId": "TXN-2024-001236",
-  "newTransactionId": "TXN-2024-001237",
-  "status": "processing",
-  "retryAttempt": 1,
-  "timestamp": "2024-12-18T16:00:00Z",
-  "estimatedCompletionTime": "2024-12-18T16:05:00Z"
+  "calculatedPremium": 150.00,
+  "frequency": "MONTHLY",
+  "effectiveDate": "2024-12-18T15:15:00Z",
+  "baseAmount": 135.00,
+  "fees": 15.00,
+  "message": "Premium calculation completed - implementation pending"
 }
 ```
 
-## Additional API Endpoints
+### Get Due Premiums
+**GET** `/api/billing/due`
 
-### 5. Get Payment History
+**Response:**
+```json
+{
+  "duePremiums": [],
+  "totalDue": 0,
+  "count": 0,
+  "message": "Due premiums endpoint - implementation pending"
+}
+```
 
-**GET** `/payments/history`
+### Get Delinquent Policies
+**GET** `/api/billing/delinquent`
 
-**Query Parameters:**
-- `policyId` (optional)
-- `customerId` (optional) 
-- `startDate` (optional)
-- `endDate` (optional)
-- `status` (optional) - paid, failed, pending
-- `limit` (optional)
-- `offset` (optional)
+**Response:**
+```json
+[
+  {
+    "policyId": "POLICY-123",
+    "customerId": "CUST-001",
+    "customerName": "John Doe",
+    "daysOverdue": 15,
+    "amountOverdue": 171.00,
+    "lastPaymentDate": "2024-11-15",
+    "gracePeriodExpiry": "2024-12-13T15:15:00Z"
+  }
+]
+```
 
-### 6. Update Payment Method
+### Calculate Premium for Policy
+**GET** `/api/billing/{policyId}/calculate`
 
-**PUT** `/customers/{customerId}/payment-methods/{methodId}`
+### Update Billing Status
+**POST** `/api/billing/{policyId}/status`
 
-### 7. Setup AutoPay
+**Request Body:**
+```json
+{
+  "paymentStatus": "PAID"
+}
+```
 
-**POST** `/billing/policies/{policyId}/autopay`
+### Get Billings by Customer
+**GET** `/api/billing/customer/{customerId}`
 
-### 8. Send Payment Reminder
+### Get Billings by Policy
+**GET** `/api/billing/policy/{policyId}`
 
-**POST** `/notifications/payment-reminders`
+### Submit Payment
+**POST** `/api/billing/payments`
 
-### 9. Grace Period Status
+**Request Body:**
+```json
+{
+  "billId": "BILL-123",
+  "amount": 171.00,
+  "paymentMethod": "CREDIT_CARD"
+}
+```
 
-**GET** `/billing/policies/{policyId}/grace-period`
+## Payment Service API (Port 8083)
 
-### 10. Calculate Late Fees
+### Health Check
+**GET** `/api/payments/hello`
 
-**GET** `/billing/policies/{policyId}/late-fees`
+**Response:**
+```json
+{
+  "service": "payment-service",
+  "message": "Hello from Payment Service!",
+  "timestamp": "2024-12-18T15:15:00Z",
+  "status": "UP"
+}
+```
 
-## Error Codes
+### Process Payment
+**POST** `/api/payments/process`
 
-| Code | Description |
-|------|-------------|
-| `INVALID_POLICY` | Policy ID not found or invalid |
-| `PAYMENT_DECLINED` | Payment was declined by processor |
-| `INSUFFICIENT_FUNDS` | Not enough funds in account |
-| `INVALID_CARD` | Card number or details invalid |
-| `EXPIRED_CARD` | Card has expired |
-| `PROCESSING_ERROR` | Generic processing error |
-| `RETRY_LIMIT_EXCEEDED` | Maximum retry attempts reached |
-| `GRACE_PERIOD_EXPIRED` | Policy grace period has expired |
+**Request Body:**
+```json
+{
+  "policyId": "POLICY-123",
+  "amount": 171.00,
+  "paymentMethod": "CREDIT_CARD"
+}
+```
 
-## Rate Limiting
+**Response:**
+```json
+{
+  "id": "TXN-12345",
+  "policyId": "POLICY-123",
+  "amount": 171.00,
+  "status": "COMPLETED",
+  "timestamp": "2024-12-18T15:15:00Z",
+  "paymentMethod": "CREDIT_CARD"
+}
+```
 
-- 1000 requests per hour per API key
-- 10 requests per second burst limit
+### Get Payment History
+**GET** `/api/payments/history?policyId={policyId}&status={status}&limit={limit}&offset={offset}`
 
-## Webhook Events
+### Get Payment Status
+**GET** `/api/payments/payments/{transactionId}/status`
 
-The system can send webhooks for the following events:
-- `payment.succeeded`
-- `payment.failed` 
-- `payment.retry_scheduled`
-- `policy.grace_period_entered`
-- `policy.lapsed`
-- `autopay.enabled`
-- `autopay.failed`
+**Response:**
+```json
+{
+  "transactionId": "TXN-12345",
+  "status": "COMPLETED",
+  "amount": 171.00,
+  "policyId": "POLICY-123",
+  "billId": "BILL-1",
+  "attemptedAt": "2024-12-18T15:15:00Z"
+}
+```
 
-## Testing
+### Retry Payment
+**POST** `/api/payments/{paymentId}/retry`
 
-Use the following test data for development:
+### Get Failed Payments
+**GET** `/api/payments/failed`
 
-**Test Policy IDs:**
-- `12345` - Overdue auto insurance
-- `67890` - Current home insurance  
-- `24680` - Current life insurance
+### Get Payment History for Policy
+**GET** `/api/payments/policy/{policyId}`
 
-**Test Payment Methods:**
-- `4532123456789012` - Success
-- `4000000000000002` - Declined
-- `4000000000000119` - Processing error
-- `4000000000000051` - Expired card
+### Initiate Refund
+**POST** `/api/payments/{transactionId}/refund`
 
-**Test Customer IDs:**
-- `CUST-001` - John Doe (multiple policies)
-- `CUST-002` - Jane Smith (single policy)
+**Request Body (optional):**
+```json
+{
+  "amount": 100.00
+}
+```
+
+### Get Payment Statistics
+**GET** `/api/payments/statistics`
+
+**Response:**
+```json
+{
+  "totalTransactions": 150,
+  "completedTransactions": 120,
+  "failedTransactions": 30,
+  "successRate": 0.8,
+  "totalAmountProcessed": 25000.00,
+  "generatedAt": "2024-12-18T15:15:00Z"
+}
+```
+
+### Update Payment Status
+**PUT** `/api/payments/{transactionId}/status`
+
+**Request Body:**
+```json
+{
+  "status": "COMPLETED"
+}
+```
+
+### Get Delinquent Policies
+**GET** `/api/payments/delinquent?limit={limit}&offset={offset}&minDaysOverdue={minDaysOverdue}&customerId={customerId}`
+
+**Response:**
+```json
+{
+  "totalCount": 2,
+  "delinquentPolicies": ["POLICY-123", "POLICY-456"]
+}
+```
+
+## Notification Service API (Port 8084)
+
+### Health Check
+**GET** `/api/notifications/hello`
+
+**Response:**
+```json
+{
+  "service": "notification-service",
+  "message": "Hello from Notification Service!",
+  "timestamp": "2024-12-18T15:15:00Z",
+  "status": "UP"
+}
+```
+
+### Send Notification
+**POST** `/api/notifications/send`
+
+**Request Body:**
+```json
+{
+  "customerId": "CUST-001",
+  "type": "PAYMENT_REMINDER",
+  "message": "Your payment is due soon"
+}
+```
+
+**Response:**
+```json
+{
+  "notificationId": "NOTIF-1734539700123",
+  "status": "SENT",
+  "message": "Notification send endpoint - implementation pending",
+  "timestamp": "2024-12-18T15:15:00Z"
+}
+```
+
+### Get Notifications for Policy
+**GET** `/api/notifications/{policyId}`
+
+**Response:**
+```json
+{
+  "policyId": "POLICY-123",
+  "notifications": [],
+  "count": 0,
+  "message": "Notification retrieval endpoint - implementation pending"
+}
+```
+
+## Health Check Endpoints
+
+All services expose health check endpoints:
+- **GET** `/actuator/health` - Spring Boot Actuator health endpoint
+- **GET** `/actuator/info` - Application information
+- **GET** `/actuator/metrics` - Application metrics
+
+## Error Responses
+
+Standard error response format:
+```json
+{
+  "error": "Error description",
+  "timestamp": "2024-12-18T15:15:00Z",
+  "status": 404,
+  "path": "/api/policies/NONEXISTENT"
+}
+```
+
+## Status Codes
+
+- `200 OK` - Successful request
+- `201 Created` - Resource created successfully
+- `400 Bad Request` - Invalid request data
+- `401 Unauthorized` - Authentication required
+- `404 Not Found` - Resource not found
+- `500 Internal Server Error` - Server error
+
+## Notes
+
+- All timestamps are in ISO 8601 format (UTC)
+- Monetary amounts are represented as decimal numbers
+- Policy IDs, Customer IDs, and Transaction IDs are strings
+- Some endpoints are marked as "implementation pending" and return mock data
+- The system uses event-driven architecture with Kafka for inter-service communication

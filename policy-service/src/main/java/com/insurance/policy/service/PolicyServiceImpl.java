@@ -5,6 +5,7 @@ import com.insurance.policy.mapper.PolicyMapper;
 import com.insurance.policy.repository.PolicyRepository;
 import com.insurance.shared.dto.PolicyDto;
 import com.insurance.shared.dto.PremiumScheduleDto;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,15 +14,12 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
+@RequiredArgsConstructor
 public class PolicyServiceImpl implements PolicyService {
 
     private final PolicyRepository policyRepository;
     private final PolicyMapper policyMapper;
 
-    public PolicyServiceImpl(PolicyRepository policyRepository, PolicyMapper policyMapper) {
-        this.policyRepository = policyRepository;
-        this.policyMapper = policyMapper;
-    }
 
     @Override
     public Optional<PolicyDto> getPolicyById(String id) {

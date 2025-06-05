@@ -1,13 +1,12 @@
 package com.insurance.billing.client;
 
 import com.insurance.shared.client.PolicyClient;
-import com.insurance.shared.entity.Policy;
+import com.insurance.shared.dto.PolicyDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j; // For logging
 import org.springframework.beans.factory.annotation.Value; // For injecting properties
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientException; // More general exception
 import org.springframework.web.client.RestTemplate;
 
@@ -24,11 +23,11 @@ public class PolicyRestClient implements PolicyClient {
     private String policyServiceUrl;
 
     @Override
-    public Optional<Policy> getPolicy(String policyId) {
+    public Optional<PolicyDto> getPolicy(String policyId) {
         String url = policyServiceUrl + "/api/policies/" + policyId; // Use a local variable for clarity
         try {
             log.debug("Fetching policy with ID: {} from URL: {}", policyId, url);
-            Policy policy = restTemplate.getForObject(url, Policy.class);
+            PolicyDto policy = restTemplate.getForObject(url, PolicyDto.class);
             return Optional.ofNullable(policy);
         } catch (HttpClientErrorException.NotFound e) {
             log.warn("Policy not found for ID: {} at URL: {}. Status: {}", policyId, url, e.getStatusCode());
