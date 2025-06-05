@@ -4,6 +4,7 @@ import com.insurance.shared.enums.PaymentStatus;
 import com.insurance.billing.service.BillingService;
 import com.insurance.shared.dto.BillingDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import com.insurance.shared.dto.PaymentRequestDto;
 import com.insurance.shared.enums.BillingStatus;
@@ -13,10 +14,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Map;
+import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.mockito.Mockito.when;
@@ -24,6 +31,33 @@ import static org.mockito.Mockito.when;
 @WebMvcTest(BillingController.class)
 class BillingControllerTest {
 
+    @BeforeEach
+    void setUp() {
+        // Mock premium details
+        when(billingService.getPremiumDetails(anyString()))
+                .thenReturn(Optional.of(Map.of(
+                        "policyId", "POLICY-123",
+                        "premiumAmount", 150.00,
+                        "frequency", "MONTHLY",
+                        "message", "Premium calculation endpoint - implementation pending"
+                )));
+
+        // Mock calculate premium
+        when(billingService.calculatePremiumFromRequest(any()))
+                .thenReturn(Map.of(
+                        "calculatedPremium", 150.00,
+                        "frequency", "MONTHLY",
+                        "effectiveDate", LocalDateTime.now(),
+                        "message", "Premium calculation completed - implementation pending"
+                ));
+
+        // Mock due premiums
+        when(billingService.getDuePremiums())
+                .thenReturn(Map.of(
+                        "duePremiums", "None",
+                        "message", "Due premiums endpoint - implementation pending"
+                ));
+    }
     @Autowired
     private MockMvc mockMvc;
 
