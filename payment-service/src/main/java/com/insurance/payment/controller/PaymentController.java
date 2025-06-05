@@ -67,7 +67,8 @@ public class PaymentController {
         }
     }
 
-    @GetMapping("/payments/{transactionId}/status")
+    // Change this line in PaymentController:
+    @GetMapping("/{transactionId}/status")  // Remove "/payments" prefix
     public ResponseEntity<Map<String, Object>> getPaymentStatus(@PathVariable String transactionId) {
         try {
             Map<String, Object> status = paymentService.getPaymentStatus(transactionId);

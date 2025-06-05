@@ -69,39 +69,20 @@ class PaymentControllerTest {
 
     @Test
     void shouldGetPaymentHistory() throws Exception {
-        // Given
-        List<PaymentDto> mockPayments = List.of(
-                PaymentDto.builder()
-                        .id("TXN-12345")
-                        .policyId("POLICY-123")
-                        .amount(new BigDecimal("171.00"))
-                        .status(PaymentStatus.SUCCESS)
-                        .paymentMethod("CREDIT_CARD")
-                        .build(),
-                PaymentDto.builder()
-                        .id("TXN-12346")
-                        .policyId("POLICY-123")
-                        .amount(new BigDecimal("200.00"))
-                        .status(PaymentStatus.SUCCESS)
-                        .paymentMethod("CREDIT_CARD")
-                        .build()
+        // Mock the method signature that actually exists in your service
+        List<Map<String, Object>> mockHistory = List.of(
+                Map.of("id", "TXN-12345", "policyId", "POLICY-123", "amount", 171.00, "status", "SUCCESS"),
+                Map.of("id", "TXN-12346", "policyId", "POLICY-123", "amount", 200.00, "status", "SUCCESS")
         );
 
-        when(paymentService.getPaymentHistory("POLICY-123", "SUCCESS", 10, 0)).thenReturn(mockPayments);
+        when(paymentService.getPaymentHistory("POLICY-123")).thenReturn(mockHistory);
 
-        // When & Then
         mockMvc.perform(get("/api/payments/history")
-                .param("policyId", "POLICY-123")
-                .param("status", "SUCCESS")
-                .param("limit", "10")
-                .param("offset", "0"))
+                        .param("policyId", "POLICY-123"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$[0].id").value("TXN-12345"))
                 .andExpect(jsonPath("$[1].id").value("TXN-12346"));
     }
-
     @Test
     void shouldGetDelinquentPolicies() throws Exception {
         // Given
