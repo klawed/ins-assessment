@@ -44,5 +44,5 @@ jobs:
         for module in policy-service billing-service notification-service payment-service
         do
           echo "Running unit tests for $module"
-          mvn test -pl $module -Dtest="!**/*E2ETest.java" -Dsurefire.failIfNoSpecifiedTests=false
+          mvn test -pl $module -Dtest="!**/*E2ETest.java" -Dsurefire.failIfNoSpecifiedTests=false -Dspring-boot.run.profiles=test
         done
