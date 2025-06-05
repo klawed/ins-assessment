@@ -1,5 +1,4 @@
-# docker-compose-dev.yml (Overrides for local development)
-version: '3.8'
+# docker-compose-dev.yml (for local development)
 
 services:
   zookeeper:
