@@ -3,17 +3,20 @@ package com.insurance.policy.entity;
 import com.insurance.shared.enums.PaymentFrequency;
 import com.insurance.shared.enums.PolicyStatus;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "policies")
 @Data
-@SuperBuilder
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 public class PolicyEntity {
 
@@ -33,8 +36,8 @@ public class PolicyEntity {
     @Column(nullable = false)
     private PolicyStatus status;
 
-    @Column(nullable = false)
-    private LocalDate effectiveDate;
+    @Column(nullable = false
+    private LocalDateTime effectiveDate;
 
     @Column(nullable = false)
     private LocalDate expirationDate;
@@ -46,23 +49,26 @@ public class PolicyEntity {
     @Column(nullable = false)
     private PaymentFrequency frequency;
 
-    private Integer gracePeriodDays;
+    @Column
+    Integer gracePeriodDays;
 
+    @Column
     private LocalDate nextDueDate;
 
     @Column(updatable = false)
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 
-    private LocalDate updatedAt;
+    @Column(updatable = false)
+    private LocalDateTime updatedAt;
 
     @PrePersist
     protected void onCreate() {
-        createdAt = LocalDate.now();
-        updatedAt = LocalDate.now();
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
 
     @PreUpdate
     protected void onUpdate() {
-        updatedAt = LocalDate.now();
+        updatedAt = LocalDateTime.now();
     }
 }
