@@ -33,14 +33,17 @@ class BillingControllerTest {
 
     @BeforeEach
     void setUp() {
-        // Mock premium details
+        // Dynamic mock that returns the correct policyId
         when(billingService.getPremiumDetails(anyString()))
-                .thenReturn(Optional.of(Map.of(
-                        "policyId", "POLICY-123",
-                        "premiumAmount", 150.00,
-                        "frequency", "MONTHLY",
-                        "message", "Premium calculation endpoint - implementation pending"
-                )));
+                .thenAnswer(invocation -> {
+                    String policyId = invocation.getArgument(0);
+                    return Optional.of(Map.of(
+                            "policyId", policyId,
+                            "premiumAmount", 150.00,
+                            "frequency", "MONTHLY",
+                            "message", "Premium calculation endpoint - implementation pending"
+                    ));
+                });
 
         // Mock calculate premium
         when(billingService.calculatePremiumFromRequest(any()))
@@ -58,6 +61,7 @@ class BillingControllerTest {
                         "message", "Due premiums endpoint - implementation pending"
                 ));
     }
+
     @Autowired
     private MockMvc mockMvc;
 
