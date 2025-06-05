@@ -2,9 +2,9 @@ name: Build and Test
 
 on:
   push:
-    branches: [ main ]
+    branches: [ dev,main ]
   pull_request:
-    branches: [ main ]
+    branches: [ dev,main ]
 
 jobs:
   build:
@@ -42,7 +42,29 @@ jobs:
     - name: Run Unit Tests
       run: |
         for module in policy-service billing-service notification-service payment-service
-        do
+          do
+          echo "==============================================="
           echo "Running unit tests for $module"
-          mvn test -pl $module -Dtest="!**/*E2ETest.java" -Dsurefire.failIfNoSpecifiedTests=false
-        done
+          echo "==============================================="
+          
+          # Run unit tests with proper profile and exclusions
+          mvn test -pl $module \
+          -Dtest="!**/*E2ETest.java,!**/*IntegrationTest.java" \
+          -Dsurefire.failIfNoSpecifiedTests=false \
+          -Dspring.profiles.active=test \
+          -Dspring.test.context.cache.maxSize=1 \
+          -Dmaven.test.failure.ignore=false \
+          -B -q
+          
+          # Check if tests passed
+          if [ $? -ne 0 ]; then
+          echo "❌ Unit tests failed for $module"
+          exit 1
+          else
+          echo "✅ Unit tests passed for $module"
+          fi
+          done
+          
+          echo "==============================================="
+          echo "All unit tests completed successfully!"
+          echo "==============================================="
